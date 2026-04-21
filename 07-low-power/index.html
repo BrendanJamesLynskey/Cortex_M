@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cortex-M Low-Power Design</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@400;500;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/black.min.css">
+<style>
+  :root{--amber:#f5a623;--green:#4ecb8d;--purple:#a78bfa;--blue:#60a5fa;--red:#f87171;--bg:#0a0a0f;--bg2:#10101a;--bg3:#181824;--border:#2a2a3a;--text:#e8e8f0;--muted:#8888a8;}
+  .reveal-viewport{background:var(--bg);} .reveal .slides section{background:transparent;} .reveal section{text-align:left;}
+  .reveal .slides > section{padding:0.5em;overflow-y:auto!important;align-items:flex-start!important;justify-content:flex-start!important;}
+  .reveal .progress{color:var(--amber);height:3px;} .reveal .controls{color:var(--amber);}
+  .reveal section::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--amber),var(--green));}
+  .reveal{font-family:'DM Sans',sans-serif;color:var(--text);font-size:22px;}
+  .reveal .slide-number{font-family:'JetBrains Mono',monospace;font-size:0.7em;color:var(--muted);}
+  .reveal h1,.reveal h2,.reveal h3{font-family:'Playfair Display',serif;color:#fff;text-transform:none;letter-spacing:-0.01em;}
+  .reveal h1{font-size:2.4em;font-weight:900;color:var(--amber);line-height:1.1;}
+  .reveal h2{font-size:1.7em;font-weight:700;color:var(--amber);margin-bottom:0.6em;}
+  .reveal h3{font-size:1.2em;font-weight:700;color:var(--green);margin-bottom:0.3em;}
+  .reveal p{font-size:0.75em;line-height:1.5;color:var(--text);} .reveal li{font-size:0.7em;line-height:1.5;margin-bottom:0.25em;}
+  .reveal code{font-family:'JetBrains Mono',monospace;font-size:.72em;}
+  .reveal pre{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:0.5em 1em;margin:0.4em 0;width:100%;box-shadow:none;}
+  .reveal pre code{font-size:0.58em;line-height:1.5;background:transparent;color:#cdd6f4;}
+  .slide-hdr{display:flex;align-items:center;gap:.4em;border-bottom:1px solid var(--border);padding-bottom:.2em;margin-bottom:.3em;}
+  .slide-hdr .tag{font-family:'JetBrains Mono',monospace;font-size:0.55em;font-weight:600;color:var(--bg);background:var(--amber);padding:.1em .4em;border-radius:3px;letter-spacing:.04em;}
+  .slide-hdr h2{margin:0;font-size:1.4em;}
+  .cols{display:grid;gap:1em;} .cols-2{grid-template-columns:1fr 1fr;} .cols-3{grid-template-columns:1fr 1fr 1fr;} .cols-6040{grid-template-columns:6fr 4fr;} .cols-4060{grid-template-columns:4fr 6fr;}
+  .card{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:1em 1.2em;box-shadow:0 4px 20px rgba(0,0,0,0.3);margin:0.4em 0;}
+  .card.amber{border-left:3px solid var(--amber);} .card.green{border-left:3px solid var(--green);} .card.purple{border-left:3px solid var(--purple);} .card.blue{border-left:3px solid var(--blue);} .card.red{border-left:3px solid var(--red);}
+  .card h3{font-size:1em;margin:0 0 0.4em;}
+  .card p,.card ul{font-size:0.8em;margin:0;color:#b8b8d0;} .card ul{padding-left:1.2em;} .card li{font-size:0.85em;margin-bottom:0.25em;}
+  .reveal table{width:100%;border-collapse:collapse;font-size:0.65em;margin:0.5em 0;}
+  .reveal table th{background:var(--bg3);color:var(--amber);padding:0.5em 0.7em;border:1px solid var(--border);text-align:left;font-weight:700;}
+  .reveal table td{padding:0.5em 0.7em;border:1px solid var(--border);color:#ccc;vertical-align:top;}
+  .reveal table tr:nth-child(even) td{background:#0e0e18;}
+  .a{color:var(--amber);font-weight:600;} .g{color:var(--green);font-weight:600;} .p{color:var(--purple);font-weight:600;} .b{color:var(--blue);font-weight:600;} .r{color:var(--red);font-weight:600;} .mono{font-family:'JetBrains Mono',monospace;}
+  svg.diagram{display:block;margin:0 auto;overflow:visible;}
+  .pill{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:0.6em;padding:0.15em 0.6em;border-radius:999px;border:1px solid;margin:0 .08em;}
+  .pill.amber{color:var(--amber);border-color:var(--amber);} .pill.green{color:var(--green);border-color:var(--green);} .pill.purple{color:var(--purple);border-color:var(--purple);} .pill.blue{color:var(--blue);border-color:var(--blue);} .pill.red{color:var(--red);border-color:var(--red);}
+  .title-slide h1{font-size:2.4em;} .title-slide .subtitle{font-size:0.85em;color:var(--green);font-weight:400;letter-spacing:0.06em;margin:0.3em 0 0.6em;} .title-slide .meta{font-size:0.6em;color:var(--muted);font-family:'JetBrains Mono',monospace;}
+  .dim{color:var(--muted);} .small{font-size:0.65em;} .smaller{font-size:0.55em;} .tiny{font-size:0.48em;}
+  .reveal ul,.reveal ol{margin:.15em 0 .15em 1em;}
+
+  /* Power bar chart */
+  .pbar { display: grid; grid-template-columns: 170px 1fr 80px; gap: 8px; align-items: center; font-family: 'JetBrains Mono', monospace; font-size: 0.62em; margin: 0.3em 0; }
+  .pbar .n { color: var(--amber); text-align: right; }
+  .pbar .b { height: 20px; background: var(--bg2); border-radius: 4px; position: relative; overflow: hidden; border: 1px solid var(--border); }
+  .pbar .b > div { height: 100%; }
+  .pbar .v { color: #cdd6f4; text-align: right; }
+  .pbar .b .fill1 { background: var(--red); }
+  .pbar .b .fill2 { background: var(--amber); }
+  .pbar .b .fill3 { background: var(--green); }
+  .pbar .b .fill4 { background: var(--blue); }
+  .pbar .b .fill5 { background: var(--purple); }
+</style>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+
+<section class="title-slide" data-background-color="#0a0a0f">
+  <div style="font-family:'JetBrains Mono',monospace;font-size:.5em;color:var(--muted);margin-bottom:.4em;letter-spacing:.1em;">ARM CORTEX-M · PRESENTATION 07</div>
+  <h1>Low-Power Design</h1>
+  <div class="subtitle">Sleep modes · WFI / WFE · WIC · Tickless RTOS · ULPMark</div>
+  <div style="width:60px;height:3px;background:var(--amber);margin-bottom:1.4em;"></div>
+  <div class="meta">How a coin-cell lasts ten years</div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">02</span><h2>Why Low Power</h2></div>
+  <div class="cols cols-2">
+    <div>
+      <ul>
+        <li>Target devices often run from CR2032 (225 mAh) for 5–10 years, or harvest μW-scale energy from solar/vibration.</li>
+        <li>The CPU is frequently <strong>awake &lt; 1%</strong> of the time — everything depends on low-power idle.</li>
+        <li>Cortex-M spec provides a small set of <em>architectural</em> primitives: WFI, WFE, SLEEPDEEP, SLEEPONEXIT.</li>
+        <li>Vendors layer their own <strong>power modes</strong> (STOP, STANDBY, LPM, SYSTEMOFF, HIBERNATE) on top of those primitives.</li>
+        <li>Interview angle: articulate the <em>split</em> between what Arm standardises and what the SoC vendor adds.</li>
+      </ul>
+    </div>
+    <div>
+      <div class="card amber">
+        <h3 class="a">Typical targets (2024)</h3>
+        <ul>
+          <li><strong>Active:</strong> 20–80 μA/MHz on 40 nm.</li>
+          <li><strong>Sleep w/ SRAM retain:</strong> 1–5 μA.</li>
+          <li><strong>Deep-sleep RTC-only:</strong> 0.3–2 μA.</li>
+          <li><strong>Ship mode / full power-off:</strong> &lt; 50 nA.</li>
+        </ul>
+      </div>
+      <div class="card green" style="margin-top:0.3em; font-size:0.72em;">
+        Ambiq Apollo4+ hits <strong>~6 μA/MHz active</strong> via subthreshold operation; Nordic nRF54L sits around 40 μA/MHz at 128 MHz on 22 nm.
+      </div>
+    </div>
+  </div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">03</span><h2>Where the Energy Goes</h2></div>
+  <div class="pbar"><div class="n">CPU dynamic</div><div class="b"><div class="fill1" style="width:55%"></div></div><div class="v">55%</div></div>
+  <div class="pbar"><div class="n">Flash access</div><div class="b"><div class="fill2" style="width:20%"></div></div><div class="v">20%</div></div>
+  <div class="pbar"><div class="n">Clock tree / PLL</div><div class="b"><div class="fill3" style="width:10%"></div></div><div class="v">10%</div></div>
+  <div class="pbar"><div class="n">Peripherals (I/O &amp; analog)</div><div class="b"><div class="fill4" style="width:10%"></div></div><div class="v">10%</div></div>
+  <div class="pbar"><div class="n">Leakage / BOR / LDO</div><div class="b"><div class="fill5" style="width:5%"></div></div><div class="v">5%</div></div>
+  <p class="smaller dim">Active-mode energy split — typical 40 nm Cortex-M4 at 64 MHz. Leakage dominates in sleep modes because dynamic power collapses.</p>
+  <div class="cols cols-2" style="margin-top:0.3em;">
+    <div class="card amber">
+      <h3 class="a">Dynamic: CV²f</h3>
+      <p>Lower V, lower f → quadratic + linear saving. Reducing core voltage from 1.2 V to 0.9 V cuts dynamic by ~44%.</p>
+    </div>
+    <div class="card green">
+      <h3 class="g">Leakage: f(V, T)</h3>
+      <p>Rises exponentially with temperature and linearly with V. Below-threshold designs (Ambiq) get huge wins at the cost of frequency.</p>
+    </div>
+  </div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">04</span><h2>The Core's Sleep Primitives</h2></div>
+  <table>
+    <tr><th>Instruction</th><th>Effect</th><th>Wakeup condition</th></tr>
+    <tr><td><code>WFI</code></td><td>Wait-For-Interrupt. Stop fetching. Core clock may gate.</td><td>Any pending IRQ of ≥ current priority, reset, debug halt.</td></tr>
+    <tr><td><code>WFE</code></td><td>Wait-For-Event. Same gating, but wakes on either an interrupt or a "SEV" event.</td><td>IRQ, debug, <code>SEV</code> from another thread / core, peripheral event.</td></tr>
+    <tr><td><code>SEV</code></td><td>Send-Event. Sets the event register; a subsequent <code>WFE</code> returns immediately.</td><td>—</td></tr>
+  </table>
+  <div class="cols cols-2">
+    <div>
+      <div class="card blue">
+        <h3 class="b">WFI vs WFE</h3>
+        <p>WFE wakes from <em>events</em> as well as interrupts. Critical for lock-free primitives (<code>LDREX</code>/<code>STREX</code>) and for RTOS idle loops that want to spin without needing a real IRQ.</p>
+      </div>
+    </div>
+    <div>
+      <div class="card amber">
+        <h3 class="a">SLEEPONEXIT</h3>
+        <p>Bit in <code>SCB-&gt;SCR</code> — on exception return to Thread mode, hardware automatically executes <code>WFI</code>. Useful for purely event-driven firmware: initialise, then live in ISRs forever, never waking in main().</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">05</span><h2>Sleep vs Deep Sleep</h2></div>
+  <div class="cols cols-2">
+    <div>
+      <h3>Regular Sleep</h3>
+      <ul>
+        <li><code>SCB-&gt;SCR.SLEEPDEEP=0</code>.</li>
+        <li>Core &amp; NVIC clock gated; most peripherals keep running.</li>
+        <li>Wake latency: &lt; 10 cycles.</li>
+        <li>Typical current: 500 μA – 5 mA depending on how much of the SoC stays up.</li>
+      </ul>
+      <h3>Deep Sleep</h3>
+      <ul>
+        <li><code>SCB-&gt;SCR.SLEEPDEEP=1</code>.</li>
+        <li>Architecture only says "deeper" — the vendor defines <em>what</em> goes off (PLL, flash, analog, SRAM retention).</li>
+        <li>Wake latency: μs to ms.</li>
+        <li>Typical current: 0.3 – 10 μA.</li>
+      </ul>
+    </div>
+    <div>
+<pre><code class="mono">void enter_deep_sleep(void)
+{
+    SCB-&gt;SCR |= SCB_SCR_SLEEPDEEP_Msk;
+    __DSB();
+    __WFI();
+    /* on wake, clock tree restarts;
+       code continues here */
+}</code></pre>
+      <div class="card green" style="font-size:0.72em;">
+        The core instruction is the <strong>same</strong> — <code>WFI</code>. The difference is entirely in what the SoC's power-management block does when it sees <code>CPU_SLEEPING &amp;&amp; SLEEPDEEP</code>.
+      </div>
+    </div>
+  </div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">06</span><h2>The Wake-up Interrupt Controller</h2></div>
+  <div class="cols cols-4060">
+    <div>
+      <svg viewBox="0 0 400 260" style="width:100%;">
+        <g font-family="DM Sans" font-size="11">
+          <rect x="30" y="30" width="150" height="70" rx="6" fill="#2a1a0a" stroke="#f5a623"/>
+          <text x="105" y="52" text-anchor="middle" fill="#f5a623" font-weight="700">Core + NVIC</text>
+          <text x="105" y="72" text-anchor="middle" font-size="10" fill="#fff">gated in deep sleep</text>
+          <text x="105" y="88" text-anchor="middle" font-size="10" fill="#8888a8">0 mA</text>
+
+          <rect x="30" y="150" width="150" height="70" rx="6" fill="#0a2a1a" stroke="#4ecb8d"/>
+          <text x="105" y="172" text-anchor="middle" fill="#4ecb8d" font-weight="700">WIC</text>
+          <text x="105" y="190" text-anchor="middle" font-size="10" fill="#fff">clocked at 32 kHz</text>
+          <text x="105" y="206" text-anchor="middle" font-size="10" fill="#8888a8">~100 nA</text>
+
+          <rect x="230" y="90" width="140" height="70" rx="6" fill="#1a0a2a" stroke="#a78bfa"/>
+          <text x="300" y="112" text-anchor="middle" fill="#a78bfa" font-weight="700">Always-on IRQs</text>
+          <text x="300" y="130" text-anchor="middle" font-size="10" fill="#fff">RTC · GPIO EXTI · LPUART</text>
+          <text x="300" y="146" text-anchor="middle" font-size="10" fill="#fff">Low-power comparator</text>
+
+          <line x1="230" y1="125" x2="180" y2="180" stroke="#4ecb8d" stroke-width="2"/>
+          <line x1="105" y1="150" x2="105" y2="100" stroke="#f5a623" stroke-width="2"/>
+          <text x="60" y="135" font-size="10" fill="#f5a623">wakeup req</text>
+        </g>
+      </svg>
+    </div>
+    <div>
+      <ul>
+        <li>The WIC duplicates the NVIC's <em>mask</em> logic on a tiny always-on domain (~100 nA).</li>
+        <li>In deep sleep, the core and NVIC are clock-gated or power-gated. Their outputs are Xs electrically.</li>
+        <li>The WIC listens to the always-on IRQ lines; on any masked-in assertion, raises WAKEUP to the PMU.</li>
+        <li>PMU restarts clocks → CPU wakes → NVIC re-captures the IRQ → handler runs normally.</li>
+        <li>Without the WIC, you cannot power-gate the NVIC and keep IRQ wake; getting down to sub-μA requires WIC support.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">07</span><h2>Retention</h2></div>
+  <div class="cols cols-2">
+    <div>
+      <h3>What can be retained in sleep</h3>
+      <ul>
+        <li><strong>CPU state</strong> — GPRs, xPSR, SP, control — stored in a handful of retention flops on the always-on domain (auto-handled by the core in some sleep modes).</li>
+        <li><strong>NVIC state</strong> — priorities, pending/enabled masks.</li>
+        <li><strong>SRAM</strong> — "retention SRAM" banks can be kept powered while the rest is collapsed. STM32 typically has 1–4 retention banks configurable.</li>
+        <li><strong>Backup registers</strong> — a handful of 32-bit words on the VBAT/RTC domain, persist across the CPU powering off entirely.</li>
+      </ul>
+    </div>
+    <div>
+      <h3>What you give up per level</h3>
+      <table style="font-size:0.6em;">
+        <tr><th>Mode</th><th>CPU</th><th>SRAM</th><th>Flash</th><th>Typ. μA</th></tr>
+        <tr><td>Sleep</td><td>✓</td><td>✓</td><td>✓</td><td>500–2000</td></tr>
+        <tr><td>Low-power sleep</td><td>✓ (slow)</td><td>✓</td><td>off</td><td>50–200</td></tr>
+        <tr><td>Stop (retained)</td><td>off</td><td>✓</td><td>off</td><td>1–10</td></tr>
+        <tr><td>Standby</td><td>off</td><td>partial</td><td>off</td><td>0.3–2</td></tr>
+        <tr><td>Shutdown</td><td>off</td><td>off</td><td>off</td><td>&lt; 0.1</td></tr>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">08</span><h2>Tickless RTOS</h2></div>
+  <div class="cols cols-2">
+    <div>
+      <ul>
+        <li>Classical RTOS wakes every 1 ms via SysTick → thousands of useless wake-ups per hour.</li>
+        <li><strong>Tickless</strong>: replace fixed SysTick with an RTC-driven timer. Scheduler programs the next needed wake directly.</li>
+        <li>Requires:
+          <ul>
+            <li>Idle callback: "sleep for up to N ticks".</li>
+            <li>Vendor RTC / low-power timer with a 32 kHz xtal.</li>
+            <li>On wake, correct the tick count by elapsed RTC time.</li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+    <div>
+<pre><code class="mono">/* FreeRTOS: enable tickless */
+#define configUSE_TICKLESS_IDLE          1
+#define configEXPECTED_IDLE_TIME_BEFORE_SLEEP 2
+
+/* Vendor overrides vPortSuppressTicksAndSleep
+   to replace SysTick with RTC-WUT */
+extern void vPortSuppressTicksAndSleep(TickType_t);
+
+/* Pseudo-flow in the port */
+void vPortSuppressTicksAndSleep(TickType_t xExpected)
+{
+    rtc_program_wake(xExpected);
+    enter_stop_mode();        /* SLEEPDEEP + WFI */
+    TickType_t slept = rtc_elapsed_and_clear();
+    vTaskStepTick(slept);
+}</code></pre>
+    </div>
+  </div>
+  <div class="card blue" style="font-size:0.72em;">
+    Tickless RTOS routinely cuts idle power by 10–30× for event-driven workloads. It is <strong>the</strong> single highest-impact firmware change in an IoT product.
+  </div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">09</span><h2>DVFS on Cortex-M</h2></div>
+  <div class="cols cols-2">
+    <div>
+      <ul>
+        <li>Cortex-M itself has no DVFS table — frequency/voltage scaling is entirely the SoC's job.</li>
+        <li>Typical scheme:
+          <ul>
+            <li>Boot at slow HSI (internal oscillator, e.g. 16 MHz).</li>
+            <li>Enable PLL → run at 80 / 100 / 168 MHz during active work.</li>
+            <li>Drop back to HSI before <code>WFI</code>.</li>
+            <li>Scale V<sub>core</sub> via a vendor VOS register (STM32: PWR_VOS0..VOS3).</li>
+          </ul>
+        </li>
+        <li>Changing voltage is slow (ms). Changing clock source is fast (μs). The ratio drives most workflows.</li>
+      </ul>
+    </div>
+    <div>
+      <div class="card amber">
+        <h3 class="a">Race to sleep vs race to idle</h3>
+        <ul>
+          <li><strong>Race to sleep</strong> — fastest feasible active, then deep sleep. Wins for burst-y workloads on newer silicon where active power ≈ linear in f and leakage dominates sleep.</li>
+          <li><strong>Race to idle (at lower f)</strong> — run slowest that still hits the deadline, avoid voltage spike. Wins on older silicon where dynamic power dominates and sleep is "meh".</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">10</span><h2>Clock Gating by Peripheral</h2></div>
+  <div class="cols cols-2">
+    <div>
+      <ul>
+        <li>Every Cortex-M SoC has "RCC / CMU / CKG" registers — one enable bit per peripheral clock branch.</li>
+        <li>A disabled peripheral draws leakage only — sometimes a couple of nA.</li>
+        <li>Correct pattern:
+          <ol>
+            <li>Clock-gate peripheral.</li>
+            <li>Touch its registers → vendor-defined behaviour (STM32: reads RAZ, writes WI until clock re-enabled).</li>
+          </ol>
+        </li>
+        <li>In RTOS, attach a "peripheral use-count" on each clock branch: enable on first user, disable on last.</li>
+      </ul>
+    </div>
+    <div>
+<pre><code class="mono">/* STM32H7 — enable then disable UART2 clock */
+RCC-&gt;APB1LENR |=  RCC_APB1LENR_USART2EN;
+__DSB();
+/* … work with UART2 … */
+RCC-&gt;APB1LENR &amp;= ~RCC_APB1LENR_USART2EN;
+
+/* Nordic nRF52 — per-peripheral in PMU */
+NRF_UARTE0-&gt;ENABLE = UARTE_ENABLE_ENABLE_Disabled;</code></pre>
+      <p class="smaller dim">The clock-gate bit is not the same as the peripheral-enable bit. Both are usually necessary.</p>
+    </div>
+  </div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">11</span><h2>Vendor Sleep Modes — STM32 Family</h2></div>
+  <table style="font-size:0.6em;">
+    <tr><th>Mode</th><th>CPU clock</th><th>Flash</th><th>PLL</th><th>SRAM</th><th>Wake sources</th><th>Current (typ L5)</th></tr>
+    <tr><td>Run</td><td>on</td><td>on</td><td>on</td><td>on</td><td>—</td><td>1–10 mA</td></tr>
+    <tr><td>Sleep</td><td>off (core)</td><td>on</td><td>on</td><td>on</td><td>any IRQ</td><td>500 μA – 2 mA</td></tr>
+    <tr><td>Low-power Run</td><td>MSI @ 2 MHz</td><td>on</td><td>off</td><td>on</td><td>any IRQ</td><td>100–300 μA</td></tr>
+    <tr><td>STOP0</td><td>off</td><td>retained</td><td>off</td><td>all</td><td>WIC-IRQs + WUTS</td><td>60–100 μA</td></tr>
+    <tr><td>STOP1</td><td>off</td><td>off</td><td>off</td><td>most</td><td>EXTI, RTC, LPUART</td><td>1–3 μA</td></tr>
+    <tr><td>STOP2</td><td>off</td><td>off</td><td>off</td><td>fewer banks</td><td>EXTI, RTC, LPUART</td><td>300–900 nA</td></tr>
+    <tr><td>STANDBY</td><td>off</td><td>off</td><td>off</td><td>backup only</td><td>RTC/WKUP pin</td><td>80–300 nA</td></tr>
+    <tr><td>SHUTDOWN</td><td>off</td><td>off</td><td>off</td><td>off</td><td>WKUP pin</td><td>&lt; 50 nA</td></tr>
+  </table>
+  <p class="smaller dim">Each mode is entered via a specific sequence of <code>PWR</code> register writes, then <code>SCB-&gt;SCR.SLEEPDEEP</code> + WFI. Recovery paths differ — STANDBY returns at reset, STOP returns to the WFI instruction.</p>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">12</span><h2>Nordic nRF52 / nRF54 Model</h2></div>
+  <div class="cols cols-2">
+    <div>
+      <ul>
+        <li><strong>System ON</strong> — normal running; idle via WFI. SoC automatically gates peripherals whose owner driver has disabled them. Typical: 5–20 μA with RTC + BLE PHY off, few kHz from the RTC.</li>
+        <li><strong>System OFF</strong> — SoC powered down apart from RAM retention + RESET/WAKEUP pins. ~0.4 μA.</li>
+        <li><strong>Constant-Latency submode</strong> — forces HFCLK running; avoids PLL restart jitter for audio or radio.</li>
+        <li>Radio (PHY + baseband) &amp; TIMERs are part of the power-aware event-driven architecture — PPI (Programmable Peripheral Interconnect) lets them operate without CPU wake.</li>
+      </ul>
+    </div>
+    <div>
+      <div class="card green">
+        <h3 class="g">PPI / DPPI — "CPU not required"</h3>
+        <p>Nordic MCUs can <strong>transfer data and trigger peripherals without waking the CPU</strong>. Example: low-power comparator → GPIOTE → TIMER → SAADC → RAM buffer, all in System ON, CPU asleep until the sample buffer is full.</p>
+      </div>
+      <div class="card blue" style="margin-top:0.3em; font-size:0.72em;">
+        This architecture is why Nordic's BLE peripheral current averages &lt; 8 μA at 1 Hz connection intervals — the CPU is off most of the time.
+      </div>
+    </div>
+  </div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">13</span><h2>Ambiq — Subthreshold Cortex-M</h2></div>
+  <div class="cols cols-2">
+    <div>
+      <ul>
+        <li>Ambiq Apollo family runs the Cortex-M core at <strong>V<sub>core</sub> ≈ 0.5 V</strong> — below the classical threshold voltage.</li>
+        <li>Requires custom SRAM &amp; flash designed to operate at that voltage, plus variation-tolerant logic libraries.</li>
+        <li>Result: ~6 μA/MHz active (Apollo4 Plus, 2022), vs 40–80 μA/MHz for conventional silicon on the same process.</li>
+        <li>Clock typically 96–192 MHz — subthreshold imposes a speed ceiling.</li>
+        <li>Used in Apple Watch S8 onwards (M4 Apollo3 Blue Plus derivative) and countless hearing aids / fitness bands.</li>
+      </ul>
+    </div>
+    <div>
+      <div class="card purple">
+        <h3 class="p">Why this is not universal</h3>
+        <p>Subthreshold operation breaks a lot of assumptions the rest of the IP toolchain makes — needs custom memory compilers, variation-aware STA, different fab processes. Arm licenses the architectural core; Ambiq does the rest.</p>
+      </div>
+      <div class="card amber" style="margin-top:0.3em; font-size:0.72em;">
+        <strong class="a">Observation:</strong> for a given architecture, power per MHz is the single biggest vendor differentiator. ST, NXP and Ambiq can ship the "same" Cortex-M4 and have 10× different μA/MHz.
+      </div>
+    </div>
+  </div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">14</span><h2>EEMBC ULPMark &amp; Benchmark Culture</h2></div>
+  <div class="cols cols-2">
+    <div>
+      <ul>
+        <li><strong>ULPMark-CP (Core Profile)</strong> — wakes the MCU for 1 s of "light" work, sleeps 9 s, repeats. Measures <em>energy per 1000 work-cycles</em>.</li>
+        <li><strong>ULPMark-PP (Peripheral Profile)</strong> — exercises analog and digital peripherals in a realistic IoT duty cycle.</li>
+        <li><strong>ULPMark-SP</strong> — security primitive profile (AES, SHA, RNG).</li>
+        <li>Vendor datasheets quote these heavily because pure μA/MHz is only half the story — <em>how quickly you can get to sleep</em> matters just as much.</li>
+      </ul>
+    </div>
+    <div>
+      <div class="card blue">
+        <h3 class="b">Example numbers (2024)</h3>
+        <table style="font-size:0.6em;">
+          <tr><th>MCU</th><th>ULPMark-CP</th></tr>
+          <tr><td>Apollo4 Plus (M4F)</td><td>~1320</td></tr>
+          <tr><td>STM32U5 (M33)</td><td>~410</td></tr>
+          <tr><td>nRF54L (M33)</td><td>~370</td></tr>
+          <tr><td>STM32L5 (M33)</td><td>~370</td></tr>
+          <tr><td>STM32L4 (M4)</td><td>~215</td></tr>
+        </table>
+        <p class="smaller dim" style="margin-top:0.3em;">Higher = better. Apollo4's subthreshold design dominates.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">15</span><h2>CoreMark / mA — Active Efficiency</h2></div>
+  <div class="cols cols-2">
+    <div>
+      <ul>
+        <li>Same CoreMark integer benchmark as everywhere, divided by measured active current.</li>
+        <li>Rewards <em>fast-finishing</em> cores with low μA/MHz.</li>
+        <li>An M7 at 480 MHz can beat a 32 MHz M0+ on CoreMark/mA — because although it draws more current, it finishes in 15× less time.</li>
+      </ul>
+    </div>
+    <div>
+      <div class="card green">
+        <h3 class="g">Lesson</h3>
+        <p>If your workload is bursty and the platform supports fast sleep entry, <strong>faster cores can be lower-power</strong>. The classic "save μA by running slower" intuition is often backwards on modern silicon.</p>
+      </div>
+      <div class="card amber" style="margin-top:0.3em; font-size:0.72em;">
+        Bosch: shipping IMUs using an M33 @ 120 MHz rather than M0+ @ 16 MHz precisely because the M33 races through its Kalman filter in 50 μs and sleeps for the remaining 950 μs per 1-kHz tick.
+      </div>
+    </div>
+  </div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">16</span><h2>Tickless Gotchas</h2></div>
+  <div class="cols cols-2">
+    <div>
+      <div class="card red" style="font-size:0.72em;">
+        <h3 class="r">1. Missed wake during critical section</h3>
+        <p>If you disable interrupts and then enter WFI, an IRQ can't wake you (unless the WIC still sees it). Most FreeRTOS ports use <code>__disable_irq()</code> before WFI and count on the WIC.</p>
+      </div>
+      <div class="card red" style="font-size:0.72em;">
+        <h3 class="r">2. RTC drift</h3>
+        <p>32 kHz crystals drift ±20 ppm. Over a 10 s deep-sleep interval, that's up to 200 μs of error. Protocol timers (BLE, LoRa) must budget for this.</p>
+      </div>
+      <div class="card red" style="font-size:0.72em;">
+        <h3 class="r">3. Pending IRQ missed on sleep entry</h3>
+        <p>Race: IRQ arrives just before WFI executes. v7-M architecture says WFI returns immediately if any IRQ is pending — but some SoCs latch the "about to sleep" state a cycle earlier. Use the "SEVONPEND" trick + WFE to guarantee.</p>
+      </div>
+    </div>
+    <div>
+      <div class="card red" style="font-size:0.72em;">
+        <h3 class="r">4. DMA still running into deep sleep</h3>
+        <p>Entering STOP while a DMA is programmed can abort it. Flush/abort DMAs before deep-sleep entry.</p>
+      </div>
+      <div class="card red" style="font-size:0.72em;">
+        <h3 class="r">5. Flash wake-up latency</h3>
+        <p>Flash macros take tens of μs to restart. First ISR after wake stalls in flash-wait. Move critical handlers into RAM (<code>.ramfunc</code>) — every vendor has a macro for this.</p>
+      </div>
+      <div class="card red" style="font-size:0.72em;">
+        <h3 class="r">6. SysTick still running</h3>
+        <p>Classic: tickless mode entered, but <code>SCB-&gt;SCR.SLEEPDEEP</code> left at 0 → you get Sleep not Stop. Check with a current probe. Always.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">17</span><h2>Debug While Sleeping</h2></div>
+  <div class="cols cols-2">
+    <div>
+      <ul>
+        <li>Entering deep sleep gates the DAP clock — debugger link drops.</li>
+        <li>Vendor "debug-monitor" bits keep the DAP alive in sleep modes for development:
+          <ul>
+            <li>STM32: <code>DBGMCU_CR.DBG_STOP = 1</code>, <code>DBG_STANDBY = 1</code>.</li>
+            <li>Nordic: <code>POWER_DEBUG.ENABLE</code>.</li>
+            <li>NXP: <code>DEBUG_SAFE</code> bit.</li>
+          </ul>
+        </li>
+        <li>Note: enabling these <strong>disables the sleep power reduction</strong>. Power measurements must be done with debug-in-sleep <em>disabled</em>.</li>
+      </ul>
+    </div>
+    <div>
+      <div class="card blue">
+        <h3 class="b">Typical bring-up rhythm</h3>
+        <ol>
+          <li>Enable debug-in-sleep. Develop the firmware flow.</li>
+          <li>Disable debug-in-sleep. Take power measurements (Joulescope, N6705, Otii).</li>
+          <li>Iterate. Confirm with a power profile that every non-active cycle is in the lowest acceptable mode.</li>
+          <li>For returned field units: you cannot debug a running unit that has DBG_STOP=0. Plan for logged telemetry over RTT or a disposable dev-mode flag.</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">18</span><h2>Event-Driven Architecture</h2></div>
+  <svg class="diagram" viewBox="0 0 900 250" style="width:100%;">
+    <g font-family="DM Sans" font-size="11">
+      <rect x="20" y="40" width="180" height="50" rx="6" fill="#0a2a1a" stroke="#4ecb8d"/>
+      <text x="110" y="62" text-anchor="middle" fill="#4ecb8d" font-weight="700">RTC tick / BLE evt / sensor</text>
+      <text x="110" y="78" text-anchor="middle" font-size="10" fill="#fff">hardware event source</text>
+
+      <rect x="240" y="40" width="180" height="50" rx="6" fill="#2a1a0a" stroke="#f5a623"/>
+      <text x="330" y="62" text-anchor="middle" fill="#f5a623" font-weight="700">Wake CPU</text>
+      <text x="330" y="78" text-anchor="middle" font-size="10" fill="#fff">WIC asserts wake</text>
+
+      <rect x="460" y="40" width="180" height="50" rx="6" fill="#1a0a2a" stroke="#a78bfa"/>
+      <text x="550" y="62" text-anchor="middle" fill="#a78bfa" font-weight="700">ISR</text>
+      <text x="550" y="78" text-anchor="middle" font-size="10" fill="#fff">quickly handle + post</text>
+
+      <rect x="680" y="40" width="180" height="50" rx="6" fill="#0a1a2a" stroke="#60a5fa"/>
+      <text x="770" y="62" text-anchor="middle" fill="#60a5fa" font-weight="700">Post + WFI</text>
+      <text x="770" y="78" text-anchor="middle" font-size="10" fill="#fff">SLEEPONEXIT auto-sleep</text>
+
+      <line x1="200" y1="65" x2="240" y2="65" stroke="#8888a8" marker-end="url(#arrD)"/>
+      <line x1="420" y1="65" x2="460" y2="65" stroke="#8888a8" marker-end="url(#arrD)"/>
+      <line x1="640" y1="65" x2="680" y2="65" stroke="#8888a8" marker-end="url(#arrD)"/>
+      <defs><marker id="arrD" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#8888a8"/></marker></defs>
+
+      <rect x="20" y="150" width="840" height="60" rx="6" fill="#10101a" stroke="#f5a623"/>
+      <text x="440" y="172" text-anchor="middle" fill="#f5a623" font-weight="700">No polling. No busy-wait. main() is a single WFI.</text>
+      <text x="440" y="194" text-anchor="middle" font-size="10" fill="#ccc">SLEEPONEXIT=1 → on ISR return hardware executes WFI automatically.</text>
+    </g>
+  </svg>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">19</span><h2>Common Bad Patterns</h2></div>
+  <div class="cols cols-2">
+    <div>
+      <div class="card red" style="font-size:0.72em;">
+        <h3 class="r">1. Busy-wait delays</h3>
+        <p><code>for (volatile int i=0; i&lt;N; i++);</code> holds the CPU 100% active. Replace with <code>__WFI</code> + RTC wake or vendor LPTIM.</p>
+      </div>
+      <div class="card red" style="font-size:0.72em;">
+        <h3 class="r">2. Bit-banging protocols</h3>
+        <p>Using GPIO in software for UART / SPI burns far more energy than the hardware peripheral. Only acceptable if the peripheral doesn't exist.</p>
+      </div>
+      <div class="card red" style="font-size:0.72em;">
+        <h3 class="r">3. printf in ISR</h3>
+        <p>A single printf on 115200 8N1 UART locks the CPU for ~1 ms. In a 1 kHz ISR that means 100% CPU; no sleep ever happens.</p>
+      </div>
+    </div>
+    <div>
+      <div class="card red" style="font-size:0.72em;">
+        <h3 class="r">4. Heap allocation in tight loops</h3>
+        <p>malloc/free not only hurt determinism — they light up lots of logic. Pre-allocate; use static buffers.</p>
+      </div>
+      <div class="card red" style="font-size:0.72em;">
+        <h3 class="r">5. Leaving peripherals enabled</h3>
+        <p>ADC left powered, comparator left biased — each costs μA. Disable after every use and re-enable on need.</p>
+      </div>
+      <div class="card red" style="font-size:0.72em;">
+        <h3 class="r">6. Long debug strings</h3>
+        <p>Every ITM/RTT byte is CPU cycles. Production builds should log binary event codes and resolve with a tool post-hoc.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">20</span><h2>Measuring — The Tooling You Need</h2></div>
+  <div class="cols cols-2">
+    <div>
+      <ul>
+        <li><strong>Joulescope JS110 / JS220</strong> — 15-bit μA .. A dynamic range, captures sleep-to-active transitions.</li>
+        <li><strong>Keysight N6705 / N6785A</strong> — bench SMU with waveform logging.</li>
+        <li><strong>Qoitech Otii</strong> / <strong>Nordic PPK2</strong> — purpose-built MCU current profilers with UART side-channel.</li>
+        <li><strong>DWT CYCCNT</strong> + a logic analyzer — cheap way to correlate firmware state with external measurement.</li>
+      </ul>
+    </div>
+    <div>
+      <div class="card green">
+        <h3 class="g">What to look for on the trace</h3>
+        <ul>
+          <li>Unexpected active-mode plateaus (should be flat sleep).</li>
+          <li>Frequent spikes at unintended rates (SysTick at 1 kHz that should be off).</li>
+          <li>Long wake windows (flash wait, PLL lock taking longer than expected).</li>
+          <li>Asymmetric loop — energy budget per cycle should be predictable.</li>
+        </ul>
+      </div>
+      <div class="card blue" style="margin-top:0.3em; font-size:0.72em;">
+        Correlate the current trace with ITM/RTT timestamps. Every unexplained μA is a TODO.
+      </div>
+    </div>
+  </div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">21</span><h2>Battery-Life Math — Worked Example</h2></div>
+  <div class="cols cols-2">
+    <div>
+      <p class="small">Sensor wakes every 1 s, samples ADC for 5 ms, then deep-sleeps.</p>
+      <table style="font-size:0.65em;">
+        <tr><th>Phase</th><th>t</th><th>I</th></tr>
+        <tr><td>Active (48 MHz)</td><td>5 ms</td><td>8 mA</td></tr>
+        <tr><td>Deep sleep (RTC)</td><td>995 ms</td><td>2 μA</td></tr>
+      </table>
+      <p class="small">Average current:</p>
+      <pre style="font-size:0.7em;"><code class="mono">I_avg = (0.005 × 8000 + 0.995 × 2) / 1.000
+      = 40 + 1.99 μA
+      ≈ 42 μA</code></pre>
+    </div>
+    <div>
+      <p class="small">CR2032 @ 225 mAh →</p>
+      <pre style="font-size:0.7em;"><code class="mono">life = 225 mAh / 0.042 mA
+     = 5357 h
+     ≈ 7.4 months</code></pre>
+      <p class="small">If we cut the active time to 2 ms (faster clock, pre-triggered ADC via DMA + PPI):</p>
+      <pre style="font-size:0.7em;"><code class="mono">I_avg = (0.002 × 8000 + 0.998 × 2) / 1
+      ≈ 18 μA
+
+life = 225 / 0.018 = 12500 h ≈ 1.4 years</code></pre>
+      <div class="card amber" style="font-size:0.72em;">
+        Same MCU. Same sleep current. 2× battery life from shortening the active window.
+      </div>
+    </div>
+  </div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">22</span><h2>Interview Checklist</h2></div>
+  <div class="cols cols-2">
+    <div>
+      <ul>
+        <li>Explain the difference between <code>WFI</code> and <code>WFE</code> and when each is correct.</li>
+        <li>Describe the role of the WIC — why it's needed for sub-μA sleep.</li>
+        <li>Walk through a tickless RTOS sleep: programming RTC, entering STOP, recovering the tick count.</li>
+        <li>Justify "race-to-sleep" vs "race-to-idle" in two sentences, specific to a given SoC generation.</li>
+        <li>Give 3 reasons a power trace might show unexpected active μA you didn't intend.</li>
+      </ul>
+    </div>
+    <div>
+      <ul>
+        <li>Know which SoC registers freeze watchdogs &amp; timers on halt (DBGMCU_CR / PMU).</li>
+        <li>Explain how SLEEPONEXIT interacts with main() — and why some codebases never use main() at all.</li>
+        <li>Describe how Nordic / STM32 / Ambiq each layer extra sleep states on top of the Cortex-M primitives.</li>
+        <li>Know EEMBC ULPMark-CP vs -PP — what's measured, why they differ.</li>
+        <li>Compute a CR2032 battery life from duty cycle &amp; active current.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">23</span><h2>References</h2></div>
+  <div style="max-width:90%;margin:0 auto;font-size:0.58em;line-height:1.8;">
+    <p>
+      <strong class="a">Arm</strong> — <em>Cortex-M Low-Power Architectures</em> — part of the Armv7-M / Armv8-M reference manuals<br>
+      <strong class="a">Arm</strong> — <em>Low Power Features in Cortex-M0 / M0+ / M23 / M33</em> technical manuals<br>
+      <strong class="a">STMicro</strong> — <em>AN5239</em> (STM32L5 low-power modes), <em>AN4635</em> (STM32H7 low-power)<br>
+      <strong class="a">Nordic</strong> — nRF52/nRF53/nRF54 <em>System Architecture</em> chapters; PPI/DPPI reference<br>
+      <strong class="a">Ambiq</strong> — Apollo4 Plus datasheet; Ambiq subthreshold white papers<br>
+      <strong class="a">EEMBC</strong> — <em>ULPMark Profile Specifications</em> and benchmark browser at <code>eembc.org</code><br>
+      <strong class="a">FreeRTOS</strong> — <em>Low Power RTOS (Tickless Idle)</em> documentation and reference ports<br>
+      <strong class="a">Klaus Finkenzeller</strong> (for RFID) &amp; <strong>Adrian Wyatt</strong> (Nordic, BLE) talks on low-power protocol-stack design
+    </p>
+    <p style="color:var(--muted);margin-top:0.8em;font-size:0.85em">
+      Presentation built with <a href="https://revealjs.com">Reveal.js 4.6</a> · Playfair Display + DM Sans + JetBrains Mono<br>
+      Educational use.
+    </p>
+  </div>
+</section>
+
+</div></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/highlight/highlight.min.js"></script>
+<script>
+Reveal.initialize({ hash: true, slideNumber: 'c/t', transition: 'fade', transitionSpeed: 'fast', controls: true, progress: true, center: false, width: 1100, height: 900, margin: 0.01, plugins: [RevealHighlight], highlight: { theme: 'monokai' } });
+</script>
+<script>
+(function(){ var h = Reveal.getConfig().height || 900; var m = Reveal.getConfig().margin || 0.02; var maxH = Math.floor(h * (1 - 2 * m)) + 'px'; function fixSlides(){ document.querySelectorAll('.reveal .slides>section,.reveal .slides>section>section').forEach(function(s){ s.style.display = 'block'; s.style.maxHeight = maxH; }); } Reveal.on('ready', fixSlides); Reveal.on('slidechanged', fixSlides); })();
+</script>
+</body>
+</html>

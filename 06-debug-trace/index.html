@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cortex-M Debug & Trace — CoreSight</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@400;500;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/black.min.css">
+<style>
+  :root{--amber:#f5a623;--green:#4ecb8d;--purple:#a78bfa;--blue:#60a5fa;--red:#f87171;--bg:#0a0a0f;--bg2:#10101a;--bg3:#181824;--border:#2a2a3a;--text:#e8e8f0;--muted:#8888a8;}
+  .reveal-viewport{background:var(--bg);} .reveal .slides section{background:transparent;} .reveal section{text-align:left;}
+  .reveal .slides > section{padding:0.5em;overflow-y:auto!important;align-items:flex-start!important;justify-content:flex-start!important;}
+  .reveal .progress{color:var(--amber);height:3px;} .reveal .controls{color:var(--amber);}
+  .reveal section::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--amber),var(--green));}
+  .reveal{font-family:'DM Sans',sans-serif;color:var(--text);font-size:22px;}
+  .reveal .slide-number{font-family:'JetBrains Mono',monospace;font-size:0.7em;color:var(--muted);}
+  .reveal h1,.reveal h2,.reveal h3{font-family:'Playfair Display',serif;color:#fff;text-transform:none;letter-spacing:-0.01em;}
+  .reveal h1{font-size:2.4em;font-weight:900;color:var(--amber);line-height:1.1;}
+  .reveal h2{font-size:1.7em;font-weight:700;color:var(--amber);margin-bottom:0.6em;}
+  .reveal h3{font-size:1.2em;font-weight:700;color:var(--green);margin-bottom:0.3em;}
+  .reveal p{font-size:0.75em;line-height:1.5;color:var(--text);} .reveal li{font-size:0.7em;line-height:1.5;margin-bottom:0.25em;}
+  .reveal code{font-family:'JetBrains Mono',monospace;font-size:.72em;}
+  .reveal pre{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:0.5em 1em;margin:0.4em 0;width:100%;box-shadow:none;}
+  .reveal pre code{font-size:0.58em;line-height:1.5;background:transparent;color:#cdd6f4;}
+  .slide-hdr{display:flex;align-items:center;gap:.4em;border-bottom:1px solid var(--border);padding-bottom:.2em;margin-bottom:.3em;}
+  .slide-hdr .tag{font-family:'JetBrains Mono',monospace;font-size:0.55em;font-weight:600;color:var(--bg);background:var(--amber);padding:.1em .4em;border-radius:3px;letter-spacing:.04em;}
+  .slide-hdr h2{margin:0;font-size:1.4em;}
+  .cols{display:grid;gap:1em;} .cols-2{grid-template-columns:1fr 1fr;} .cols-3{grid-template-columns:1fr 1fr 1fr;} .cols-6040{grid-template-columns:6fr 4fr;} .cols-4060{grid-template-columns:4fr 6fr;}
+  .card{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:1em 1.2em;box-shadow:0 4px 20px rgba(0,0,0,0.3);margin:0.4em 0;}
+  .card.amber{border-left:3px solid var(--amber);} .card.green{border-left:3px solid var(--green);} .card.purple{border-left:3px solid var(--purple);} .card.blue{border-left:3px solid var(--blue);} .card.red{border-left:3px solid var(--red);}
+  .card h3{font-size:1em;margin:0 0 0.4em;}
+  .card p,.card ul{font-size:0.8em;margin:0;color:#b8b8d0;} .card ul{padding-left:1.2em;} .card li{font-size:0.85em;margin-bottom:0.25em;}
+  .reveal table{width:100%;border-collapse:collapse;font-size:0.65em;margin:0.5em 0;}
+  .reveal table th{background:var(--bg3);color:var(--amber);padding:0.5em 0.7em;border:1px solid var(--border);text-align:left;font-weight:700;}
+  .reveal table td{padding:0.5em 0.7em;border:1px solid var(--border);color:#ccc;vertical-align:top;}
+  .reveal table tr:nth-child(even) td{background:#0e0e18;}
+  .a{color:var(--amber);font-weight:600;} .g{color:var(--green);font-weight:600;} .p{color:var(--purple);font-weight:600;} .b{color:var(--blue);font-weight:600;} .r{color:var(--red);font-weight:600;} .mono{font-family:'JetBrains Mono',monospace;}
+  svg.diagram{display:block;margin:0 auto;overflow:visible;}
+  .pill{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:0.6em;padding:0.15em 0.6em;border-radius:999px;border:1px solid;margin:0 .08em;}
+  .pill.amber{color:var(--amber);border-color:var(--amber);} .pill.green{color:var(--green);border-color:var(--green);} .pill.purple{color:var(--purple);border-color:var(--purple);} .pill.blue{color:var(--blue);border-color:var(--blue);} .pill.red{color:var(--red);border-color:var(--red);}
+  .title-slide h1{font-size:2.4em;} .title-slide .subtitle{font-size:0.85em;color:var(--green);font-weight:400;letter-spacing:0.06em;margin:0.3em 0 0.6em;} .title-slide .meta{font-size:0.6em;color:var(--muted);font-family:'JetBrains Mono',monospace;}
+  .dim{color:var(--muted);} .small{font-size:0.65em;} .smaller{font-size:0.55em;} .tiny{font-size:0.48em;}
+  .reveal ul,.reveal ol{margin:.15em 0 .15em 1em;}
+</style>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+
+<section class="title-slide" data-background-color="#0a0a0f">
+  <div style="font-family:'JetBrains Mono',monospace;font-size:.5em;color:var(--muted);margin-bottom:.4em;letter-spacing:.1em;">ARM CORTEX-M · PRESENTATION 06</div>
+  <h1>Debug &amp; Trace — CoreSight</h1>
+  <div class="subtitle">SWD / JTAG · DAP · FPB · DWT · ITM · ETM · TPIU · MTB · RTT · Semihosting</div>
+  <div style="width:60px;height:3px;background:var(--amber);margin-bottom:1.4em;"></div>
+  <div class="meta">How a 2-wire link reveals the entire CPU state</div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">02</span><h2>Why CoreSight Matters</h2></div>
+  <div class="cols cols-2">
+    <div>
+      <ul>
+        <li>Every Cortex-M has the same debug &amp; trace IP — <strong class="a">CoreSight</strong> — so the same probe drives an STM32, Nordic nRF52, and NXP i.MX RT.</li>
+        <li>The debug system is <strong>intrusive</strong> (halt, single-step, read memory) and <strong>non-intrusive</strong> (trace, watchpoints with hit counts, printf via ITM).</li>
+        <li>On M0/M0+/M23 the footprint is minimal (8 HW breakpoints → 4 → 2, no ETM); on M7/M55/M85 it is a full-strength trace infrastructure.</li>
+        <li>A debugger finds 80% of bugs; a <em>tracer</em> finds the remaining 20% — timing, race conditions, ISR interactions.</li>
+      </ul>
+    </div>
+    <div>
+      <div class="card amber">
+        <h3 class="a">Interview angle</h3>
+        <p>A strong candidate can sketch the CoreSight block diagram on the whiteboard, explain what the DAP is, and describe how <code>printf()</code> makes it off-chip via ITM+SWO without stopping the CPU.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">03</span><h2>CoreSight Block Diagram</h2></div>
+  <svg class="diagram" viewBox="0 0 960 330" style="width:100%;">
+    <defs><marker id="arrC" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#8888a8"/></marker></defs>
+    <g font-family="DM Sans" font-size="11">
+      <!-- Probe -->
+      <rect x="20" y="130" width="130" height="70" rx="8" fill="#1a0a2a" stroke="#a78bfa"/>
+      <text x="85" y="152" text-anchor="middle" fill="#a78bfa" font-weight="700">Debug Probe</text>
+      <text x="85" y="172" text-anchor="middle" font-size="10" fill="#fff">JLink · ST-Link · CMSIS-DAP</text>
+      <text x="85" y="188" text-anchor="middle" font-size="10" fill="#fff">USB ↔ SWD/JTAG</text>
+
+      <!-- DAP -->
+      <rect x="180" y="100" width="160" height="130" rx="8" fill="#2a1a0a" stroke="#f5a623"/>
+      <text x="260" y="122" text-anchor="middle" fill="#f5a623" font-weight="700">DAP</text>
+      <text x="260" y="140" text-anchor="middle" font-size="10" fill="#fff">SWJ-DP / SW-DP</text>
+      <text x="260" y="158" text-anchor="middle" font-size="10" fill="#fff">AHB-AP → system bus</text>
+      <text x="260" y="176" text-anchor="middle" font-size="10" fill="#fff">APB-AP → CoreSight</text>
+      <text x="260" y="196" text-anchor="middle" font-size="10" fill="#8888a8">bus master inside the SoC</text>
+
+      <!-- Core + buses -->
+      <rect x="380" y="30" width="150" height="280" rx="8" fill="#0a2a1a" stroke="#4ecb8d"/>
+      <text x="455" y="54" text-anchor="middle" fill="#4ecb8d" font-weight="700">Cortex-M core</text>
+      <text x="455" y="80"  text-anchor="middle" font-size="10" fill="#fff">FPB (breakpoints)</text>
+      <text x="455" y="100" text-anchor="middle" font-size="10" fill="#fff">DWT (watchpoints)</text>
+      <text x="455" y="120" text-anchor="middle" font-size="10" fill="#fff">ITM (stim. trace)</text>
+      <text x="455" y="140" text-anchor="middle" font-size="10" fill="#fff">ETM (instr. trace)</text>
+      <text x="455" y="160" text-anchor="middle" font-size="10" fill="#fff">MTB (M0+ only)</text>
+      <text x="455" y="180" text-anchor="middle" font-size="10" fill="#fff">NVIC / SCB / MPU</text>
+      <text x="455" y="280" text-anchor="middle" font-size="10" fill="#8888a8">SCS — System Control Space</text>
+
+      <!-- Trace funnel -->
+      <rect x="570" y="100" width="140" height="60" rx="6" fill="#10101a" stroke="#60a5fa"/>
+      <text x="640" y="122" text-anchor="middle" fill="#60a5fa" font-weight="700">Trace Funnel</text>
+      <text x="640" y="140" text-anchor="middle" font-size="10" fill="#fff">merges ITM + ETM</text>
+
+      <!-- TPIU -->
+      <rect x="570" y="180" width="140" height="60" rx="6" fill="#10101a" stroke="#60a5fa"/>
+      <text x="640" y="202" text-anchor="middle" fill="#60a5fa" font-weight="700">TPIU</text>
+      <text x="640" y="220" text-anchor="middle" font-size="10" fill="#fff">trace port / SWO</text>
+
+      <!-- Pins -->
+      <rect x="750" y="100" width="180" height="140" rx="6" fill="#2a0a0a" stroke="#f87171"/>
+      <text x="840" y="125" text-anchor="middle" fill="#f87171" font-weight="700">Package pins</text>
+      <text x="840" y="148" text-anchor="middle" font-size="10" fill="#fff">SWDIO &amp; SWCLK</text>
+      <text x="840" y="164" text-anchor="middle" font-size="10" fill="#fff">SWO (trace)</text>
+      <text x="840" y="180" text-anchor="middle" font-size="10" fill="#fff">TRACEDATA[n] (ETM)</text>
+      <text x="840" y="200" text-anchor="middle" font-size="10" fill="#fff">nRESET</text>
+      <text x="840" y="220" text-anchor="middle" font-size="10" fill="#8888a8">(or JTAG: TCK/TMS/TDI/TDO)</text>
+
+      <!-- Arrows -->
+      <g stroke="#8888a8" fill="none" marker-end="url(#arrC)">
+        <line x1="150" y1="165" x2="180" y2="165"/>
+        <line x1="340" y1="165" x2="380" y2="165"/>
+        <line x1="530" y1="130" x2="570" y2="130"/>
+        <line x1="530" y1="210" x2="570" y2="210"/>
+        <line x1="710" y1="130" x2="750" y2="130"/>
+        <line x1="710" y1="210" x2="750" y2="210"/>
+      </g>
+    </g>
+  </svg>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">04</span><h2>SWD vs JTAG</h2></div>
+  <table>
+    <tr><th></th><th>JTAG (4/5 wires)</th><th>SWD (2 wires)</th></tr>
+    <tr><td>Pins</td><td>TCK, TMS, TDI, TDO (+nTRST)</td><td>SWCLK, SWDIO</td></tr>
+    <tr><td>Bandwidth</td><td>~25 Mbps typ.</td><td>~50 Mbps typ. (half-duplex)</td></tr>
+    <tr><td>Daisy-chaining</td><td>IEEE 1149.1 scan chain</td><td>Multi-drop SWD (ARM IHI 0031)</td></tr>
+    <tr><td>Boundary scan</td><td>Yes</td><td>No</td></tr>
+    <tr><td>Typical MCU pinout</td><td>Optional — shares with SWJ-DP if SWJ mode</td><td>Default on nearly every Cortex-M</td></tr>
+  </table>
+  <div class="cols cols-2">
+    <div>
+      <ul>
+        <li>SWJ-DP is a dual-role block that speaks <em>either</em> JTAG or SWD; the probe issues a magic sequence (0x79E7) on the TMS/SWDIO pin to switch modes.</li>
+        <li>SWO (Serial Wire Output) is a <strong>one-way UART-style pin</strong> emitting ITM/TPIU packets at up to 200 Mbps UART or Manchester-encoded.</li>
+      </ul>
+    </div>
+    <div>
+      <div class="card green" style="font-size:0.72em;">
+        <strong class="g">Why SWD won:</strong> MCUs have few pins. Two-wire SWD gives equivalent debug without the TDI/TDO cost. Every vendor defaults to SWD today, with JTAG optional.
+      </div>
+    </div>
+  </div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">05</span><h2>The Debug Access Port (DAP)</h2></div>
+  <div class="cols cols-2">
+    <div>
+      <ul>
+        <li>Small bus master inside the SoC; accepts probe commands and performs memory/register reads/writes <strong>without halting the CPU</strong>.</li>
+        <li>Two register banks:
+          <ul>
+            <li><strong>DP</strong> — Debug Port. Selects an AP, manages auth, reports errors (CTRL/STAT).</li>
+            <li><strong>AP</strong> — Access Port. One AHB-AP per bus master (typically: system bus + PPB). APB-AP for CoreSight components.</li>
+          </ul>
+        </li>
+        <li>Register model is <em>memory-mapped over the probe transport</em> — the probe issues 36-bit packets (8-bit header + 32-bit data + parity) on SWD.</li>
+      </ul>
+    </div>
+    <div>
+<pre><code class="mono">/* Pseudo — probe interaction */
+DP:SELECT   = AP 0, bank 0      ; pick AHB-AP
+AP:CSW      = 0x23000002         ; 32-bit word, auto-inc
+AP:TAR      = 0x20000000         ; target addr
+AP:DRW      = read/write         ; data read or write
+AP:TAR      auto-incs 4 bytes    ; burst reads follow
+
+/* High-level: dump 1 KiB of SRAM without halting */</code></pre>
+      <p class="smaller dim">CMSIS-DAP and PyOCD expose this at a higher level.</p>
+    </div>
+  </div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">06</span><h2>Halting Debug — the Classic Loop</h2></div>
+  <div class="cols cols-2">
+    <div>
+      <ul>
+        <li>Debug State: CPU halted, pipeline frozen; GPRs and memory accessible via DAP.</li>
+        <li>Enter via:
+          <ul>
+            <li>Halt request from probe (DHCSR.C_HALT).</li>
+            <li>Hit on a breakpoint / watchpoint.</li>
+            <li>Fault that escalates to DebugMon or HardFault while debug is enabled.</li>
+          </ul>
+        </li>
+        <li>Exit via DHCSR.C_HALT=0 (resume) or DHCSR.C_STEP=1 (single-step).</li>
+        <li>Halting is allowed to keep peripherals running — the SoC optionally freezes timers &amp; watchdog via a "debug freeze" register.</li>
+      </ul>
+    </div>
+    <div>
+<pre><code class="mono">/* DHCSR — 0xE000EDF0
+   Top half = 0xA05F key required on writes. */
+#define DHCSR (*(volatile uint32_t*)0xE000EDF0)
+
+/* Halt */ DHCSR = 0xA05F0003;     /* C_DEBUGEN | C_HALT */
+/* Step */ DHCSR = 0xA05F000D;     /* + C_STEP + MASKINTS */
+/* Run  */ DHCSR = 0xA05F0001;     /* C_DEBUGEN only */</code></pre>
+      <div class="card red" style="font-size:0.72em;">
+        <strong class="r">Do not</strong> write DHCSR from firmware — it's there for the probe. Firmware writing it will confuse IDE state.
+      </div>
+    </div>
+  </div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">07</span><h2>Flash Patch &amp; Breakpoint Unit (FPB)</h2></div>
+  <div class="cols cols-2">
+    <div>
+      <ul>
+        <li>Sets hardware breakpoints by comparing PC to a small set of registers.</li>
+        <li>Breakpoint slots per core:
+          <ul>
+            <li><strong>Cortex-M0 / M1</strong>: 4</li>
+            <li><strong>Cortex-M0+ / M23</strong>: 4</li>
+            <li><strong>Cortex-M3 / M4 / M33</strong>: 6 or 8</li>
+            <li><strong>Cortex-M7 / M85</strong>: 8</li>
+          </ul>
+        </li>
+        <li>Software breakpoints via <code>BKPT #imm</code> — unlimited, but require patching code in flash (fine on RAM-resident code).</li>
+        <li>FPB "patch" mode (M3/M4 only) can substitute up to 2 fetched words — used for flash-remap tricks, deprecated on v8-M.</li>
+      </ul>
+    </div>
+    <div>
+      <div class="card amber">
+        <h3 class="a">SW vs HW breakpoints in practice</h3>
+        <p>GDB places HW breakpoints in flash (where it can't write) and SW breakpoints in RAM. OpenOCD / pyOCD juggle slots automatically, throwing "no HW breakpoints left" when you exceed the limit.</p>
+      </div>
+      <div class="card blue" style="margin-top:0.3em; font-size:0.72em;">
+        <strong class="b">Watch out:</strong> asserting breakpoints in an ISR quickly runs through slots — a typical 6-slot M4 can't maintain a breakpoint per RTOS task.
+      </div>
+    </div>
+  </div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">08</span><h2>Data Watchpoint &amp; Trace (DWT)</h2></div>
+  <div class="cols cols-2">
+    <div>
+      <h3>Watchpoints</h3>
+      <ul>
+        <li>4 comparators (M3/M4), up to 16 (M7+).</li>
+        <li>Each matches on <strong>PC</strong>, <strong>address</strong>, <strong>value</strong>, or cycle count.</li>
+        <li>Programmable mask for range matches.</li>
+        <li>Triggers: halt, ITM event, ETM start/stop, counter.</li>
+      </ul>
+      <h3>Counters</h3>
+      <ul>
+        <li><code>CYCCNT</code> — 32-bit free-running cycle count (use it for timing measurements).</li>
+        <li><code>CPICNT</code>, <code>EXCCNT</code>, <code>SLEEPCNT</code>, <code>LSUCNT</code>, <code>FOLDCNT</code> — 8-bit saturating counters for CPI, exception overhead, sleep, load-store, folded instr.</li>
+      </ul>
+    </div>
+    <div>
+<pre><code class="mono">/* Use DWT CYCCNT for profiling */
+#define DWT_CTRL   (*(volatile uint32_t*)0xE0001000)
+#define DWT_CYCCNT (*(volatile uint32_t*)0xE0001004)
+#define DEMCR      (*(volatile uint32_t*)0xE000EDFC)
+
+void dwt_init(void) {
+    DEMCR    |= (1u &lt;&lt; 24);   /* TRCENA */
+    DWT_CYCCNT = 0;
+    DWT_CTRL |= 1;            /* CYCCNTENA */
+}
+
+uint32_t cycles_elapsed(uint32_t start) {
+    return DWT_CYCCNT - start;
+}</code></pre>
+      <p class="smaller dim">Cycle-accurate profiling with a single 32-bit register. Every embedded engineer's best friend.</p>
+    </div>
+  </div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">09</span><h2>Instrumentation Trace Macrocell (ITM)</h2></div>
+  <div class="cols cols-2">
+    <div>
+      <ul>
+        <li>32 stimulus ports, each a 32-bit register at <code>0xE000_0000 .. 0xE000_007C</code>.</li>
+        <li>Writes form <strong>packets</strong> which are streamed out via SWO / TPIU at the CPU's pace.</li>
+        <li>Zero-cost "printf": a handful of writes per character, no busy-wait, no blocking.</li>
+        <li>Protocol also carries DWT events, timestamp packets, and PC-sampling packets at configurable rate.</li>
+        <li>Host decoder (OpenOCD / JLink / Keil µVision) demultiplexes port 0 → console, port 1 → data log, etc.</li>
+      </ul>
+    </div>
+    <div>
+<pre><code class="mono">/* Classic retargeted putc() */
+#define ITM_STIM0 (*(volatile uint32_t*)0xE0000000)
+#define ITM_TER   (*(volatile uint32_t*)0xE0000E00)
+#define ITM_TCR   (*(volatile uint32_t*)0xE0000E80)
+
+int _write(int fd, const void *buf, size_t len) {
+    const char *s = buf;
+    while (len--) {
+        while (!(ITM_STIM0 &amp; 1));   /* FIFO not full */
+        *(volatile uint8_t *)&amp;ITM_STIM0 = *s++;
+    }
+    return 0;
+}</code></pre>
+      <p class="smaller dim">Each byte costs ~3 cycles. A 115 kbps UART costs ~700 cycles per byte by contrast.</p>
+    </div>
+  </div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">10</span><h2>ITM Ports in Practice</h2></div>
+  <table>
+    <tr><th>Port</th><th>Typical use</th></tr>
+    <tr><td>0</td><td>Console output — printf / puts</td></tr>
+    <tr><td>1–3</td><td>Binary log data (machine-readable)</td></tr>
+    <tr><td>31</td><td>Error / assertion channel</td></tr>
+  </table>
+  <div class="cols cols-2">
+    <div>
+      <h3>DWT events over ITM</h3>
+      <ul>
+        <li>Exception entry/exit packets (<code>DWT_CTRL.EXCTRCENA</code>).</li>
+        <li>PC sampling — periodic PC snapshot for statistical profiling.</li>
+        <li>Watchpoint-match events.</li>
+        <li>Cycle-count timestamp packets.</li>
+      </ul>
+    </div>
+    <div>
+      <div class="card blue">
+        <h3 class="b">Arm Streamline + Keil µVision</h3>
+        <p>Combine ITM PC-sampling + exception-trace to produce a <strong>per-function CPU-utilisation view</strong>, live, with no firmware instrumentation. Great for finding accidental 100%-CPU loops.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">11</span><h2>Embedded Trace Macrocell (ETM)</h2></div>
+  <div class="cols cols-2">
+    <div>
+      <ul>
+        <li>Optional block — on M4/M7/M33/M55/M85.</li>
+        <li>Produces a compressed stream of <strong>branch packets</strong>: "I took this branch at this timestamp."</li>
+        <li>Combined with the static code image, trace tools reconstruct the <em>exact</em> instruction sequence executed.</li>
+        <li>Non-intrusive — CPU runs at full speed.</li>
+        <li>Output over:
+          <ul>
+            <li>SWO pin — ~1–20 MB/s (same as ITM path).</li>
+            <li>TRACEDATA[0..3] pins — up to 200+ MB/s. Needs debug probe with parallel trace support (JLink Ultra+, Arm ULINKpro).</li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+    <div>
+      <div class="card amber">
+        <h3 class="a">When you actually need ETM</h3>
+        <ul>
+          <li>Intermittent HardFaults — look at the last N thousand instructions.</li>
+          <li>Interrupt-order races that a breakpoint would mask.</li>
+          <li>Performance hotspots at the <em>basic-block</em> level.</li>
+          <li>Certification traces (ISO 26262, IEC 61508).</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">12</span><h2>TPIU, Trace Clocks &amp; Pin Muxing</h2></div>
+  <div class="cols cols-2">
+    <div>
+      <ul>
+        <li><strong>TPIU</strong> (Trace Port Interface Unit) serialises the merged trace stream for export.</li>
+        <li>Two output modes:
+          <ul>
+            <li><strong>SWO</strong> (serial) — 1 pin at 1–200 Mbps; low-pin-count vendors prefer this.</li>
+            <li><strong>Parallel</strong> — 1/2/4-bit TRACEDATA + TRACECLK pins. Higher bandwidth, dedicated pins.</li>
+          </ul>
+        </li>
+        <li>Pin muxing is SoC-specific: on STM32 MCUs, the same pins are <em>candidate</em> TRACEDATA but usually shared with GPIO. Board designs commit one way.</li>
+        <li>SWO clock is usually derived from the CPU clock — prescaled by <code>TPIU-&gt;ACPR</code>.</li>
+      </ul>
+    </div>
+    <div>
+      <div class="card green">
+        <h3 class="g">Practical setup</h3>
+        <ol>
+          <li>Enable TRCENA in DEMCR.</li>
+          <li>Configure ITM: set <code>ITM_LAR=0xC5ACCE55</code>, <code>ITM_TCR=0x00010005</code> (ITMENA, SYNCENA).</li>
+          <li>Configure TPIU: <code>TPIU_SPPR=2</code> (NRZ SWO), <code>TPIU_ACPR = core_hz/swo_hz − 1</code>.</li>
+          <li>Configure vendor's debug-mux to route SWO to a pin.</li>
+          <li>Host: start SWO listener matching that baud.</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">13</span><h2>Micro Trace Buffer (MTB) on Cortex-M0+</h2></div>
+  <div class="cols cols-2">
+    <div>
+      <ul>
+        <li>M0+ lacks ETM, but offers a small <strong>Micro Trace Buffer</strong> — last N branches stored in on-chip SRAM.</li>
+        <li>Typical size: 512 B – 4 KiB of SRAM reserved at boot.</li>
+        <li>Each "trace record" is 8 bytes: source PC + destination PC of one taken branch.</li>
+        <li>After a HardFault, the MTB content is the cheapest possible "last 256 branches" history — extremely useful forensics.</li>
+      </ul>
+    </div>
+    <div>
+<pre><code class="mono">/* Reserve 1 KiB of SRAM for MTB */
+#define MTB_BASE      (*(volatile uint32_t*)0xF0002000)
+#define MTB_FLOW      (*(volatile uint32_t*)0xF0002008)
+#define MTB_MASTER    (*(volatile uint32_t*)0xF000200C)
+
+static uint8_t __attribute__((aligned(1024))) mtb_buf[1024];
+
+void mtb_init(void) {
+    MTB_BASE   = (uint32_t)mtb_buf;
+    MTB_MASTER = (1 &lt;&lt; 31) |          /* EN */
+                 (10);                  /* MASK → 2^10 wrap */
+}</code></pre>
+    </div>
+  </div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">14</span><h2>CoreSight ROM Tables</h2></div>
+  <div class="cols cols-2">
+    <div>
+      <ul>
+        <li>At <code>0xE00F_F000</code> every Cortex-M has a <strong>ROM table</strong> — a list of pointers describing the debug components present.</li>
+        <li>Probe enumerates by walking the table; fingerprints the SoC.</li>
+        <li>Each component has a <em>peripheral ID</em> (ARM DDI 0314 CoreSight Architecture) — ITM = 0x001, DWT = 0x002, FPB = 0x003, etc.</li>
+        <li>This is how CMSIS-DAP / pyOCD auto-detect which features the target supports without device-specific code.</li>
+      </ul>
+    </div>
+    <div>
+      <div class="card blue">
+        <h3 class="b">On the wire</h3>
+        <p>When you plug in a new board and run <code>pyocd list</code>, the tool issues ~20 SWD reads to walk the ROM table and matches component IDs against its internal catalogue.</p>
+      </div>
+      <div class="card amber" style="margin-top:0.3em;">
+        <strong class="a">Writing a new driver?</strong> Start by dumping the ROM table. Everything interesting about the SoC's debug surface is described there.
+      </div>
+    </div>
+  </div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">15</span><h2>Semihosting</h2></div>
+  <div class="cols cols-2">
+    <div>
+      <ul>
+        <li>A pre-CoreSight convention: use <code>BKPT #0xAB</code> as a <em>system call</em> to the debugger.</li>
+        <li>Debugger catches the breakpoint, inspects registers: R0 = syscall number, R1 = arg ptr.</li>
+        <li>Provides <code>SYS_OPEN</code>, <code>SYS_WRITE</code>, <code>SYS_READ</code>, <code>SYS_TIME</code>, <code>SYS_EXIT</code> etc.</li>
+        <li>Great for CI tests — firmware calls <code>fopen("test.log","w")</code> and the file lands on the host.</li>
+        <li><strong class="r">Terrible</strong> for production: blocks CPU for ~200 kcycle per call; firmware hangs if no debugger is attached.</li>
+      </ul>
+    </div>
+    <div>
+<pre><code class="mono">/* Typical use in test firmware */
+static inline int semihost(int op, void *arg)
+{
+    register int r0 __asm("r0") = op;
+    register void *r1 __asm("r1") = arg;
+    __asm volatile (
+        "bkpt 0xAB" : "+r"(r0) : "r"(r1) : "memory");
+    return r0;
+}
+
+/* SYS_WRITE0 = 0x04, arg = null-term string */
+semihost(0x04, "Hello from the chip\n");</code></pre>
+      <div class="card red" style="font-size:0.72em;">
+        Always gate semihosting behind a "debugger attached" check (<code>CoreDebug-&gt;DHCSR &amp; C_DEBUGEN</code>). Otherwise a field unit hangs forever at the first BKPT.
+      </div>
+    </div>
+  </div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">16</span><h2>SEGGER Real-Time Transfer (RTT)</h2></div>
+  <div class="cols cols-2">
+    <div>
+      <ul>
+        <li>Pure-software alternative to ITM: a ring-buffer in SRAM that the debug probe polls over the DAP.</li>
+        <li>No extra pins, no special hardware — works on every Cortex-M, even M0.</li>
+        <li>Bi-directional: 8 up-channels and 8 down-channels.</li>
+        <li>Measured throughput: ~1 MB/s on a JLink over SWD.</li>
+        <li>"Fire-and-forget" log calls: ~10 cycles each, safe from any context including fault handlers.</li>
+      </ul>
+    </div>
+    <div>
+      <div class="card green">
+        <h3 class="g">Why RTT beats ITM for most teams</h3>
+        <ul>
+          <li>Works with any probe that can do DAP memory reads (JLink, OpenOCD, pyOCD).</li>
+          <li>No SWO pin or baud-rate configuration.</li>
+          <li>Identical semantics on M0 (no ITM) and M7 (has ITM).</li>
+          <li>Back-channel input ("enter a test command") without USB CDC.</li>
+        </ul>
+      </div>
+      <div class="card blue" style="font-size:0.72em; margin-top:0.3em;">
+        <strong class="b">Trade-off:</strong> RTT is busy-polled by the probe; ITM is hardware-driven into SWO. ITM has a little less jitter for time-sensitive traces.
+      </div>
+    </div>
+  </div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">17</span><h2>Probes in the Wild</h2></div>
+  <table>
+    <tr><th>Probe</th><th>SWD / JTAG</th><th>ETM parallel</th><th>Host tools</th></tr>
+    <tr><td><strong class="a">SEGGER J-Link</strong></td><td>✓ up to 50 MHz</td><td>J-Trace Pro (4-bit)</td><td>Ozone, GDB, Keil, IAR</td></tr>
+    <tr><td><strong class="a">ST-Link V3</strong></td><td>✓</td><td>2-bit trace</td><td>STM32CubeIDE, OpenOCD</td></tr>
+    <tr><td><strong class="a">CMSIS-DAP / DAPLink</strong></td><td>✓</td><td>—</td><td>pyOCD, OpenOCD</td></tr>
+    <tr><td><strong class="a">Arm ULINKplus / pro</strong></td><td>✓</td><td>✓</td><td>Keil µVision, Arm DS</td></tr>
+    <tr><td><strong class="a">Raspberry Pi Debug Probe</strong></td><td>✓ (CMSIS-DAP FW)</td><td>—</td><td>OpenOCD, GDB</td></tr>
+    <tr><td><strong class="a">Lauterbach TRACE32</strong></td><td>✓</td><td>✓ (full ETM)</td><td>TRACE32 PowerView</td></tr>
+  </table>
+  <p class="smaller dim">CMSIS-DAP is Arm's open reference probe firmware — shipping on every eval board since 2017. "DAPLink" is Arm Mbed's productised version.</p>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">18</span><h2>A Typical gdb + OpenOCD Session</h2></div>
+<pre><code class="mono"># terminal 1
+$ openocd -f interface/cmsis-dap.cfg -f target/stm32f4x.cfg
+Open On-Chip Debugger 0.12.0
+Info : CMSIS-DAP: SWD supported
+Info : STM32F411CEUx found
+Info : target halted due to debug-request, current mode: Thread
+Info : Listening on port 3333 for gdb connections
+
+# terminal 2
+$ arm-none-eabi-gdb ./firmware.elf
+(gdb) target extended-remote :3333
+(gdb) load
+Loading section .isr_vector, size 0x1c0 lma 0x8000000
+Loading section .text,        size 0x41d8 lma 0x80001c0
+Start address 0x08000198, load size 17448
+Transfer rate: 12 KB/sec, 2181 bytes/write.
+(gdb) monitor reset halt
+(gdb) b main
+(gdb) c
+Breakpoint 1, main () at src/main.c:42
+42    HAL_Init();
+(gdb) info registers
+r0 0x20000000   536870912
+...
+(gdb) monitor mww 0x4002103C 0x00000001   ; toggle a peripheral
+(gdb) step</code></pre>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">19</span><h2>Trace Analysis Tools</h2></div>
+  <div class="cols cols-3">
+    <div class="card amber">
+      <h3 class="a">Percepio Tracealyzer</h3>
+      <p>Consumes custom RTOS hook output (FreeRTOS, Zephyr, ThreadX) via RTT/ITM; shows task scheduling, priority inversion, queue timing in a visual timeline. De-facto RTOS trace tool.</p>
+    </div>
+    <div class="card green">
+      <h3 class="g">Arm Streamline</h3>
+      <p>Consumes ITM PC-sampling + DWT exception-trace. Produces flame-graph CPU profile + per-function heat map. Shines with ETM.</p>
+    </div>
+    <div class="card purple">
+      <h3 class="p">SEGGER SystemView</h3>
+      <p>Free companion to RTT-based firmware. Event-visualiser for RTOS calls; integrates with J-Link Ozone.</p>
+    </div>
+  </div>
+  <div class="card blue" style="font-size:0.72em;">
+    Bugs that breakpoints hide from you — priority-inversion races, ISR starvation, DMA-to-cache coherency regressions — are exactly the bugs a trace tool <em>shows</em>. Budget ETM/ITM pins on every new board.
+  </div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">20</span><h2>Debug in Production</h2></div>
+  <div class="cols cols-2">
+    <div>
+      <h3>Why lock it down?</h3>
+      <ul>
+        <li>An attacker with SWD access can read firmware, extract keys, patch code.</li>
+        <li>SWD is <strong>on by default</strong>; pads are routed to test points on almost every board.</li>
+      </ul>
+      <h3>How</h3>
+      <ul>
+        <li><strong>Readout Protection (RDP)</strong> — vendor-specific option byte; Level 2 permanently disables the DAP. STM32, NXP, Nordic all have this.</li>
+        <li><strong>DAP_AUTH</strong> challenge-response — newer SoCs (STM32U5, nRF54) require signed token from the probe.</li>
+        <li><strong>Secure-debug channel</strong> — in Armv8-M, <code>DAUTHCTRL</code> gates halting/debug per security state.</li>
+      </ul>
+    </div>
+    <div>
+      <div class="card red">
+        <h3 class="r">Side-channel reality</h3>
+        <p>Setting RDP is not enough — glitching and fault-injection can revive the DAP on many designs. Cortex-M35P was purpose-built with hardware countermeasures; M33 parts advertise similar features as "attack detection".</p>
+      </div>
+      <div class="card amber" style="margin-top:0.3em;">
+        <strong class="a">In practice:</strong> ship with RDP1 (unlocked by mass-erase), document the unlock path internally. RDP2 only for "never debuggable again" production SKUs.
+      </div>
+    </div>
+  </div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">21</span><h2>TrustZone Impact on Debug</h2></div>
+  <div class="cols cols-2">
+    <div>
+      <ul>
+        <li>v8-M cores add two per-state gates: <strong>Secure debug enable</strong> (SDE) and <strong>Non-Secure debug enable</strong> (NSDE).</li>
+        <li>If SDE=0, the probe cannot halt the CPU while it is executing Secure code. Memory reads of S regions are RAZ/WI.</li>
+        <li>This lets secure bootloader authors run RDP-like policies at the state boundary — useful for PSA attestation.</li>
+        <li>Halt/step from NS code still works when NSDE=1, even if S is locked. Developers of NS app firmware can still debug without unlocking S.</li>
+      </ul>
+    </div>
+    <div>
+      <div class="card purple">
+        <h3 class="p">The Authenticated-Debug flow</h3>
+        <ol>
+          <li>Probe reads a public challenge from the SoC.</li>
+          <li>Developer signs challenge with a per-project key held by secure engineering.</li>
+          <li>Probe replies with the signed token.</li>
+          <li>On-chip secure HW verifies → raises SDE.</li>
+        </ol>
+        <p class="smaller" style="margin-top:0.3em;">Implemented by Arm PSA authentic debug (ADAC); ship with M33 / M85 in many production SKUs.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">22</span><h2>Common Debug Bugs</h2></div>
+  <div class="cols cols-2">
+    <div>
+      <div class="card red" style="font-size:0.72em;">
+        <h3 class="r">1. SWD pin muxed as GPIO</h3>
+        <p>A firmware glitch reconfigures SWCLK/SWDIO to GPIO → next debugger connect fails. Use the probe's "connect under reset" mode to recover.</p>
+      </div>
+      <div class="card red" style="font-size:0.72em;">
+        <h3 class="r">2. Watchdog resets during halt</h3>
+        <p>Halted CPU can't kick the watchdog. Configure the SoC's debug-freeze bit for IWDG/WWDG, or enable the IDE's "halt-suppresses-WD" option.</p>
+      </div>
+      <div class="card red" style="font-size:0.72em;">
+        <h3 class="r">3. Cached D-cache hides reality</h3>
+        <p>Memory read from probe goes through the DAP → often direct to RAM, bypassing the CPU cache. A variable shown as "stale" in the IDE is actually in the CPU's dirty cache line.</p>
+      </div>
+    </div>
+    <div>
+      <div class="card red" style="font-size:0.72em;">
+        <h3 class="r">4. Low-power sleep kills the probe link</h3>
+        <p>STOP mode gates the AHB-AP clock → SWD drops. Configure <code>DBGMCU_CR</code> to keep debug running in STOP/STANDBY during bring-up.</p>
+      </div>
+      <div class="card red" style="font-size:0.72em;">
+        <h3 class="r">5. ITM output stops after reset</h3>
+        <p>Re-enable TRCENA + LAR + TCR after every reset. It is easy to forget because the IDE may do it implicitly on attach, but cold-boot firmware must do it itself.</p>
+      </div>
+      <div class="card red" style="font-size:0.72em;">
+        <h3 class="r">6. Breakpoints in flash-XIP code</h3>
+        <p>Flash-XIP (QSPI) does not support SW breakpoint writes; you only get HW slots. Place critical test code in RAM during bring-up.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">23</span><h2>Production-Ready Debug Plan</h2></div>
+  <div class="cols cols-2">
+    <div>
+      <ul>
+        <li><strong>Always</strong> wire up SWD (2 pins) to a test header — even on the smallest product.</li>
+        <li>Leave SWO available (one pin) unless the board is truly pin-starved.</li>
+        <li>Use RTT from day one; ITM for pin-scarce builds; ETM only when needed.</li>
+        <li>Keep a cycle-counted <code>BSOD</code> fault handler that dumps MSP/PSP, CFSR, HFSR, MMFAR, BFAR over RTT and the last MTB/ETM window over a predictable channel.</li>
+        <li>Set up the watchdog to <strong>freeze on debug</strong> during dev, <strong>run always</strong> in production.</li>
+        <li>Have a documented procedure to unlock RDP for returned units (or accept permanent lockdown).</li>
+      </ul>
+    </div>
+    <div>
+      <div class="card green">
+        <h3 class="g">Minimum CI setup</h3>
+        <ol>
+          <li>Raspberry Pi 4 + CMSIS-DAP probe ($25 total).</li>
+          <li>pyOCD flashes firmware, runs pytest-embedded.</li>
+          <li>Test firmware uses semihosting for assertion results.</li>
+          <li>Pass/fail propagates to GitHub Actions via exit code.</li>
+        </ol>
+        <p class="smaller dim" style="margin-top:0.3em;">Total: &lt; $40 of hardware per rack slot; catches regressions the instant they land.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">24</span><h2>References</h2></div>
+  <div style="max-width:90%;margin:0 auto;font-size:0.58em;line-height:1.8;">
+    <p>
+      <strong class="a">Arm</strong> — <em>CoreSight Architecture Specification</em> (ARM IHI 0029)<br>
+      <strong class="a">Arm</strong> — <em>Arm Debug Interface</em> (ADIv5, ADIv6) specifications (IHI 0031)<br>
+      <strong class="a">Arm</strong> — <em>Cortex-M3 / M4 / M7 Technical Reference Manuals</em> — chapters on DWT, ITM, FPB, ETM<br>
+      <strong class="a">Arm</strong> — <em>Armv8-M Debug Architecture</em> extensions, Authenticated Debug (ADAC)<br>
+      <strong class="a">Joseph Yiu</strong> — <em>Definitive Guide to Cortex-M3/M4</em>, Chapter 14 — debug and trace architecture<br>
+      <strong class="a">SEGGER</strong> — <em>Application Note — Real-Time Transfer (RTT)</em> and <em>J-Link User Guide</em><br>
+      <strong class="a">pyOCD</strong> — python CoreSight driver library, github.com/pyocd/pyOCD<br>
+      <strong class="a">OpenOCD</strong> — open-source debug, github.com/openocd-org/openocd — best reference source for CoreSight protocols
+    </p>
+    <p style="color:var(--muted);margin-top:0.8em;font-size:0.85em">
+      Presentation built with <a href="https://revealjs.com">Reveal.js 4.6</a> · Playfair Display + DM Sans + JetBrains Mono<br>
+      Educational use.
+    </p>
+  </div>
+</section>
+
+</div></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/highlight/highlight.min.js"></script>
+<script>
+Reveal.initialize({ hash: true, slideNumber: 'c/t', transition: 'fade', transitionSpeed: 'fast', controls: true, progress: true, center: false, width: 1100, height: 900, margin: 0.01, plugins: [RevealHighlight], highlight: { theme: 'monokai' } });
+</script>
+<script>
+(function(){ var h = Reveal.getConfig().height || 900; var m = Reveal.getConfig().margin || 0.02; var maxH = Math.floor(h * (1 - 2 * m)) + 'px'; function fixSlides(){ document.querySelectorAll('.reveal .slides>section,.reveal .slides>section>section').forEach(function(s){ s.style.display = 'block'; s.style.maxHeight = maxH; }); } Reveal.on('ready', fixSlides); Reveal.on('slidechanged', fixSlides); })();
+</script>
+</body>
+</html>

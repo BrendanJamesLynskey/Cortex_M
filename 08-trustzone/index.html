@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cortex-M TrustZone for Armv8-M</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@400;500;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/black.min.css">
+<style>
+  :root{--amber:#f5a623;--green:#4ecb8d;--purple:#a78bfa;--blue:#60a5fa;--red:#f87171;--bg:#0a0a0f;--bg2:#10101a;--bg3:#181824;--border:#2a2a3a;--text:#e8e8f0;--muted:#8888a8;}
+  .reveal-viewport{background:var(--bg);} .reveal .slides section{background:transparent;} .reveal section{text-align:left;}
+  .reveal .slides > section{padding:0.5em;overflow-y:auto!important;align-items:flex-start!important;justify-content:flex-start!important;}
+  .reveal .progress{color:var(--amber);height:3px;} .reveal .controls{color:var(--amber);}
+  .reveal section::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--amber),var(--green));}
+  .reveal{font-family:'DM Sans',sans-serif;color:var(--text);font-size:22px;}
+  .reveal .slide-number{font-family:'JetBrains Mono',monospace;font-size:0.7em;color:var(--muted);}
+  .reveal h1,.reveal h2,.reveal h3{font-family:'Playfair Display',serif;color:#fff;text-transform:none;letter-spacing:-0.01em;}
+  .reveal h1{font-size:2.4em;font-weight:900;color:var(--amber);line-height:1.1;}
+  .reveal h2{font-size:1.7em;font-weight:700;color:var(--amber);margin-bottom:0.6em;}
+  .reveal h3{font-size:1.2em;font-weight:700;color:var(--green);margin-bottom:0.3em;}
+  .reveal p{font-size:0.75em;line-height:1.5;color:var(--text);} .reveal li{font-size:0.7em;line-height:1.5;margin-bottom:0.25em;}
+  .reveal code{font-family:'JetBrains Mono',monospace;font-size:.72em;}
+  .reveal pre{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:0.5em 1em;margin:0.4em 0;width:100%;box-shadow:none;}
+  .reveal pre code{font-size:0.58em;line-height:1.5;background:transparent;color:#cdd6f4;}
+  .slide-hdr{display:flex;align-items:center;gap:.4em;border-bottom:1px solid var(--border);padding-bottom:.2em;margin-bottom:.3em;}
+  .slide-hdr .tag{font-family:'JetBrains Mono',monospace;font-size:0.55em;font-weight:600;color:var(--bg);background:var(--amber);padding:.1em .4em;border-radius:3px;letter-spacing:.04em;}
+  .slide-hdr h2{margin:0;font-size:1.4em;}
+  .cols{display:grid;gap:1em;} .cols-2{grid-template-columns:1fr 1fr;} .cols-3{grid-template-columns:1fr 1fr 1fr;} .cols-6040{grid-template-columns:6fr 4fr;} .cols-4060{grid-template-columns:4fr 6fr;}
+  .card{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:1em 1.2em;box-shadow:0 4px 20px rgba(0,0,0,0.3);margin:0.4em 0;}
+  .card.amber{border-left:3px solid var(--amber);} .card.green{border-left:3px solid var(--green);} .card.purple{border-left:3px solid var(--purple);} .card.blue{border-left:3px solid var(--blue);} .card.red{border-left:3px solid var(--red);}
+  .card h3{font-size:1em;margin:0 0 0.4em;}
+  .card p,.card ul{font-size:0.8em;margin:0;color:#b8b8d0;} .card ul{padding-left:1.2em;} .card li{font-size:0.85em;margin-bottom:0.25em;}
+  .reveal table{width:100%;border-collapse:collapse;font-size:0.65em;margin:0.5em 0;}
+  .reveal table th{background:var(--bg3);color:var(--amber);padding:0.5em 0.7em;border:1px solid var(--border);text-align:left;font-weight:700;}
+  .reveal table td{padding:0.5em 0.7em;border:1px solid var(--border);color:#ccc;vertical-align:top;}
+  .reveal table tr:nth-child(even) td{background:#0e0e18;}
+  .a{color:var(--amber);font-weight:600;} .g{color:var(--green);font-weight:600;} .p{color:var(--purple);font-weight:600;} .b{color:var(--blue);font-weight:600;} .r{color:var(--red);font-weight:600;} .mono{font-family:'JetBrains Mono',monospace;}
+  svg.diagram{display:block;margin:0 auto;overflow:visible;}
+  .pill{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:0.6em;padding:0.15em 0.6em;border-radius:999px;border:1px solid;margin:0 .08em;}
+  .pill.amber{color:var(--amber);border-color:var(--amber);} .pill.green{color:var(--green);border-color:var(--green);} .pill.purple{color:var(--purple);border-color:var(--purple);} .pill.blue{color:var(--blue);border-color:var(--blue);} .pill.red{color:var(--red);border-color:var(--red);}
+  .title-slide h1{font-size:2.4em;} .title-slide .subtitle{font-size:0.85em;color:var(--green);font-weight:400;letter-spacing:0.06em;margin:0.3em 0 0.6em;} .title-slide .meta{font-size:0.6em;color:var(--muted);font-family:'JetBrains Mono',monospace;}
+  .dim{color:var(--muted);} .small{font-size:0.65em;} .smaller{font-size:0.55em;} .tiny{font-size:0.48em;}
+  .reveal ul,.reveal ol{margin:.15em 0 .15em 1em;}
+
+  /* 2x2 state matrix */
+  .mx { display: grid; grid-template-columns: 120px 1fr 1fr; gap: 6px; font-size: 0.72em; margin: 0.5em 0; }
+  .mx .h { background: var(--bg3); color: var(--amber); font-family: 'JetBrains Mono', monospace; font-weight: 700; padding: 0.5em 0.7em; border-radius: 4px; text-align: center; }
+  .mx .c { padding: 0.5em 0.8em; border-radius: 4px; border: 1px solid var(--border); }
+  .mx .c.s { background: #1a0a2a; border-left: 3px solid var(--purple); }
+  .mx .c.ns { background: #0a1a2a; border-left: 3px solid var(--blue); }
+  .mx .c b { color: var(--amber); }
+
+  /* Memory attribution strip */
+  .attr { font-family: 'JetBrains Mono', monospace; font-size: 0.62em; display: flex; border: 1px solid var(--border); border-radius: 6px; overflow: hidden; margin: 0.5em 0; }
+  .attr .seg { flex: 1; padding: 0.7em 0.3em; text-align: center; color: #fff; font-weight: 700; border-right: 1px solid var(--border); }
+  .attr .seg:last-child { border-right: none; }
+  .attr .seg.s   { background: #2a0a3a; }
+  .attr .seg.ns  { background: #0a2a3a; }
+  .attr .seg.nsc { background: #2a2a0a; color: var(--amber); }
+</style>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+
+<section class="title-slide" data-background-color="#0a0a0f">
+  <div style="font-family:'JetBrains Mono',monospace;font-size:.5em;color:var(--muted);margin-bottom:.4em;letter-spacing:.1em;">ARM CORTEX-M · PRESENTATION 08</div>
+  <h1>TrustZone for Armv8-M</h1>
+  <div class="subtitle">Secure / Non-Secure State · SAU · IDAU · SG / BXNS · Veneer Tables · PSA · TF-M</div>
+  <div style="width:60px;height:3px;background:var(--amber);margin-bottom:1.4em;"></div>
+  <div class="meta">A second execution state, orthogonal to Privileged/Unprivileged</div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">02</span><h2>Why TrustZone on MCUs</h2></div>
+  <div class="cols cols-2">
+    <div>
+      <ul>
+        <li>By 2015 the IoT market needed <strong>per-device cryptographic identity</strong>: secure boot, firmware update signatures, attested telemetry.</li>
+        <li>Adding a second secure-element chip (SE050 etc.) doubled BoM cost and board area.</li>
+        <li>On A-profile, TrustZone had been doing the same job since 2004 (phones). Arm re-architected the concept for MCUs with <strong>Armv8-M</strong> (2016).</li>
+        <li>v8-M TrustZone is now the backbone of <strong>PSA Certified</strong>, <strong>Trusted Firmware-M</strong>, and most IoT security standards.</li>
+      </ul>
+    </div>
+    <div>
+      <div class="card amber">
+        <h3 class="a">Key design goal</h3>
+        <p>Arm wanted an isolation mechanism that:</p>
+        <ul>
+          <li>was <strong>not an MPU</strong> (MPU permission-matrix depends on privilege + task);</li>
+          <li>supported <em>deterministic, cycle-level</em> interrupt latency;</li>
+          <li>added &lt; 5 % area to a Cortex-M33 over an M3;</li>
+          <li>could be enabled or disabled at synthesis — leave out for non-secure SKUs.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">03</span><h2>TrustZone-A vs TrustZone-M</h2></div>
+  <table>
+    <tr><th></th><th>TrustZone-A (2004)</th><th>TrustZone-M (2016)</th></tr>
+    <tr><td>Introduced in</td><td>ARM1176JZ-S</td><td>Cortex-M23 / M33</td></tr>
+    <tr><td>State switching</td><td>Software-controlled via SMC (Secure Monitor Call); flush pipeline; context save</td><td>Hardware-controlled; automatic context save on cross-domain call</td></tr>
+    <tr><td>Secure monitor</td><td>Dedicated secure-monitor layer (EL3)</td><td>No monitor layer; S and NS call each other directly via SG + BXNS</td></tr>
+    <tr><td>IRQ handling</td><td>SMC into monitor</td><td>Direct — an IRQ targets S or NS based on NVIC.ITNS bit</td></tr>
+    <tr><td>Latency</td><td>Hundreds of cycles per switch</td><td>&lt; 10 cycles per switch</td></tr>
+  </table>
+  <div class="card blue" style="font-size:0.72em;">
+    v8-M TrustZone is deliberately <em>not</em> a mini-version of A-profile TrustZone. It's a ground-up design that preserves the Cortex-M's core property — fast, deterministic interrupt entry.
+  </div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">04</span><h2>Two Worlds</h2></div>
+  <svg class="diagram" viewBox="0 0 900 260" style="width:100%;">
+    <g font-family="DM Sans" font-size="12">
+      <!-- NS -->
+      <rect x="20" y="30" width="360" height="200" rx="10" fill="#0a1a2a" stroke="#60a5fa" stroke-width="2"/>
+      <text x="200" y="58" text-anchor="middle" fill="#60a5fa" font-family="Playfair Display" font-weight="900" font-size="18">Non-Secure World</text>
+      <g font-size="11" fill="#cdd6f4">
+        <text x="40" y="90">• Application firmware, RTOS, user tasks</text>
+        <text x="40" y="110">• Can be field-updated freely</text>
+        <text x="40" y="130">• Cannot read Secure code or data</text>
+        <text x="40" y="150">• Cannot configure SAU / NVIC_S / MPU_S</text>
+        <text x="40" y="172">• Calls into Secure world only via</text>
+        <text x="60" y="190">declared NSC entry points</text>
+        <text x="40" y="218" fill="#f5a623">MSP_NS · PSP_NS · MSPLIM_NS · PSPLIM_NS</text>
+      </g>
+
+      <!-- S -->
+      <rect x="520" y="30" width="360" height="200" rx="10" fill="#1a0a2a" stroke="#a78bfa" stroke-width="2"/>
+      <text x="700" y="58" text-anchor="middle" fill="#a78bfa" font-family="Playfair Display" font-weight="900" font-size="18">Secure World</text>
+      <g font-size="11" fill="#cdd6f4">
+        <text x="540" y="90">• TF-M / secure bootloader / crypto</text>
+        <text x="540" y="110">• Device identity &amp; attestation keys</text>
+        <text x="540" y="130">• Root-of-trust, secure RNG, HUK</text>
+        <text x="540" y="150">• Signs firmware updates</text>
+        <text x="540" y="172">• Provides hardened APIs to NS</text>
+        <text x="540" y="190">  (sign, verify, decrypt, attest)</text>
+        <text x="540" y="218" fill="#f5a623">MSP_S · PSP_S · MSPLIM_S · PSPLIM_S</text>
+      </g>
+
+      <!-- gate -->
+      <rect x="390" y="110" width="120" height="60" rx="6" fill="#2a2a0a" stroke="#f5a623"/>
+      <text x="450" y="132" text-anchor="middle" fill="#f5a623" font-weight="700">NSC Gateway</text>
+      <text x="450" y="150" text-anchor="middle" fill="#fff" font-size="10">SG instruction</text>
+      <text x="450" y="166" text-anchor="middle" fill="#fff" font-size="10">BXNS / BLXNS</text>
+    </g>
+  </svg>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">05</span><h2>The 2 × 2 Execution Matrix</h2></div>
+  <div class="mx">
+    <div class="h"></div>
+    <div class="h">Privileged</div>
+    <div class="h">Unprivileged</div>
+
+    <div class="h">Secure</div>
+    <div class="c s"><b>S-Priv</b><br>Secure kernel (TF-M core, secure bootloader). Full access to SAU, S-NVIC, MPU_S, keys.</div>
+    <div class="c s"><b>S-Unpriv</b><br>Secure user tasks. Can call S APIs but not change security config. MPU_S constrains them.</div>
+
+    <div class="h">Non-Secure</div>
+    <div class="c ns"><b>NS-Priv</b><br>NS kernel / RTOS. Full NS system access. Cannot see S memory or S registers.</div>
+    <div class="c ns"><b>NS-Unpriv</b><br>NS tasks / apps. MPU_NS constrains them further. Most application code lives here.</div>
+  </div>
+  <div class="card amber" style="font-size:0.72em;">
+    <strong class="a">Four independent banks</strong> of CONTROL, PRIMASK, FAULTMASK, BASEPRI, MSP, PSP, MSPLIM, PSPLIM, and MPU regions — the CPU holds all of them and swaps the <em>active</em> set on state transitions.
+  </div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">06</span><h2>Attribution — Who Decides S vs NS?</h2></div>
+  <div class="cols cols-2">
+    <div>
+      <p>Every address has a security attribute determined <em>on every bus access</em> by:</p>
+      <ol>
+        <li><strong class="p">IDAU</strong> — Implementation-Defined Attribution Unit. Hard-wired by the SoC vendor; typically partitions the 4 GiB at power-of-two boundaries.</li>
+        <li><strong class="a">SAU</strong> — Security Attribution Unit. Programmable by the Secure kernel at runtime; up to 8 regions.</li>
+      </ol>
+      <p>Result: attribute ∈ { <strong class="p">Secure</strong>, <strong class="b">Non-Secure</strong>, <strong class="a">Non-Secure Callable (NSC)</strong> }.</p>
+    </div>
+    <div>
+      <div class="attr">
+        <div class="seg s">Secure</div>
+        <div class="seg nsc">NSC</div>
+        <div class="seg s">Secure</div>
+        <div class="seg ns">Non-Secure</div>
+        <div class="seg s">S</div>
+        <div class="seg ns">NS</div>
+      </div>
+      <p class="small">Example attribution of the flash region: mostly Secure, with a small NSC "door" holding gateway veneers, then a Non-Secure chunk for application firmware.</p>
+    </div>
+  </div>
+  <div class="card blue" style="font-size:0.72em;">
+    <strong class="b">Rule:</strong> if IDAU and SAU disagree, the <em>more secure</em> attribution wins. The vendor can thus guarantee a region stays Secure no matter what the SAU says — the SAU can only carve an already-S region into NS, not upgrade an NS region to S.
+  </div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">07</span><h2>SAU — Security Attribution Unit</h2></div>
+  <div class="cols cols-2">
+    <div>
+      <ul>
+        <li>Up to 8 programmable regions (or 0/4/8 by impl option).</li>
+        <li>Each region: base + limit (32-byte-aligned), plus attribute bits:
+          <ul>
+            <li>ENABLE</li>
+            <li>NSC (non-secure-callable)</li>
+          </ul>
+        </li>
+        <li>Attribute encoding:
+          <ul>
+            <li>region match, NSC=0 → <strong class="b">Non-Secure</strong></li>
+            <li>region match, NSC=1 → <strong class="a">NSC</strong></li>
+            <li>no region match → <strong class="p">Secure (default)</strong></li>
+          </ul>
+        </li>
+        <li>Configured only from <strong>Privileged Secure</strong>. NS code cannot read or write the SAU.</li>
+      </ul>
+    </div>
+    <div>
+<pre><code class="mono">/* Mark 0x0807_F800..0x0808_0000 as NSC (veneers) */
+SAU-&gt;RNR  = 0;
+SAU-&gt;RBAR = 0x0807F800UL;
+SAU-&gt;RLAR = 0x0807FFE0UL | (1u &lt;&lt; 1) | 1;  /* NSC + ENABLE */
+
+/* Mark 0x0808_0000..0x080F_FFFF as NS (app flash) */
+SAU-&gt;RNR  = 1;
+SAU-&gt;RBAR = 0x08080000UL;
+SAU-&gt;RLAR = 0x080FFFE0UL | 1;              /* ENABLE */
+
+/* Everything else stays Secure by default */
+SAU-&gt;CTRL = 1;                              /* ENABLE SAU */
+__DSB(); __ISB();</code></pre>
+    </div>
+  </div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">08</span><h2>IDAU — The Vendor's Fixed Partitioning</h2></div>
+  <div class="cols cols-2">
+    <div>
+      <ul>
+        <li>Implemented entirely by the SoC vendor; not configurable at runtime.</li>
+        <li>Typical scheme splits a region in half:
+          <ul>
+            <li>lower half → <strong>Non-Secure alias</strong></li>
+            <li>upper half → <strong>Secure alias</strong></li>
+          </ul>
+          Same underlying memory, two views. Accessing the "wrong" alias from the wrong state → SecureFault.</li>
+        <li>This trick means NS and S code can share an address space <em>and</em> a memory chip, with hardware-enforced mirroring.</li>
+      </ul>
+    </div>
+    <div>
+      <div class="card amber">
+        <h3 class="a">Example — STM32L5</h3>
+        <ul>
+          <li>Flash S alias: <code>0x0C00_0000</code></li>
+          <li>Flash NS alias: <code>0x0800_0000</code></li>
+          <li>SRAM S:  <code>0x3000_0000</code></li>
+          <li>SRAM NS: <code>0x2000_0000</code></li>
+        </ul>
+        <p class="smaller dim">Linker puts TF-M at 0x0C00_0000; NS app at 0x0800_0000; both actually live in the same flash bank. The IDAU enforces "NS world can only reach via 0x0800".</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">09</span><h2>NSC — Non-Secure Callable Regions</h2></div>
+  <div class="cols cols-2">
+    <div>
+      <ul>
+        <li>A sub-class of Secure memory — marked NSC by SAU.</li>
+        <li>Only memory with the NSC attribute may hold <strong>entry points</strong> that NS code is allowed to call.</li>
+        <li>The very first instruction in an NSC-marked 32-bit slot must be <code>SG</code> — <strong>Secure Gateway</strong>. Anything else → SecureFault on NS call.</li>
+        <li>Rationale: prevents an attacker from jumping into the middle of a Secure function via a crafted pointer. The only door is an <code>SG</code>.</li>
+      </ul>
+    </div>
+    <div>
+<pre><code class="mono">/* Veneer (NSC) section in Secure image */
+
+  .section ".gnu.sgstubs"        /* linker places in NSC */
+
+  .global __acle_se_crypto_decrypt
+__acle_se_crypto_decrypt:
+    SG                              ; secure gateway entry
+    B    crypto_decrypt_impl        ; tail-call to real impl</code></pre>
+      <p class="smaller dim">The compiler emits these veneers automatically when a function is attributed <code>cmse_nonsecure_entry</code>.</p>
+    </div>
+  </div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">10</span><h2>The SG Instruction</h2></div>
+  <div class="cols cols-4060">
+    <div>
+<pre><code class="mono">SG   ; Secure Gateway
+
+; Preconditions:
+;   current state = Non-Secure
+;   PC  is in an NSC region
+;   SG is the first halfword at this address
+
+; Effects (atomically):
+;   switch to Secure state
+;   clear FAULTMASK_NS to avoid FAULTMASK escape
+;   return-address LR bit[0] = 0 (FNC_RETURN tag)
+;   pipeline refetches in new state</code></pre>
+    </div>
+    <div>
+      <ul>
+        <li>One instruction does what took many on A-profile.</li>
+        <li>Inside Secure, the function executes normally.</li>
+        <li>Returning is just <code>BXNS LR</code> (see next slide).</li>
+        <li>If SG is executed in any other context (already Secure, or PC not in NSC) → NOP on Secure side, or SecureFault.</li>
+      </ul>
+      <div class="card green" style="font-size:0.72em; margin-top:0.3em;">
+        The hardware ensures <em>the only way</em> for NS code to become Secure is to hit an SG in an NSC region. No call-gate, no trampoline, no software trust-on-first-use.
+      </div>
+    </div>
+  </div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">11</span><h2>BXNS &amp; BLXNS — Leaving Secure</h2></div>
+  <table>
+    <tr><th>Instruction</th><th>Meaning</th><th>Use case</th></tr>
+    <tr><td><code>BXNS Rm</code></td><td>Branch and switch to Non-Secure. Targets LR or a function pointer.</td><td>Return from a secure function that was called from NS; launch NS firmware from Secure bootloader.</td></tr>
+    <tr><td><code>BLXNS Rm</code></td><td>Branch-with-link and switch to NS. Push a <em>FNC_RETURN</em> magic value onto the S stack so a BX lr from NS can re-enter S safely.</td><td>Secure-world calls a Non-Secure callback (e.g. a user-provided log function).</td></tr>
+  </table>
+  <div class="cols cols-2">
+    <div>
+      <ul>
+        <li>BXNS clears LR bit 0 and tags it so the return address is marked non-secure.</li>
+        <li>The CPU pushes an <em>integrity signature</em> when the call crosses domains, so attempts to forge the return path fail.</li>
+        <li>BXNS is the <em>only</em> legitimate way to leave Secure. An ordinary <code>BX lr</code> with an LR pointing into NS memory → SecureFault.</li>
+      </ul>
+    </div>
+    <div>
+      <div class="card blue" style="font-size:0.72em;">
+        <strong class="b">Why BLXNS exists:</strong> a secure crypto library sometimes wants to invoke an NS logger. Without a safe "call-back into NS" primitive, secure code would have to trust that NS returns politely. BLXNS encodes the policy in hardware.
+      </div>
+    </div>
+  </div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">12</span><h2>The Veneer Table Pattern</h2></div>
+  <svg class="diagram" viewBox="0 0 960 260" style="width:100%;">
+    <g font-family="DM Sans" font-size="11">
+      <rect x="20"  y="30" width="260" height="190" rx="8" fill="#0a1a2a" stroke="#60a5fa"/>
+      <text x="150" y="54" text-anchor="middle" fill="#60a5fa" font-weight="700">Non-Secure app</text>
+      <g fill="#cdd6f4" font-size="10" font-family="JetBrains Mono">
+        <text x="36" y="82">int sign_payload(uint8_t *p, size_t n)</text>
+        <text x="36" y="100">{</text>
+        <text x="36" y="118">    uint8_t buf[32];</text>
+        <text x="36" y="136">    return psa_mac_sign(...);</text>
+        <text x="36" y="154">}</text>
+        <text x="36" y="190" fill="#f5a623">       ↓ BL psa_mac_sign</text>
+      </g>
+
+      <rect x="340" y="30" width="260" height="190" rx="8" fill="#2a2a0a" stroke="#f5a623"/>
+      <text x="470" y="54" text-anchor="middle" fill="#f5a623" font-weight="700">NSC Veneer</text>
+      <g fill="#cdd6f4" font-size="10" font-family="JetBrains Mono">
+        <text x="356" y="82">psa_mac_sign:</text>
+        <text x="356" y="100">    SG</text>
+        <text x="356" y="118">    B   __acle_se_psa_mac_sign</text>
+        <text x="356" y="150" fill="#8888a8">; linker auto-generated</text>
+        <text x="356" y="168" fill="#8888a8">; 8 bytes total (SG + B)</text>
+      </g>
+
+      <rect x="660" y="30" width="280" height="190" rx="8" fill="#1a0a2a" stroke="#a78bfa"/>
+      <text x="800" y="54" text-anchor="middle" fill="#a78bfa" font-weight="700">Secure implementation</text>
+      <g fill="#cdd6f4" font-size="10" font-family="JetBrains Mono">
+        <text x="676" y="82">__acle_se_psa_mac_sign:</text>
+        <text x="676" y="100">    PUSH  {r4, lr}</text>
+        <text x="676" y="118">    BL    sanitize_ns_ptrs</text>
+        <text x="676" y="136">    BL    crypto_engine</text>
+        <text x="676" y="154">    POP   {r4, lr}</text>
+        <text x="676" y="172">    BXNS  lr   ; back to NS</text>
+      </g>
+
+      <line x1="280" y1="130" x2="340" y2="130" stroke="#8888a8" marker-end="url(#arrE)"/>
+      <line x1="600" y1="130" x2="660" y2="130" stroke="#8888a8" marker-end="url(#arrE)"/>
+      <defs><marker id="arrE" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#8888a8"/></marker></defs>
+    </g>
+  </svg>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">13</span><h2>ACLE Annotations</h2></div>
+  <div class="cols cols-4060">
+    <div>
+<pre><code class="mono">/* Secure library header, shared with NS */
+
+#include &lt;arm_cmse.h&gt;
+
+/* Exported to NS */
+__attribute__((cmse_nonsecure_entry))
+int psa_mac_sign(const uint8_t *buf,
+                 size_t         n,
+                 uint8_t       *out);
+
+/* Callback called from S back into NS */
+typedef void (*ns_log_t)(const char *)
+    __attribute__((cmse_nonsecure_call));</code></pre>
+    </div>
+    <div>
+      <ul>
+        <li><code>cmse_nonsecure_entry</code> — marks an exported function; compiler emits an SG-gated veneer, clears caller-saved regs that might leak S state before BXNS.</li>
+        <li><code>cmse_nonsecure_call</code> — marks a pointer to NS code; compiler emits BLXNS with the right safety scrubbing.</li>
+        <li>CMSE helper intrinsics like <code>cmse_check_address_range()</code> let the Secure handler <strong>verify that an NS pointer really points into NS memory</strong> — essential defence against the "Bubble" attack.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">14</span><h2>Banked System Registers</h2></div>
+  <table style="font-size:0.62em;">
+    <tr><th>Register</th><th>Banked?</th><th>Notes</th></tr>
+    <tr><td>MSP / PSP</td><td>✓ per state</td><td>MSP_S · PSP_S · MSP_NS · PSP_NS</td></tr>
+    <tr><td>MSPLIM / PSPLIM</td><td>✓ per state</td><td>HW stack-overflow detection banks per world</td></tr>
+    <tr><td>CONTROL</td><td>✓</td><td>Separate nPRIV &amp; SPSEL for S and NS threads; FPCA shared</td></tr>
+    <tr><td>PRIMASK / BASEPRI / FAULTMASK</td><td>✓</td><td>NS cannot set its mask to block S IRQs</td></tr>
+    <tr><td>VTOR</td><td>✓</td><td>VTOR_S, VTOR_NS</td></tr>
+    <tr><td>MPU</td><td>✓</td><td>MPU_S, MPU_NS — each with own region config</td></tr>
+    <tr><td>NVIC priority / enable</td><td>✓</td><td>NS can only write NS IRQ masks; S can touch both</td></tr>
+    <tr><td>SYSCTL / AIRCR</td><td>banked fields</td><td>Some fields (e.g. PRIGROUP) per state; reset controls Secure-only</td></tr>
+  </table>
+  <p class="smaller dim">The silicon area cost is mostly flops for these banked registers — still &lt; 5 % overall, which is why Arm could price TrustZone-capable cores competitively.</p>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">15</span><h2>NVIC &amp; IRQ Targeting</h2></div>
+  <div class="cols cols-2">
+    <div>
+      <ul>
+        <li>Each external IRQ has an <strong>ITNS</strong> bit in <code>NVIC_ITNS[n]</code>: 0 = IRQ targets Secure, 1 = NS.</li>
+        <li>ITNS is writable only from Privileged Secure. NS cannot re-target an IRQ.</li>
+        <li>IRQ of priority higher than current state may preempt, even across domains — that is when the integrity signature is stacked.</li>
+        <li>System exceptions (HardFault, NMI, SecureFault, BusFault) may be configured S-target or NS-target via <code>AIRCR.BFHFNMINS</code>.</li>
+      </ul>
+    </div>
+    <div>
+      <div class="card amber">
+        <h3 class="a">Typical policy</h3>
+        <ul>
+          <li>Crypto engine, RNG, HUK: <strong>Secure IRQ</strong>.</li>
+          <li>Radio, USB, UART, DMA to app buffers: <strong>NS IRQ</strong>.</li>
+          <li>Shared I²C with secure sensor: usually <strong>Secure IRQ</strong> with a forwarded NS notification via mailbox.</li>
+        </ul>
+      </div>
+      <div class="card blue" style="font-size:0.72em; margin-top:0.3em;">
+        The SAU also has analogous <em>SAU-region-attribute-based</em> IRQ routing in future extensions, but ITNS remains the core mechanism for v8-M.
+      </div>
+    </div>
+  </div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">16</span><h2>Exception Across Domains</h2></div>
+  <div class="cols cols-2">
+    <div>
+      <h3>S preempts NS</h3>
+      <ol>
+        <li>NS code running; S-targeted IRQ arrives at higher priority.</li>
+        <li>CPU stacks 8 "basic" words on NS stack.</li>
+        <li>CPU then stacks an <strong>additional context</strong> (R4-R11, "state context") plus a 4-word <em>integrity signature</em>, again on the NS stack.</li>
+        <li>Switches to Secure handler; all caller-saved NS regs are cleared.</li>
+        <li>On return, the signature is <em>verified</em>. Mismatch → Secure fault.</li>
+      </ol>
+    </div>
+    <div>
+      <h3>NS preempts S (rare)</h3>
+      <ul>
+        <li>Only possible if an NS IRQ has priority higher than the executing S handler.</li>
+        <li>By default, NS is <em>not</em> allowed to preempt S — the AIRCR.PRIS bit forces NS priorities to the low half.</li>
+        <li>When it does happen, additional S-context is stacked on the S stack (protected from NS read).</li>
+      </ul>
+      <div class="card red" style="font-size:0.72em;">
+        <strong class="r">Lesson:</strong> cross-domain preemption is where the integrity signature lives — without it, NS could overwrite the return frame during the brief window before S resumes.
+      </div>
+    </div>
+  </div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">17</span><h2>The Integrity Signature</h2></div>
+  <div class="cols cols-2">
+    <div>
+      <ul>
+        <li>On any exception that crosses state, CPU pushes a 4-word "signature frame" to the incoming side's stack.</li>
+        <li>Contains <code>0xFEF5EDA5</code> as a magic tag, plus state information.</li>
+        <li>On exception return, CPU checks the signature. If it has been altered → the CPU <strong>does not restore the stacked context</strong> and raises a Secure fault.</li>
+        <li>Defends against:
+          <ul>
+            <li>NS code corrupting the S-return path,</li>
+            <li>NS code forging an EXC_RETURN into S,</li>
+            <li>Race conditions where NS sees a partial S frame.</li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+    <div>
+      <div class="card green">
+        <h3 class="g">Why a signature, not encryption?</h3>
+        <p>The whole point is to be fast — a few cycles of compare, not a crypto op. The signature is magic-value-plus-metadata, and it's checked only by the CPU. NS code trying to guess the right bytes can't, because the metadata includes current state bits that NS cannot read.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">18</span><h2>PSA &amp; Trusted Firmware-M</h2></div>
+  <div class="cols cols-2">
+    <div>
+      <h3>Platform Security Architecture (PSA)</h3>
+      <ul>
+        <li>Arm-led specification defining a set of MCU security properties:
+          <ul>
+            <li>Attestation (prove identity &amp; firmware version)</li>
+            <li>Cryptography (symmetric, asymmetric, hash)</li>
+            <li>Secure storage</li>
+            <li>Secure firmware update</li>
+            <li>Boot ROM &amp; chain-of-trust</li>
+          </ul>
+        </li>
+        <li>PSA Certified levels 1/2/3: increasingly stringent evaluation.</li>
+      </ul>
+    </div>
+    <div>
+      <h3>Trusted Firmware-M (TF-M)</h3>
+      <ul>
+        <li>Open-source reference implementation of the PSA Secure-side runtime.</li>
+        <li>Runs entirely in Secure state; exposes PSA APIs to NS via NSC veneers.</li>
+        <li>Includes crypto (via Mbed TLS), secure storage, attestation, firmware update (MCUboot).</li>
+        <li>Ships as the default secure firmware for STM32U5/L5, Nordic nRF54, NXP LPC55, Renesas RA.</li>
+        <li>github.com/trustedfirmware/trusted-firmware-m</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">19</span><h2>Typical Boot Flow</h2></div>
+  <svg class="diagram" viewBox="0 0 940 280" style="width:100%;">
+    <g font-family="DM Sans" font-size="11">
+      <rect x="20"  y="30" width="160" height="60" rx="6" fill="#2a0a0a" stroke="#f87171"/>
+      <text x="100" y="52" text-anchor="middle" fill="#f87171" font-weight="700">ROM Boot</text>
+      <text x="100" y="70" text-anchor="middle" font-size="10" fill="#fff">immutable, masked in silicon</text>
+
+      <rect x="210" y="30" width="160" height="60" rx="6" fill="#1a0a2a" stroke="#a78bfa"/>
+      <text x="290" y="52" text-anchor="middle" fill="#a78bfa" font-weight="700">Secure Bootloader</text>
+      <text x="290" y="70" text-anchor="middle" font-size="10" fill="#fff">MCUboot (Secure image)</text>
+
+      <rect x="400" y="30" width="160" height="60" rx="6" fill="#1a0a2a" stroke="#a78bfa"/>
+      <text x="480" y="52" text-anchor="middle" fill="#a78bfa" font-weight="700">TF-M Secure runtime</text>
+      <text x="480" y="70" text-anchor="middle" font-size="10" fill="#fff">PSA APIs; starts in S</text>
+
+      <rect x="590" y="30" width="160" height="60" rx="6" fill="#0a1a2a" stroke="#60a5fa"/>
+      <text x="670" y="52" text-anchor="middle" fill="#60a5fa" font-weight="700">NS Bootloader</text>
+      <text x="670" y="70" text-anchor="middle" font-size="10" fill="#fff">optional; verifies NS image</text>
+
+      <rect x="780" y="30" width="160" height="60" rx="6" fill="#0a1a2a" stroke="#60a5fa"/>
+      <text x="860" y="52" text-anchor="middle" fill="#60a5fa" font-weight="700">NS App + RTOS</text>
+      <text x="860" y="70" text-anchor="middle" font-size="10" fill="#fff">production firmware</text>
+
+      <g stroke="#f5a623" fill="none" stroke-width="2" marker-end="url(#arrF)">
+        <line x1="180" y1="60" x2="210" y2="60"/>
+        <line x1="370" y1="60" x2="400" y2="60"/>
+        <line x1="560" y1="60" x2="590" y2="60"/>
+        <line x1="750" y1="60" x2="780" y2="60"/>
+      </g>
+      <defs><marker id="arrF" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#f5a623"/></marker></defs>
+
+      <g font-size="10" fill="#8888a8">
+        <text x="100" y="120" text-anchor="middle">Verify SB</text>
+        <text x="100" y="134" text-anchor="middle">signature</text>
+        <text x="290" y="120" text-anchor="middle">Verify TF-M</text>
+        <text x="290" y="134" text-anchor="middle">Configure SAU</text>
+        <text x="480" y="120" text-anchor="middle">Init keys, HUK</text>
+        <text x="480" y="134" text-anchor="middle">BXNS → NS</text>
+        <text x="670" y="120" text-anchor="middle">Load NS app</text>
+        <text x="670" y="134" text-anchor="middle">from flash</text>
+      </g>
+
+      <rect x="20" y="190" width="900" height="60" rx="6" fill="#10101a" stroke="#f5a623"/>
+      <text x="470" y="212" text-anchor="middle" fill="#f5a623" font-weight="700">Root of Trust</text>
+      <text x="470" y="232" text-anchor="middle" font-size="10" fill="#ccc">Each stage verifies signature of the next, chained from ROM → keys sealed in the HUK (Hardware Unique Key).</text>
+    </g>
+  </svg>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">20</span><h2>Secure Debug — ADAC</h2></div>
+  <div class="cols cols-2">
+    <div>
+      <ul>
+        <li><code>DAUTHCTRL</code> register in SCB has four enable bits — one per {S, NS} × {halting, non-invasive debug}.</li>
+        <li>Secure bootloader sets them at power-on based on authentication policy.</li>
+        <li><strong>Authenticated Debug Access Control (ADAC)</strong>: challenge-response over DAP using device-specific keys, verified by secure ROM.</li>
+        <li>Allowed levels:
+          <ul>
+            <li>All debug off → truly unbrickable.</li>
+            <li>NS debug enabled → developers can attach to app firmware.</li>
+            <li>S + NS debug enabled → full access (engineering / RMA only).</li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+    <div>
+      <div class="card red">
+        <h3 class="r">Attack surface</h3>
+        <ul>
+          <li>Glitch attack on SAU configure → try to force a region NS before keys are derived.</li>
+          <li>Side-channel on RNG / HUK on first boot.</li>
+          <li>Rollback: replaying old signed firmware with known bugs. Mitigation: anti-rollback counter in NV fuses.</li>
+        </ul>
+      </div>
+      <div class="card amber" style="font-size:0.72em; margin-top:0.3em;">
+        Cortex-M35P adds fault-injection countermeasures at gate level specifically for these attacks.
+      </div>
+    </div>
+  </div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">21</span><h2>TrustZone vs MPU vs Privilege</h2></div>
+  <table style="font-size:0.62em;">
+    <tr><th>Mechanism</th><th>Protects against</th><th>Does <em>not</em> protect against</th></tr>
+    <tr><td>MPU</td><td>Task-level bugs: task A reading task B's buffer; stack overflow hitting kernel data.</td><td>Kernel compromise; malicious <em>privileged</em> code; firmware updates.</td></tr>
+    <tr><td>Privilege (nPRIV bit)</td><td>User code touching SCB/NVIC; preventing raw peripheral config.</td><td>Ring 0 bugs; kernel-to-kernel compromise; any attack at same privilege.</td></tr>
+    <tr><td><strong class="p">TrustZone</strong></td><td>Any NS compromise (including NS kernel + NS firmware update flaws). Keeps crypto keys and attestation identity uncompromised.</td><td>Physical attacks on silicon; compromise inside the Secure side itself.</td></tr>
+  </table>
+  <div class="card green" style="font-size:0.72em;">
+    The three layers compose: TrustZone isolates "things that must never be compromised" (crypto keys, root-of-trust) from the NS application world. MPU + privilege inside the NS world keeps user tasks from trampling each other. Together they enable a defence-in-depth story for certifications.
+  </div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">22</span><h2>Hardware Memory Partitioning</h2></div>
+  <div class="cols cols-2">
+    <div>
+      <p class="small">TrustZone is only one layer — the SoC bus must also enforce <strong>HNONSEC</strong> attributes.</p>
+      <ul>
+        <li>Every AHB-5 transaction carries a <strong>HNONSEC</strong> bit (0 = Secure access, 1 = NS).</li>
+        <li>Slaves may either be TrustZone-aware (check HNONSEC and reject) or TrustZone-oblivious (behind a filter).</li>
+        <li>Vendor filter blocks (STM32 GTZC, NXP AHB-RF, Nordic SPU) policy each slave as S-only, NS-only, or either.</li>
+        <li>Crypto engine &amp; RNG are usually S-only; user GPIO, UART, timers are NS; flash controller is S-only but the flash contents are split per attribution.</li>
+      </ul>
+    </div>
+    <div>
+      <div class="card amber">
+        <h3 class="a">STM32L5 GTZC example</h3>
+        <ul>
+          <li>GTZC_TZSC_IDMMR — per-peripheral security policy.</li>
+          <li>GTZC_MPCBB — per-page SRAM security.</li>
+          <li>GTZC_TZIC — consolidated illegal-access fault controller.</li>
+          <li>Any NS access to a S-allocated peripheral → TZIC raises interrupt → TF-M logs and resets.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">23</span><h2>Common TrustZone Bugs</h2></div>
+  <div class="cols cols-2">
+    <div>
+      <div class="card red" style="font-size:0.72em;">
+        <h3 class="r">1. TOCTOU on NS pointer</h3>
+        <p>Secure function validates a pointer, then dereferences it later. Meanwhile an NS thread changes the memory at that address. Always copy args to S-local buffer before use, or use <code>cmse_check_address_range</code> atomically with DMA source.</p>
+      </div>
+      <div class="card red" style="font-size:0.72em;">
+        <h3 class="r">2. Leaking secrets via caller-saved regs</h3>
+        <p>If the compiler doesn't zero R0-R3 before BXNS, intermediate crypto values can leak. <code>cmse_nonsecure_entry</code> handles this correctly — but hand-written assembly must do it explicitly.</p>
+      </div>
+      <div class="card red" style="font-size:0.72em;">
+        <h3 class="r">3. NS gets access to an S peripheral</h3>
+        <p>Vendor filter not programmed → NS can touch the crypto engine MMIO. Audit the GTZC/SPU config in the secure bootloader.</p>
+      </div>
+    </div>
+    <div>
+      <div class="card red" style="font-size:0.72em;">
+        <h3 class="r">4. Stack overflow into S memory</h3>
+        <p>NS task overflows its PSP_NS into an adjacent S SRAM region. Solution: enforce PSPLIM_NS + MPU_NS + ensure S SRAM is not contiguous with NS stacks.</p>
+      </div>
+      <div class="card red" style="font-size:0.72em;">
+        <h3 class="r">5. Wrong SAU region order</h3>
+        <p>SAU region ordering matters on overlap. Debug a region configuration by walking the SAU with an MPU-check helper during bring-up.</p>
+      </div>
+      <div class="card red" style="font-size:0.72em;">
+        <h3 class="r">6. Missing DSB+ISB after SAU update</h3>
+        <p>Instructions in flight may still use old attributes; same as MPU. Always <code>DSB(); ISB();</code> after reconfig.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">24</span><h2>Interview Checklist</h2></div>
+  <div class="cols cols-2">
+    <div>
+      <ul>
+        <li>Draw the 2×2 {S,NS} × {Priv, Unpriv} matrix and list what's banked.</li>
+        <li>Explain the difference between SAU, IDAU, and MPU.</li>
+        <li>Describe exactly what the <code>SG</code> instruction does and why NSC regions are necessary.</li>
+        <li>Explain the integrity signature and what it prevents.</li>
+        <li>Walk through a secure boot → TF-M → NS application handoff.</li>
+        <li>Compare TrustZone-M vs TrustZone-A (latency, monitor layer, switching model).</li>
+      </ul>
+    </div>
+    <div>
+      <ul>
+        <li>Give an example where TrustZone is the right answer and one where an MPU alone is sufficient.</li>
+        <li>List three attacks that TrustZone does <strong>not</strong> prevent (physical, glitch, side-channel).</li>
+        <li>Explain PSA Certified — what does "Level 2" demonstrate?</li>
+        <li>Describe BLXNS and when Secure calls back into NS.</li>
+        <li>Name the vendor filter blocks that enforce HNONSEC per peripheral on STM32L5 / Nordic / NXP.</li>
+        <li>Explain why <code>cmse_nonsecure_entry</code> matters more than just a calling convention.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">25</span><h2>References</h2></div>
+  <div style="max-width:90%;margin:0 auto;font-size:0.58em;line-height:1.8;">
+    <p>
+      <strong class="a">Arm</strong> — <em>Armv8-M Architecture Reference Manual</em> (ARM DDI 0553) — chapter B4 (Security State)<br>
+      <strong class="a">Arm</strong> — <em>TrustZone technology for Armv8-M Architecture</em> white paper (ARM 100690, v2.1)<br>
+      <strong class="a">Arm</strong> — <em>Cortex-M23 / M33 Technical Reference Manuals</em><br>
+      <strong class="a">Joseph Yiu</strong> — <em>Definitive Guide to Arm Cortex-M23 &amp; Cortex-M33 Processors</em> (Newnes, 2021) — chapters 10–13<br>
+      <strong class="a">Arm PSA</strong> — <em>Platform Security Architecture</em> specifications (Attestation, Firmware Update, Secure Storage)<br>
+      <strong class="a">Trusted Firmware-M</strong> — <code>trustedfirmware.org/projects/tf-m</code> and GitHub mirror<br>
+      <strong class="a">Arm CMSE</strong> — ACLE Extensions for Cortex-M Security (<code>cmse_nonsecure_entry</code>, <code>cmse_check_address_range</code>)<br>
+      <strong class="a">STMicro</strong> — <em>AN5347 STM32L5 TrustZone</em>; <em>AN5429 STM32U5 TF-M guide</em><br>
+      <strong class="a">Nordic</strong> — <em>nRF5340 / nRF54L Product Specification</em>, chapters on SPU and TrustZone<br>
+      <strong class="a">NXP</strong> — <em>LPC55Sxx TrustZone User Manual</em>
+    </p>
+    <p style="color:var(--muted);margin-top:0.8em;font-size:0.85em">
+      Presentation built with <a href="https://revealjs.com">Reveal.js 4.6</a> · Playfair Display + DM Sans + JetBrains Mono<br>
+      Educational use.
+    </p>
+  </div>
+</section>
+
+</div></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/highlight/highlight.min.js"></script>
+<script>
+Reveal.initialize({ hash: true, slideNumber: 'c/t', transition: 'fade', transitionSpeed: 'fast', controls: true, progress: true, center: false, width: 1100, height: 900, margin: 0.01, plugins: [RevealHighlight], highlight: { theme: 'monokai' } });
+</script>
+<script>
+(function(){ var h = Reveal.getConfig().height || 900; var m = Reveal.getConfig().margin || 0.02; var maxH = Math.floor(h * (1 - 2 * m)) + 'px'; function fixSlides(){ document.querySelectorAll('.reveal .slides>section,.reveal .slides>section>section').forEach(function(s){ s.style.display = 'block'; s.style.maxHeight = maxH; }); } Reveal.on('ready', fixSlides); Reveal.on('slidechanged', fixSlides); })();
+</script>
+</body>
+</html>

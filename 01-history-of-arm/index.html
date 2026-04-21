@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>History of Arm & the Architecture</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@400;500;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/black.min.css">
+<style>
+  :root {
+    --amber:#f5a623;--green:#4ecb8d;--purple:#a78bfa;--blue:#60a5fa;--red:#f87171;
+    --bg:#0a0a0f;--bg2:#10101a;--bg3:#181824;--border:#2a2a3a;--text:#e8e8f0;--muted:#8888a8;
+  }
+  .reveal-viewport { background: var(--bg); }
+  .reveal .slides section { background: transparent; }
+  .reveal section { text-align: left; }
+  .reveal .slides > section { padding: 0.5em; overflow-y: auto !important; align-items: flex-start !important; justify-content: flex-start !important; }
+  .reveal .progress { color: var(--amber); height: 3px; }
+  .reveal .controls { color: var(--amber); }
+  .reveal section::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, var(--amber), var(--green)); }
+  .reveal { font-family: 'DM Sans', sans-serif; color: var(--text); font-size: 22px; }
+  .reveal .slide-number { font-family: 'JetBrains Mono', monospace; font-size: 0.7em; color: var(--muted); }
+  .reveal h1, .reveal h2, .reveal h3 { font-family: 'Playfair Display', serif; color: #fff; text-transform: none; letter-spacing: -0.01em; }
+  .reveal h1 { font-size: 2.4em; font-weight: 900; color: var(--amber); line-height: 1.1; }
+  .reveal h2 { font-size: 1.7em; font-weight: 700; color: var(--amber); margin-bottom: 0.6em; }
+  .reveal h3 { font-size: 1.2em; font-weight: 700; color: var(--green); margin-bottom: 0.3em; }
+  .reveal p  { font-size: 0.75em; line-height: 1.5; color: var(--text); }
+  .reveal li { font-size: 0.7em; line-height: 1.5; margin-bottom: 0.25em; }
+  .reveal code { font-family: 'JetBrains Mono', monospace; font-size: .72em; }
+  .reveal pre  { background: var(--bg3); border: 1px solid var(--border); border-radius: 8px; padding: 0.5em 1em; margin: 0.4em 0; width: 100%; box-shadow: none; }
+  .reveal pre code { font-size: 0.58em; line-height: 1.5; background: transparent; color: #cdd6f4; }
+  .slide-hdr { display: flex; align-items: center; gap: .4em; border-bottom: 1px solid var(--border); padding-bottom: .2em; margin-bottom: .3em; }
+  .slide-hdr .tag { font-family: 'JetBrains Mono', monospace; font-size: 0.55em; font-weight: 600; color: var(--bg); background: var(--amber); padding: .1em .4em; border-radius: 3px; letter-spacing: .04em; }
+  .slide-hdr h2 { margin: 0; font-size: 1.4em; }
+  .cols{display:grid;gap:1em;} .cols-2{grid-template-columns:1fr 1fr;} .cols-3{grid-template-columns:1fr 1fr 1fr;} .cols-6040{grid-template-columns:6fr 4fr;} .cols-4060{grid-template-columns:4fr 6fr;}
+  .card { background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; padding: 1em 1.2em; box-shadow: 0 4px 20px rgba(0,0,0,0.3); margin: 0.4em 0; }
+  .card.amber { border-left: 3px solid var(--amber); } .card.green { border-left: 3px solid var(--green); } .card.purple{ border-left: 3px solid var(--purple); } .card.blue  { border-left: 3px solid var(--blue); } .card.red   { border-left: 3px solid var(--red); }
+  .card h3 { font-size: 1em; margin: 0 0 0.4em; }
+  .card p, .card ul  { font-size: 0.8em; margin: 0; color: #b8b8d0; } .card ul { padding-left: 1.2em; } .card li { font-size: 0.85em; margin-bottom: 0.25em; }
+  .reveal table { width: 100%; border-collapse: collapse; font-size: 0.65em; margin: 0.5em 0; }
+  .reveal table th { background: var(--bg3); color: var(--amber); padding: 0.5em 0.7em; border: 1px solid var(--border); text-align: left; font-weight: 700; }
+  .reveal table td { padding: 0.5em 0.7em; border: 1px solid var(--border); color: #ccc; vertical-align: top; }
+  .reveal table tr:nth-child(even) td { background: #0e0e18; }
+  .a{color:var(--amber);font-weight:600;} .g{color:var(--green);font-weight:600;} .p{color:var(--purple);font-weight:600;} .b{color:var(--blue);font-weight:600;} .r{color:var(--red);font-weight:600;} .mono{font-family:'JetBrains Mono',monospace;}
+  svg.diagram { display: block; margin: 0 auto; overflow: visible; }
+  .pill { display: inline-block; font-family: 'JetBrains Mono', monospace; font-size: 0.6em; padding: 0.15em 0.6em; border-radius: 999px; border: 1px solid; margin: 0 .08em; }
+  .pill.amber{color:var(--amber);border-color:var(--amber);} .pill.green{color:var(--green);border-color:var(--green);} .pill.purple{color:var(--purple);border-color:var(--purple);} .pill.blue{color:var(--blue);border-color:var(--blue);} .pill.red{color:var(--red);border-color:var(--red);}
+  .title-slide h1 { font-size: 2.4em; } .title-slide .subtitle { font-size: 0.85em; color: var(--green); font-weight: 400; letter-spacing: 0.06em; margin: 0.3em 0 0.6em; } .title-slide .meta { font-size: 0.6em; color: var(--muted); font-family: 'JetBrains Mono', monospace; }
+  .dim { color: var(--muted); } .small { font-size: 0.65em; } .smaller { font-size: 0.55em; } .tiny { font-size: 0.48em; }
+  .reveal ul, .reveal ol { margin: .15em 0 .15em 1em; }
+
+  /* History timeline */
+  .tl { font-family: 'JetBrains Mono', monospace; font-size: 0.68em; display: grid; grid-template-columns: 90px 20px 1fr; gap: 0.2em 0.5em; margin: 0.3em 0; }
+  .tl .yr { color: var(--amber); font-weight: 700; text-align: right; padding-top: 0.35em; }
+  .tl .dot { color: var(--green); text-align: center; padding-top: 0.35em; font-size: 0.9em; }
+  .tl .ev { background: var(--bg2); border-left: 3px solid var(--border); border-radius: 4px; padding: 0.4em 0.7em; color: #cdd6f4; }
+  .tl .ev strong { color: var(--amber); }
+  .tl .ev.hi { border-left-color: var(--amber); background: #1a0f05; }
+
+  /* Interactive ISA toggle */
+  .isa-picker { display: flex; gap: 6px; margin: 0.4em 0; font-family: 'JetBrains Mono', monospace; font-size: 0.65em; flex-wrap: wrap; }
+  .isa-picker .btn { cursor: pointer; padding: 0.4em 0.9em; border: 1px solid var(--border); border-radius: 5px; background: var(--bg2); color: var(--text); transition: all 0.15s; }
+  .isa-picker .btn:hover { border-color: var(--amber); color: var(--amber); }
+  .isa-picker .btn.active { background: var(--amber); color: var(--bg); border-color: var(--amber); font-weight: 700; }
+  .isa-info { background: var(--bg2); border: 1px solid var(--border); border-left: 3px solid var(--amber); border-radius: 6px; padding: 0.7em 1em; margin-top: 0.3em; font-size: 0.75em; min-height: 130px; }
+  .isa-info .t { color: var(--amber); font-weight: 700; font-family: 'Playfair Display', serif; font-size: 1.15em; margin-bottom: 0.15em; }
+  .isa-info .s { color: var(--green); font-family: 'JetBrains Mono', monospace; font-size: 0.8em; margin-bottom: 0.3em; }
+  .isa-info ul { margin: 0.2em 0 0 1em; font-size: 0.9em; }
+
+  .quote { font-style: italic; color: #ccc; padding: 0.5em 1em; border-left: 3px solid var(--blue); background: var(--bg2); border-radius: 4px; font-size: 0.8em; }
+  .quote cite { display: block; font-size: 0.72em; color: var(--muted); font-style: normal; margin-top: 0.4em; }
+</style>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+
+<section class="title-slide" data-background-color="#0a0a0f">
+  <div style="font-family:'JetBrains Mono',monospace;font-size:.5em;color:var(--muted);margin-bottom:.4em;letter-spacing:.1em;">ARM CORTEX-M · PRESENTATION 01</div>
+  <h1>History of Arm &amp; the Architecture</h1>
+  <div class="subtitle">From the BBC Micro to Armv9 · Four decades of one RISC design</div>
+  <div style="width:60px;height:3px;background:var(--amber);margin-bottom:1.4em;"></div>
+  <div class="meta">Acorn · ARM1 · Apple Newton · ARM7TDMI · Cortex-A/R/M · Helium · TrustZone · Armv9</div>
+  <div class="meta" style="margin-top:1em;">Navigate: <span class="mono">→ ←</span> &nbsp;|&nbsp; Overview: <span class="mono">Esc</span> &nbsp;|&nbsp; Fullscreen: <span class="mono">F</span></div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">02</span><h2>Why the History Matters</h2></div>
+  <div class="cols cols-2">
+    <div>
+      <ul>
+        <li>Many Cortex-M design choices only make sense once you understand what Arm was in <strong>1985</strong>, <strong>1994</strong>, and <strong>2004</strong>.</li>
+        <li>The Thumb-only M-profile, the fixed memory map, the NVIC priority model — all are reactions to specific historical pain points.</li>
+        <li>The <strong>IP licensing model</strong> Arm pioneered is why the same core design ships in 220+ different MCU SKUs today.</li>
+        <li>Interview panels <em>love</em> "why is it like this?" questions — a quick history of the architecture is often the cleanest answer.</li>
+      </ul>
+    </div>
+    <div>
+      <div class="quote">
+        "We didn't actually have enough money to design a chip in the usual sense, so we had to do it in a different way."
+        <cite>— Steve Furber, co-designer of the ARM1 (Cambridge University, 2012 interview)</cite>
+      </div>
+      <div class="card amber" style="margin-top:0.6em;">
+        <p>The original Arm was a <em>frugality-driven</em> design. That DNA — simplicity, orthogonality, predictable timing — is still visible in every Cortex-M today.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">03</span><h2>Prehistory — Acorn Computers</h2></div>
+  <div class="cols cols-2">
+    <div>
+      <ul>
+        <li><strong class="a">Acorn Computers</strong> founded in Cambridge (UK), 1978 by Chris Curry, Hermann Hauser, and Andy Hopper.</li>
+        <li>Built the Acorn System 1 (6502-based) and then won the <strong>BBC Micro contract</strong> in 1981 — 1.5 M units sold, one per UK classroom.</li>
+        <li>Acorn's next-gen PC needed a faster CPU. They evaluated the <strong>Intel 80286</strong> (rejected — poor interrupt handling), <strong>Motorola 68000</strong> (too slow, too complex), and <strong>National Semi NS32016</strong> (too expensive).</li>
+        <li>After reading papers on <strong>RISC</strong> from Berkeley (Patterson, RISC-I 1981) and Stanford (MIPS, 1983), Sophie Wilson and Steve Furber proposed designing Acorn's own RISC processor.</li>
+      </ul>
+    </div>
+    <div>
+      <div class="card green">
+        <h3 class="g">The RISC insight</h3>
+        <p>Berkeley's RISC-I (44k transistors) outperformed the commercial 68000 (68k transistors) on compiled C code. A small team with no fabrication budget could compete with Motorola and Intel by making the design <em>radically</em> simpler.</p>
+      </div>
+      <div class="card blue" style="margin-top:0.4em;">
+        <h3 class="b">Constraints bred virtues</h3>
+        <p>Acorn could not afford a full EDA tool flow or a dedicated fab. The whole architecture had to be simulated on a BBC Micro in BBC BASIC before any silicon could be taped out — forcing simplicity.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">04</span><h2>ARM1 — First Silicon, April 1985</h2></div>
+  <div class="cols cols-2">
+    <div>
+      <ul>
+        <li>Team of ~6 people, led by <strong>Sophie Wilson</strong> (ISA) and <strong>Steve Furber</strong> (microarchitecture).</li>
+        <li>VLSI Technology fabbed it on a 3 µm process. <strong>25,000 transistors</strong> — smaller than a 6502.</li>
+        <li>32-bit architecture, 32-bit registers, 26-bit program counter packed into R15 with status flags.</li>
+        <li>3-stage pipeline: Fetch — Decode — Execute. Every instruction conditional. Barrel shifter in the ALU path "for free".</li>
+        <li>Famous story: the test chip drew so little power (a few hundred mW) that when the designers probed the V<sub>dd</sub> pin they found it <strong>disconnected</strong> — the chip was running on leakage from the I/O pads.</li>
+      </ul>
+    </div>
+    <div>
+      <svg viewBox="0 0 320 220" style="width:100%;">
+        <rect x="10" y="10" width="300" height="200" rx="10" fill="#10101a" stroke="#f5a623"/>
+        <text x="160" y="38" text-anchor="middle" fill="#f5a623" font-family="Playfair Display" font-weight="700" font-size="16">ARM1 (1985)</text>
+        <g font-family="JetBrains Mono" font-size="11" fill="#cdd6f4">
+          <text x="30" y="62">Process ........... VLSI 3 µm CMOS</text>
+          <text x="30" y="82">Transistors ....... ~25,000</text>
+          <text x="30" y="102">Die area .......... ~50 mm²</text>
+          <text x="30" y="122">Clock ............. 6 MHz</text>
+          <text x="30" y="142">Registers ......... 16 × 32-bit</text>
+          <text x="30" y="162">Pipeline .......... 3-stage</text>
+          <text x="30" y="182">Instruction count . ~44</text>
+          <text x="30" y="202">Power ............. &lt; 0.1 W</text>
+        </g>
+      </svg>
+      <p class="smaller dim" style="margin-top:0.3em;">ARM = <em>Acorn RISC Machine</em> — renamed to <em>Advanced RISC Machines</em> in 1990.</p>
+    </div>
+  </div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">05</span><h2>ARM2 / ARM3 — Commercial Products</h2></div>
+  <div class="cols cols-2">
+    <div>
+      <h3>ARM2 (1986)</h3>
+      <ul>
+        <li>First Arm to ship in a commercial product: the <strong>Acorn Archimedes A305</strong> (June 1987) — the world's first RISC-based desktop computer.</li>
+        <li>8 MHz, ~30,000 transistors, 4 MIPS — out-ran a 16 MHz 80386 on integer code.</li>
+        <li>No cache, no MMU, no FPU. Ran the Arthur/RISC OS at desktop-responsive speed.</li>
+      </ul>
+      <h3>ARM3 (1989)</h3>
+      <ul>
+        <li>Added a 4 KB <strong>unified cache</strong> on-die — first Arm to have any cache.</li>
+        <li>25 MHz, ~310,000 transistors.</li>
+        <li>Last Acorn-designed Arm before the Apple spin-out.</li>
+      </ul>
+    </div>
+    <div>
+      <div class="card blue">
+        <h3 class="b">Archimedes in context</h3>
+        <p>In 1987 the competition was the Amiga 500 (68000 @ 7 MHz), the Atari ST (68000), and early 80286 PCs. An 8 MHz Archimedes was benchmarked at 3–5× the CPU performance of all of them on FP-free workloads.</p>
+      </div>
+      <div class="card amber" style="margin-top:0.4em;">
+        <p>Despite the technical win, Acorn's total volume was a rounding error next to IBM-PC clones. This set up the pivotal move that turned Arm from "a cool British chip" into the world's most widely-licensed CPU: <strong>Apple.</strong></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">06</span><h2>1990 — The Apple / VLSI Spin-Out</h2></div>
+  <div class="cols cols-2">
+    <div>
+      <ul>
+        <li>Apple was developing the <strong>Newton</strong> MessagePad — needed a low-power 32-bit CPU.</li>
+        <li>The Newton team (Larry Tesler) evaluated Arm and loved it, but Acorn was a flaky British PC maker with no long-term prospects.</li>
+        <li>November 1990: Apple, Acorn, and VLSI Technology jointly founded <strong>Advanced RISC Machines Ltd</strong> — 12 engineers, one conference room in Cambridge.</li>
+        <li>The new Arm was a <strong>pure IP licensing company</strong>: no fab, no products, just designs sold to whoever wanted to build silicon.</li>
+        <li>Apple invested £1.5M for 43% of the new company; VLSI 43%; Acorn 15%.</li>
+      </ul>
+    </div>
+    <div>
+      <div class="quote">
+        "I had a piece of A4 paper with five bullets on it. 'Don't just be a chip company; license the design, let others make the chips.' That was the plan."
+        <cite>— Robin Saxby, first CEO of ARM, recounting 1991 (Arm 30-year anniversary interview, 2020)</cite>
+      </div>
+      <div class="card green" style="margin-top:0.4em;">
+        <h3 class="g">The licensing revolution</h3>
+        <p>Before Arm, CPUs came from Intel, Motorola, IBM, or DEC — each vertically integrated. Arm's model let <em>any</em> semiconductor company ship a competitive 32-bit CPU by licensing a well-supported IP block. Fifteen years later, nearly every mobile-phone chip vendor was an Arm licensee.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">07</span><h2>ARM6 → ARM7TDMI — The Mobile Break</h2></div>
+  <div class="cols cols-2">
+    <div>
+      <h3>ARM6 (1992) → ARM7 (1994)</h3>
+      <ul>
+        <li>ARM6 was used in the Newton MessagePad.</li>
+        <li>ARM7 added a 3-stage pipeline (deeper fetch), higher clock.</li>
+        <li>Crucially, Arm introduced <strong class="a">Thumb</strong> — a 16-bit compressed instruction set — in <strong>1994</strong>.</li>
+      </ul>
+      <h3>ARM7TDMI (1994)</h3>
+      <ul>
+        <li><strong>T</strong>humb, <strong>D</strong>ebug, <strong>M</strong>ultiplier, <strong>I</strong>CE-RT.</li>
+        <li>Nokia picked it for the 6110 (1998); Texas Instruments put it at the heart of the OMAP baseband.</li>
+        <li>By 2000, ARM7TDMI was in hundreds of millions of mobile phones — the single most-shipped 32-bit core of the 20th century.</li>
+      </ul>
+    </div>
+    <div>
+      <div class="card amber">
+        <h3 class="a">Why Thumb mattered</h3>
+        <p>16-bit Thumb encoded the most common instructions in half the space. On a phone with 256 KiB of expensive masked ROM, Thumb reduced code size by ~30% — two-for-one on flash cost.</p>
+        <p style="margin-top:0.3em;">The core switched between ARM mode (32-bit) and Thumb mode (16-bit) at runtime via <code>BX</code>.</p>
+      </div>
+      <div class="card purple" style="margin-top:0.3em;">
+        The Cortex-M series would later take Thumb so far that it <em>became</em> the only mode — A32 simply doesn't exist in M-profile.
+      </div>
+    </div>
+  </div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">08</span><h2>Architecture Versions — Interactive</h2></div>
+  <p class="dim small">Click a version to see what it added and what shipped under it.</p>
+  <div class="isa-picker" id="isaPicker">
+    <div class="btn" data-k="v1">Armv1</div>
+    <div class="btn" data-k="v2">Armv2</div>
+    <div class="btn" data-k="v3">Armv3</div>
+    <div class="btn" data-k="v4">Armv4</div>
+    <div class="btn" data-k="v5">Armv5</div>
+    <div class="btn" data-k="v6">Armv6</div>
+    <div class="btn active" data-k="v7">Armv7</div>
+    <div class="btn" data-k="v8">Armv8</div>
+    <div class="btn" data-k="v9">Armv9</div>
+  </div>
+  <div class="isa-info" id="isaInfo">
+    <div class="t">Armv7 (2004–2014)</div>
+    <div class="s">Profiles introduced: Armv7-A · Armv7-R · Armv7-M · Armv7E-M</div>
+    <ul>
+      <li>First Arm architecture to be <strong>split into profiles</strong> — Application, Real-time, Microcontroller.</li>
+      <li>ARMv7-M introduced the Cortex-M3 (2004–2006) — Thumb-only, NVIC, MPU.</li>
+      <li>Thumb-2 extended Thumb with 32-bit encodings; full parity with A32.</li>
+      <li>NEON SIMD added on the A-profile side (Cortex-A8, 2007).</li>
+      <li>LPAE, TrustZone (A-profile), Virtualisation extensions added during v7 lifetime.</li>
+    </ul>
+  </div>
+  <script>
+    (function(){
+      var data = {
+        v1: { t:'Armv1 (1985)', s:'One implementation: ARM1. Never commercially shipped.', b:[
+          '26-bit program counter, 32-bit data path.',
+          'Barrel shifter in ALU path.','Conditional execution on every instruction.',
+          '4 modes: User, FIQ, IRQ, Supervisor.','No integer multiply instruction (added in Armv2).'
+        ]},
+        v2: { t:'Armv2 / v2a (1986–1990)', s:'ARM2 / ARM3 (ARM2a adds on-die cache).', b:[
+          '32-bit multiply instruction (MUL, MLA).','Coprocessor interface (for later FPU attach).',
+          'Shipped in Acorn Archimedes desktop line.','ARM3 adds 4 KB unified cache.'
+        ]},
+        v3: { t:'Armv3 (1991)', s:'ARM6, ARM7 base. First "proper" 32-bit PC.', b:[
+          '<strong>Full 32-bit program counter</strong> — breaks binary compat with v1/v2.',
+          'Separate CPSR / SPSR status registers.','Apple Newton MessagePad ran an ARM6 / ARMv3.',
+          'First Arm that IP-licensed widely.'
+        ]},
+        v4: { t:'Armv4 / v4T (1994)', s:'ARM7TDMI, ARM9TDMI, StrongARM.', b:[
+          '<strong>Thumb-1 introduced (v4T)</strong> — 16-bit compressed encoding.',
+          'Load/store half-word &amp; signed byte instructions.','Nokia 6110 and nearly every early-2000s feature phone ran ARM7TDMI.',
+          'StrongARM (DEC, then Intel) became Apple Newton successor &amp; first 200 MHz Arm.'
+        ]},
+        v5: { t:'Armv5 / v5TE / v5TEJ (1999)', s:'ARM9E, ARM10, ARM11, XScale.', b:[
+          '<strong>DSP extensions (E)</strong> — saturating arithmetic, double multiply-accumulate.',
+          'BLX (branch-link-with-exchange) — cleaner Thumb interworking.',
+          'Jazelle (J) — Java bytecode direct execution (now deprecated).',
+          'Intel XScale (PXA250/270) used Armv5TE for PocketPC.'
+        ]},
+        v6: { t:'Armv6 / v6T2 / v6-M (2002)', s:'ARM11; first Cortex-M0 / M1 in 2009.', b:[
+          'SIMD on the integer datapath (QADD8 etc.).','Endianness per-instruction (SETEND).',
+          'Unaligned access on Normal memory.','TrustZone (on A-profile).',
+          '<strong>Armv6-M</strong> — first microcontroller-profile subset (Cortex-M0, 2009).'
+        ]},
+        v7: { t:'Armv7 (2004–2014)', s:'Profiles introduced: Armv7-A · Armv7-R · Armv7-M · Armv7E-M', b:[
+          'First Arm architecture to be <strong>split into profiles</strong> — Application, Real-time, Microcontroller.',
+          'ARMv7-M introduced the Cortex-M3 (2004–2006) — Thumb-only, NVIC, MPU.',
+          'Thumb-2 extended Thumb with 32-bit encodings; full parity with A32.',
+          'NEON SIMD added on the A-profile side (Cortex-A8, 2007).',
+          'LPAE, TrustZone (A-profile), Virtualisation extensions added during v7 lifetime.'
+        ]},
+        v8: { t:'Armv8 (2011) / v8-M (2016) / v8.1-M (2019)', s:'AArch64 on A/R; TrustZone on M.', b:[
+          'A/R-profile gained <strong>AArch64</strong> — the 64-bit A64 instruction set.',
+          'M-profile: <strong>Armv8-M</strong> brought TrustZone to microcontrollers (Cortex-M23, M33).',
+          'Armv8.1-M added <strong>Helium (MVE)</strong> — 128-bit SIMD for MCU-class vectors (Cortex-M55/M85).',
+          'Pointer authentication (PAC), branch target identification (BTI) introduced.'
+        ]},
+        v9: { t:'Armv9 (2021)', s:'A/R-profile only so far; extends from v8.', b:[
+          'Launched March 2021. A-profile &amp; R-profile extensions; <em>no</em> v9-M yet.',
+          'SVE2 (Scalable Vector Extension 2) — replaces NEON on Armv9-A.',
+          'Realms / Confidential Compute Architecture (CCA) — hypervisor-level isolation.',
+          'Memory Tagging Extension (MTE) — 4-bit tags on every 16-byte allocation for C heap safety.',
+          'Cortex-M story unchanged — Cortex-M still uses v8-M / v8.1-M.'
+        ]}
+      };
+      var info = document.getElementById('isaInfo');
+      document.querySelectorAll('#isaPicker .btn').forEach(function(b){
+        b.addEventListener('click', function(){
+          document.querySelectorAll('#isaPicker .btn').forEach(function(x){ x.classList.remove('active'); });
+          b.classList.add('active');
+          var d = data[b.dataset.k];
+          info.innerHTML = '<div class="t">'+d.t+'</div><div class="s">'+d.s+'</div><ul>'+d.b.map(function(x){return '<li>'+x+'</li>';}).join('')+'</ul>';
+        });
+      });
+    })();
+  </script>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">09</span><h2>Profile Split — The 2004 Decision</h2></div>
+  <div class="cols cols-2">
+    <div>
+      <ul>
+        <li>By the early 2000s, a single Arm ISA (ARM7/ARM9/ARM11) had to serve phones, servers, MCUs, and automotive.</li>
+        <li>Each market pulled in a different direction:
+          <ul>
+            <li><strong class="a">Phones/servers</strong> — caches, MMU, virtualisation.</li>
+            <li><strong class="g">Automotive/industrial</strong> — deterministic timing, lockstep CPUs.</li>
+            <li><strong class="p">MCUs</strong> — small die, fast IRQ, no MMU, low power.</li>
+          </ul>
+        </li>
+        <li>Arm's answer: <strong>split Armv7 into three profiles</strong>.</li>
+      </ul>
+    </div>
+    <div>
+      <table>
+        <tr><th>Profile</th><th>v7 flagship</th><th>Niche</th></tr>
+        <tr><td><span class="pill amber">A</span> Application</td><td>Cortex-A8 (2007)</td><td>Phones, set-top, later servers</td></tr>
+        <tr><td><span class="pill green">R</span> Real-time</td><td>Cortex-R4 (2006)</td><td>Baseband, automotive, storage</td></tr>
+        <tr><td><span class="pill blue">M</span> Microcontroller</td><td>Cortex-M3 (2004)</td><td>Deeply-embedded MCUs</td></tr>
+      </table>
+      <div class="card blue" style="font-size:0.72em; margin-top:0.3em;">
+        <strong class="b">Cortex-M3 announced first</strong> (October 2004) — Arm's deliberate signal that the microcontroller market was being taken seriously. It went on to single-handedly displace the 8051 and 16-bit (HC08, MSP430) families from 32-bit MCUs.
+      </div>
+    </div>
+  </div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">10</span><h2>Birth of Cortex-M</h2></div>
+  <div class="tl">
+    <div class="yr">2004</div><div class="dot">●</div>
+    <div class="ev hi"><strong>Cortex-M3 announced</strong> — first Armv7-M core. Thumb-only, NVIC, MPU optional. Luminary Micro (later acquired by TI) was lead licensee with the LM3S series.</div>
+
+    <div class="yr">2006</div><div class="dot">●</div>
+    <div class="ev">STMicro licenses Cortex-M3 for the <strong>STM32F1</strong> family — launched 2007. First mass-market 32-bit MCU with a rich ecosystem.</div>
+
+    <div class="yr">2007</div><div class="dot">●</div>
+    <div class="ev">NXP (formerly Philips Semi) licenses Cortex-M3 for the LPC1700. The "LPC vs STM32" rivalry begins.</div>
+
+    <div class="yr">2009</div><div class="dot">●</div>
+    <div class="ev hi"><strong>Cortex-M0 and M1 released</strong> — Armv6-M Baseline. At ~12k gates, the M0 became the smallest 32-bit CPU Arm ever shipped. Instantly killed new 16-bit MCU starts.</div>
+
+    <div class="yr">2010</div><div class="dot">●</div>
+    <div class="ev hi"><strong>Cortex-M4 released</strong> — Armv7E-M. Adds DSP SIMD + optional single-precision FPU. The default DSP-adjacent MCU for a decade.</div>
+
+    <div class="yr">2012</div><div class="dot">●</div>
+    <div class="ev"><strong>Cortex-M0+</strong> — 2-stage pipeline revision of M0. Single-cycle I/O port, micro-trace buffer. Massive in wireless &amp; IoT.</div>
+
+    <div class="yr">2014</div><div class="dot">●</div>
+    <div class="ev hi"><strong>Cortex-M7 released</strong> — Armv7E-M with 6-stage dual-issue pipeline, caches, TCM, FPv5. STM32F7 / STM32H7 hit 600 MHz.</div>
+
+    <div class="yr">2016</div><div class="dot">●</div>
+    <div class="ev hi"><strong>Cortex-M23 and M33</strong> — first Armv8-M cores. TrustZone for MCUs arrives. PSA / TF-M launches.</div>
+
+    <div class="yr">2019</div><div class="dot">●</div>
+    <div class="ev"><strong>Cortex-M35P</strong> — physical-security-hardened variant. Targets smart-card / EMV.</div>
+
+    <div class="yr">2020</div><div class="dot">●</div>
+    <div class="ev hi"><strong>Cortex-M55</strong> — Armv8.1-M, first core with Helium (MVE). TinyML on MCU becomes practical.</div>
+
+    <div class="yr">2022</div><div class="dot">●</div>
+    <div class="ev hi"><strong>Cortex-M85</strong> — flagship. 7-stage dual-issue, PACBTI, Helium. ~6.3 CoreMark/MHz.</div>
+
+    <div class="yr">2024</div><div class="dot">●</div>
+    <div class="ev"><strong>Cortex-M52</strong> — mid-range Helium-capable core, targeting the M33 replacement slot with built-in MVE.</div>
+  </div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">11</span><h2>Why Thumb-Only in M-Profile?</h2></div>
+  <div class="cols cols-2">
+    <div>
+      <h3>Thumb-1 (1994)</h3>
+      <ul>
+        <li>16-bit encoding of a subset of A32 instructions.</li>
+        <li>Code density ~30% better than A32; performance ~70%.</li>
+        <li>Phones used Thumb to save ROM mask costs.</li>
+      </ul>
+      <h3>Thumb-2 (2003)</h3>
+      <ul>
+        <li>Added 32-bit encodings for instructions that wouldn't fit in 16 bits.</li>
+        <li>A single compiler output could reach <strong>all</strong> A32 functionality while still averaging ~16-bit code size.</li>
+        <li>Thumb-2 could <strong>replace</strong> A32 entirely.</li>
+      </ul>
+    </div>
+    <div>
+      <h3>M-profile decision (2004)</h3>
+      <ul>
+        <li>Strip out A32 state altogether. No mode switch. No CPSR.T bit toggling.</li>
+        <li>All exception handlers and interrupt vectors are Thumb.</li>
+        <li>Benefits:
+          <ul>
+            <li>Simpler pipeline (one decoder).</li>
+            <li>Smaller die area.</li>
+            <li>Uniformly dense code — crucial when flash is 32–64 KB.</li>
+            <li>Deterministic code size for ROM vendors.</li>
+          </ul>
+        </li>
+      </ul>
+      <div class="card green" style="font-size:0.72em;">
+        <strong class="g">Consequence for today:</strong> when a Cortex-M Reset_Handler loads the reset vector into PC, the low bit <em>must</em> be 1 to mark Thumb state — even though Thumb is the only state. The architectural LSB of any function pointer is always 1.
+      </div>
+    </div>
+  </div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">12</span><h2>Shipments — the Cortex-M Curve</h2></div>
+  <svg class="diagram" viewBox="0 0 900 300" style="width:100%;">
+    <g font-family="JetBrains Mono" font-size="11">
+      <!-- axes -->
+      <line x1="60"  y1="260" x2="880" y2="260" stroke="#8888a8"/>
+      <line x1="60"  y1="260" x2="60"  y2="30"  stroke="#8888a8"/>
+
+      <text x="60"  y="278" fill="#8888a8">2005</text>
+      <text x="190" y="278" fill="#8888a8">2010</text>
+      <text x="320" y="278" fill="#8888a8">2013</text>
+      <text x="450" y="278" fill="#8888a8">2016</text>
+      <text x="580" y="278" fill="#8888a8">2019</text>
+      <text x="710" y="278" fill="#8888a8">2022</text>
+      <text x="840" y="278" fill="#8888a8">2024</text>
+
+      <text x="20" y="258" fill="#8888a8">0</text>
+      <text x="10" y="205" fill="#8888a8">10 B</text>
+      <text x="10" y="155" fill="#8888a8">20 B</text>
+      <text x="10" y="105" fill="#8888a8">30 B</text>
+      <text x="10" y="55"  fill="#8888a8">40 B</text>
+
+      <text x="50" y="22" fill="#f5a623">Cumulative Arm-based chips shipped (approx.)</text>
+
+      <!-- a smooth curve (piecewise) -->
+      <path d="M 60 258
+               L 190 253
+               L 320 235
+               L 450 200
+               L 580 145
+               L 710 80
+               L 840 35"
+            fill="none" stroke="#f5a623" stroke-width="3"/>
+
+      <!-- milestone markers -->
+      <circle cx="320" cy="235" r="5" fill="#4ecb8d"/>
+      <text x="325" y="225" fill="#4ecb8d" font-size="10">10B cumul. (2013)</text>
+
+      <circle cx="450" cy="200" r="5" fill="#4ecb8d"/>
+      <text x="455" y="190" fill="#4ecb8d" font-size="10">~18B (2017, M-profile ≈ 2/3)</text>
+
+      <circle cx="580" cy="145" r="5" fill="#4ecb8d"/>
+      <text x="585" y="135" fill="#4ecb8d" font-size="10">~28B (2020)</text>
+
+      <circle cx="710" cy="80" r="5" fill="#4ecb8d"/>
+      <text x="715" y="70" fill="#4ecb8d" font-size="10">~40B (2022)</text>
+
+      <circle cx="840" cy="35" r="5" fill="#4ecb8d"/>
+      <text x="700" y="30" fill="#4ecb8d" font-size="10">&gt; 50B (2024)</text>
+    </g>
+  </svg>
+  <p class="smaller dim">Figures from Arm's investor presentations and the 2023 IPO prospectus. Cortex-M represents the largest shipment slice (by unit count); Cortex-A represents the largest revenue slice.</p>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">13</span><h2>Inflection Points in M-Profile</h2></div>
+  <div class="cols cols-3">
+    <div class="card amber">
+      <h3 class="a">Thumb-2 everywhere (2004)</h3>
+      <p>Dropping A32 in the microcontroller profile was a one-way choice — once made, every toolchain and every RTOS simplified. Nobody regretted it.</p>
+    </div>
+    <div class="card green">
+      <h3 class="g">NVIC is the core (2004)</h3>
+      <p>Integrating the interrupt controller into the CPU with a fixed register map meant driver code could be written against "the NVIC" instead of "STMicro's interrupt controller". This portability cemented Cortex-M's dominance.</p>
+    </div>
+    <div class="card purple">
+      <h3 class="p">DSP extension (2010)</h3>
+      <p>Cortex-M4's SIMD and saturating math unlocked audio &amp; motor-control for MCUs. Before M4, these tasks needed a dedicated DSP (TI C28x, ADSP Blackfin).</p>
+    </div>
+  </div>
+  <div class="cols cols-3" style="margin-top:0.5em;">
+    <div class="card blue">
+      <h3 class="b">TrustZone-M (2016)</h3>
+      <p>Bringing secure/non-secure state to MCUs made PSA-certified IoT / payment / medical possible without a separate secure element chip.</p>
+    </div>
+    <div class="card amber">
+      <h3 class="a">Helium MVE (2019)</h3>
+      <p>128-bit beat-wise vector with int8 + FP16 lanes — explicitly designed for TinyML inference. 5× speedup on CNN kernels vs DSP intrinsics on M4.</p>
+    </div>
+    <div class="card green">
+      <h3 class="g">PACBTI (2022)</h3>
+      <p>Pointer Authentication + Branch Target Identification hardens control flow against ROP/JOP exploits — a first-class defence on MCUs, not just servers.</p>
+    </div>
+  </div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">14</span><h2>The Licensing Model</h2></div>
+  <div class="cols cols-2">
+    <div>
+      <ul>
+        <li>Arm does not fab chips. It licenses <strong>synthesisable RTL</strong> (the "core IP") plus tool flows, compilers, and reference designs.</li>
+        <li>Typical licence structure:
+          <ul>
+            <li><strong>Per-design licence</strong> — paid once per SoC tape-out.</li>
+            <li><strong>Royalty</strong> — a few pence per chip, for the life of the product.</li>
+          </ul>
+        </li>
+        <li><strong>Arm Flexible Access</strong> (2019) — a subscription that bundles most Cortex-M cores + tools for start-ups &amp; small teams. Lowered the barrier to a first Cortex-M SoC to ~€75k / year.</li>
+        <li><strong>Cortex-M0 DesignStart</strong> (2017) — free-to-license M0 + interrupt controller for academic / evaluation use.</li>
+        <li>220+ companies license Cortex-M today.</li>
+      </ul>
+    </div>
+    <div>
+      <div class="card blue">
+        <h3 class="b">Why it works</h3>
+        <p>A single team at Arm (~150 people for the M-profile CPU group) designs the core. 220+ silicon companies then independently ship tens of thousands of SKUs, reusing Arm's verification, Arm's compiler, Arm's CMSIS headers. Software ecosystem compounds across vendors.</p>
+      </div>
+      <div class="card amber" style="margin-top:0.4em;">
+        <h3 class="a">Contrast with x86</h3>
+        <p>Intel &amp; AMD both design <em>and</em> fabricate. Result: 2 vendors, tight vertical integration, no 8051-like diversity. Arm's model gave it the long tail of MCU vendors x86 never had.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">15</span><h2>Corporate History — SoftBank, Nvidia, IPO</h2></div>
+  <div class="tl">
+    <div class="yr">1990</div><div class="dot">●</div><div class="ev">Arm Holdings founded (Apple / Acorn / VLSI joint venture), Cambridge.</div>
+    <div class="yr">1998</div><div class="dot">●</div><div class="ev">Arm IPO on LSE and NASDAQ. ~£266M market cap.</div>
+    <div class="yr">2016</div><div class="dot">●</div><div class="ev hi"><strong>SoftBank acquires Arm</strong> for £24.3 B. Taken private.</div>
+    <div class="yr">2020</div><div class="dot">●</div><div class="ev"><strong>Nvidia announces $40 B acquisition of Arm</strong> from SoftBank.</div>
+    <div class="yr">2022</div><div class="dot">●</div><div class="ev hi">Nvidia / SoftBank deal <strong>abandoned</strong> under UK/EU/US regulatory pressure.</div>
+    <div class="yr">2023</div><div class="dot">●</div><div class="ev hi"><strong>Arm IPO</strong> on NASDAQ (<em>Arm Holdings plc</em>, ticker <code>ARM</code>), Sep 2023. ~$54 B valuation at open.</div>
+    <div class="yr">2023</div><div class="dot">●</div><div class="ev"><strong>Arm Total Design</strong> ecosystem launched — reference flows bundling Arm CPUs with partner chiplet IP for custom silicon.</div>
+    <div class="yr">2024</div><div class="dot">●</div><div class="ev">Arm pivots marketing toward AI — Neoverse for datacentre AI, Cortex-M52/M85 for TinyML at the edge.</div>
+  </div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">16</span><h2>What Cortex-M Inherits</h2></div>
+  <div class="cols cols-2">
+    <div>
+      <h3>From ARM1 (1985)</h3>
+      <ul>
+        <li><strong>Load/store architecture</strong> — compute only between registers.</li>
+        <li><strong>16 general-purpose registers</strong> — R0–R15, same layout 40 years later.</li>
+        <li>R13=SP, R14=LR, R15=PC convention unchanged.</li>
+        <li>Pipelined design with in-order execution.</li>
+      </ul>
+      <h3>From ARM7TDMI (1994)</h3>
+      <ul>
+        <li><strong>Thumb</strong> — compact 16-bit encoding.</li>
+        <li><strong>Debug</strong> — architected debug interface (CoreSight evolved from this).</li>
+        <li><strong>ICE-RT</strong> — halting debug concept.</li>
+      </ul>
+    </div>
+    <div>
+      <h3>From ARMv5E (1999)</h3>
+      <ul>
+        <li>DSP extensions — saturating arithmetic, double-MAC (now in Cortex-M4+).</li>
+      </ul>
+      <h3>From Armv7-M (2004)</h3>
+      <ul>
+        <li><strong>NVIC</strong> in the core.</li>
+        <li><strong>Thumb-2</strong> full ISA.</li>
+        <li>Profile split — M-profile became its own thing.</li>
+      </ul>
+      <h3>From Armv8-M (2016)</h3>
+      <ul>
+        <li><strong>TrustZone</strong>, stack-limit registers, SAU/IDAU.</li>
+      </ul>
+      <h3>From Armv8.1-M (2019)</h3>
+      <ul>
+        <li><strong>Helium (MVE)</strong>, low-overhead loops, PACBTI.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">17</span><h2>Competitive Landscape Today</h2></div>
+  <table>
+    <tr><th>Competitor</th><th>Position vs Cortex-M</th><th>Status (2024/5)</th></tr>
+    <tr><td><strong class="a">RISC-V</strong></td><td>Open ISA alternative; gaining in cost-sensitive / China-sovereign silicon.</td><td>Raspberry Pi RP2350 ships with dual M33 <em>or</em> dual Hazard-3 RISC-V. SiFive, Andes, Codasip supply RISC-V MCU cores.</td></tr>
+    <tr><td><strong class="g">8051 / AVR / PIC</strong></td><td>8-bit; still shipping but new designs are rare.</td><td>Ultra-low-cost &amp; legacy markets only.</td></tr>
+    <tr><td><strong class="p">TI C28x</strong></td><td>Dedicated DSP for motor control.</td><td>Co-exists with Cortex-M4 in the same SoC; hybrid parts like C2000 / F28P6x pair M33 + C28x.</td></tr>
+    <tr><td><strong class="b">Microchip PIC32 MIPS</strong></td><td>32-bit MIPS MCU line.</td><td>Maintained but not expanding; MIPS-the-company pivoted to RISC-V in 2022.</td></tr>
+    <tr><td><strong class="r">Infineon TriCore / AURIX</strong></td><td>Automotive 32-bit with integrated safety MCU.</td><td>Strong in power-train / ADAS; orthogonal to Cortex-M.</td></tr>
+  </table>
+  <div class="card amber" style="font-size:0.72em;">
+    RISC-V is the real long-term competitor. The Cortex-M's answer is the <strong>CMSIS software moat</strong>, the <strong>production-hardened NVIC model</strong>, and the <strong>tool-chain / vendor ecosystem</strong> — territory the RISC-V world is still building in 2025.
+  </div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">18</span><h2>Timeline — One Slide</h2></div>
+  <svg class="diagram" viewBox="0 0 980 420" style="width:100%;">
+    <defs>
+      <marker id="arrB" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#f5a623"/></marker>
+    </defs>
+    <g font-family="DM Sans" font-size="11">
+      <!-- ruler -->
+      <line x1="40" y1="380" x2="960" y2="380" stroke="#8888a8"/>
+      <g fill="#8888a8">
+        <text x="60"  y="400" text-anchor="middle">1985</text>
+        <text x="180" y="400" text-anchor="middle">1990</text>
+        <text x="310" y="400" text-anchor="middle">1994</text>
+        <text x="420" y="400" text-anchor="middle">2004</text>
+        <text x="540" y="400" text-anchor="middle">2010</text>
+        <text x="660" y="400" text-anchor="middle">2016</text>
+        <text x="790" y="400" text-anchor="middle">2020</text>
+        <text x="920" y="400" text-anchor="middle">2024</text>
+      </g>
+
+      <!-- rows -->
+      <text x="5" y="60"  fill="#f5a623" font-weight="700" font-size="11">Corporate</text>
+      <text x="5" y="160" fill="#4ecb8d" font-weight="700" font-size="11">A / R profiles</text>
+      <text x="5" y="260" fill="#60a5fa" font-weight="700" font-size="11">M profile</text>
+
+      <!-- corporate -->
+      <g fill="#fff">
+        <rect x="50"  y="40" width="120" height="34" rx="5" fill="#2a1a0a" stroke="#f5a623"/><text x="110" y="62" text-anchor="middle">Acorn / ARM1</text>
+        <rect x="170" y="40" width="140" height="34" rx="5" fill="#2a1a0a" stroke="#f5a623"/><text x="240" y="62" text-anchor="middle">Apple JV (1990)</text>
+        <rect x="370" y="40" width="120" height="34" rx="5" fill="#2a1a0a" stroke="#f5a623"/><text x="430" y="62" text-anchor="middle">LSE IPO (1998)</text>
+        <rect x="620" y="40" width="120" height="34" rx="5" fill="#2a1a0a" stroke="#f5a623"/><text x="680" y="62" text-anchor="middle">SoftBank (2016)</text>
+        <rect x="840" y="40" width="120" height="34" rx="5" fill="#2a1a0a" stroke="#f5a623"/><text x="900" y="62" text-anchor="middle">Arm IPO (2023)</text>
+      </g>
+
+      <!-- A/R -->
+      <g fill="#fff">
+        <rect x="250" y="140" width="110" height="34" rx="5" fill="#0a2a1a" stroke="#4ecb8d"/><text x="305" y="162" text-anchor="middle">ARM7TDMI</text>
+        <rect x="400" y="140" width="110" height="34" rx="5" fill="#0a2a1a" stroke="#4ecb8d"/><text x="455" y="162" text-anchor="middle">Cortex-A8</text>
+        <rect x="540" y="140" width="110" height="34" rx="5" fill="#0a2a1a" stroke="#4ecb8d"/><text x="595" y="162" text-anchor="middle">Armv8 A64</text>
+        <rect x="760" y="140" width="120" height="34" rx="5" fill="#0a2a1a" stroke="#4ecb8d"/><text x="820" y="162" text-anchor="middle">Armv9 / SVE2</text>
+      </g>
+
+      <!-- M -->
+      <g fill="#fff">
+        <rect x="410" y="240" width="100" height="34" rx="5" fill="#0a1a2a" stroke="#60a5fa"/><text x="460" y="262" text-anchor="middle">Cortex-M3</text>
+        <rect x="530" y="240" width="100" height="34" rx="5" fill="#0a1a2a" stroke="#60a5fa"/><text x="580" y="262" text-anchor="middle">M0 / M4</text>
+        <rect x="640" y="240" width="100" height="34" rx="5" fill="#0a1a2a" stroke="#60a5fa"/><text x="690" y="262" text-anchor="middle">M7 / M33</text>
+        <rect x="750" y="240" width="100" height="34" rx="5" fill="#0a1a2a" stroke="#60a5fa"/><text x="800" y="262" text-anchor="middle">M55 (MVE)</text>
+        <rect x="860" y="240" width="100" height="34" rx="5" fill="#0a1a2a" stroke="#60a5fa"/><text x="910" y="262" text-anchor="middle">M85 / M52</text>
+      </g>
+
+      <!-- vertical links -->
+      <line x1="430" y1="180" x2="430" y2="240" stroke="#8888a8" stroke-dasharray="2 2"/>
+      <text x="435" y="230" font-size="10" fill="#8888a8">profile split</text>
+      <line x1="600" y1="180" x2="600" y2="240" stroke="#8888a8" stroke-dasharray="2 2"/>
+      <text x="605" y="230" font-size="10" fill="#8888a8">v8 split</text>
+    </g>
+  </svg>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">19</span><h2>Lessons for the Interview</h2></div>
+  <div class="cols cols-2">
+    <div>
+      <ul>
+        <li><strong class="a">"Why Thumb-only?"</strong> → code density + pipeline simplicity; the Archimedes-to-Newton lineage cared about ROM cost first, silicon area second.</li>
+        <li><strong class="a">"Why is the NVIC architectural?"</strong> → because Arm's 2004 profile split made the interrupt controller part of the CPU contract; portability of driver code.</li>
+        <li><strong class="a">"Why is the priority field 8 bits but only top N used?"</strong> → forward-compatibility: a driver compiled for a 4-bit impl works on an 8-bit impl without changes.</li>
+        <li><strong class="a">"Why did v8-M bring TrustZone to MCUs?"</strong> → PSA &amp; IoT security economics (2014–2016) required root-of-trust isolation without a second chip.</li>
+      </ul>
+    </div>
+    <div>
+      <ul>
+        <li><strong class="g">"Why did M7 bring caches but M3/M4 didn't?"</strong> → flash wait-states became dominant at 300+ MHz; caches hide them. At &lt; 100 MHz, single-cycle flash makes caches unnecessary.</li>
+        <li><strong class="g">"What's the difference between Helium and NEON?"</strong> → Helium is 128-bit <em>beat-wise</em> SIMD designed for MCU area; NEON is a full 128-bit SIMD block on A-profile. Different instruction set, different micro-architecture.</li>
+        <li><strong class="g">"Is Cortex-M relevant now?"</strong> → M-profile accounts for the majority of Arm <em>units</em> shipped. Every Wi-Fi dongle, smartwatch companion, car door-lock sensor, washing-machine controller ships one.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">20</span><h2>References</h2></div>
+  <div style="max-width:90%;margin:0 auto;font-size:0.58em;line-height:1.8;">
+    <p>
+      <strong class="a">Arm Ltd.</strong> — <em>Arm Architecture Reference Manual</em> (A-profile, R-profile, M-profile) — all freely downloadable<br>
+      <strong class="a">Steve Furber</strong> — <em>ARM System-on-Chip Architecture</em>, 2nd ed. (Addison-Wesley, 2000) — history + architecture by one of the original ARM1 designers<br>
+      <strong class="a">Sophie Wilson &amp; Steve Furber</strong> — oral histories, Computer History Museum (CHM) and the British Computer Society archive<br>
+      <strong class="a">Joseph Yiu</strong> — <em>Definitive Guide to ARM Cortex-M3/M4</em> &amp; <em>Cortex-M23/M33</em> — chapters on Arm architecture history<br>
+      <strong class="a">Chisnall, D.</strong> — "Understanding ARM Architectures" (ACM Queue, 2015)<br>
+      <strong class="a">Arm IPO prospectus (2023)</strong> — historical shipment data, revenue splits, licensee counts<br>
+      <strong class="a">Wikipedia</strong> — "ARM architecture family", "Acorn Computers", "ARM Holdings" — surprisingly well-sourced cross-references<br>
+      <strong class="a">Hauser, Curry, Saxby</strong> — interviews in <em>Micro Men</em> (BBC, 2009) and the 30-year Arm anniversary documentary (2020)
+    </p>
+    <p style="color:var(--muted);margin-top:0.8em;font-size:0.85em">
+      Presentation built with <a href="https://revealjs.com">Reveal.js 4.6</a> · Playfair Display + DM Sans + JetBrains Mono<br>
+      Educational use.
+    </p>
+  </div>
+</section>
+
+</div></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/highlight/highlight.min.js"></script>
+<script>
+Reveal.initialize({ hash: true, slideNumber: 'c/t', transition: 'fade', transitionSpeed: 'fast', controls: true, progress: true, center: false, width: 1100, height: 900, margin: 0.01, plugins: [RevealHighlight], highlight: { theme: 'monokai' } });
+</script>
+<script>
+(function(){ var h = Reveal.getConfig().height || 900; var m = Reveal.getConfig().margin || 0.02; var maxH = Math.floor(h * (1 - 2 * m)) + 'px'; function fixSlides(){ document.querySelectorAll('.reveal .slides>section,.reveal .slides>section>section').forEach(function(s){ s.style.display = 'block'; s.style.maxHeight = maxH; }); } Reveal.on('ready', fixSlides); Reveal.on('slidechanged', fixSlides); })();
+</script>
+</body>
+</html>

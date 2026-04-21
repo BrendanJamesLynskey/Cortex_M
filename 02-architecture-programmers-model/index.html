@@ -1,0 +1,1133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cortex-M Architecture & Programmer's Model</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@400;500;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/black.min.css">
+<style>
+  :root {
+    --amber:  #f5a623;
+    --green:  #4ecb8d;
+    --purple: #a78bfa;
+    --blue:   #60a5fa;
+    --red:    #f87171;
+    --bg:     #0a0a0f;
+    --bg2:    #10101a;
+    --bg3:    #181824;
+    --border: #2a2a3a;
+    --text:   #e8e8f0;
+    --muted:  #8888a8;
+  }
+
+  .reveal-viewport { background: var(--bg); }
+  .reveal .slides section { background: transparent; }
+  .reveal section { text-align: left; }
+  .reveal .slides > section { padding: 0.5em; overflow-y: auto !important; align-items: flex-start !important; justify-content: flex-start !important; }
+  .reveal .progress { color: var(--amber); height: 3px; }
+  .reveal .controls { color: var(--amber); }
+
+  .reveal section::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--amber), var(--green));
+  }
+
+  .reveal { font-family: 'DM Sans', sans-serif; color: var(--text); font-size: 22px; }
+  .reveal .slide-number { font-family: 'JetBrains Mono', monospace; font-size: 0.7em; color: var(--muted); }
+  .reveal h1, .reveal h2, .reveal h3 { font-family: 'Playfair Display', serif; color: #fff; text-transform: none; letter-spacing: -0.01em; }
+  .reveal h1 { font-size: 2.4em; font-weight: 900; color: var(--amber); line-height: 1.1; }
+  .reveal h2 { font-size: 1.7em; font-weight: 700; color: var(--amber); margin-bottom: 0.6em; }
+  .reveal h3 { font-size: 1.2em; font-weight: 700; color: var(--green); margin-bottom: 0.3em; }
+  .reveal p  { font-size: 0.75em; line-height: 1.5; color: var(--text); }
+  .reveal li { font-size: 0.7em; line-height: 1.5; margin-bottom: 0.25em; }
+  .reveal code { font-family: 'JetBrains Mono', monospace; font-size: .72em; }
+  .reveal pre  { box-shadow: none; background: var(--bg3); border: 1px solid var(--border);
+                 border-radius: 8px; padding: 0.5em 1em; margin: 0.4em 0; width: 100%; }
+  .reveal pre code { font-size: 0.58em; line-height: 1.5; background: transparent; color: #cdd6f4; }
+
+  .slide-hdr {
+    display: flex; align-items: center; gap: .4em;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: .2em; margin-bottom: .3em;
+  }
+  .slide-hdr .tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.55em; font-weight: 600;
+    color: var(--bg); background: var(--amber);
+    padding: .1em .4em; border-radius: 3px;
+    letter-spacing: .04em;
+  }
+  .slide-hdr h2 { margin: 0; font-size: 1.4em; }
+
+  .cols   { display: grid; gap: 1em; }
+  .cols-2 { grid-template-columns: 1fr 1fr; }
+  .cols-3 { grid-template-columns: 1fr 1fr 1fr; }
+  .cols-6040 { grid-template-columns: 6fr 4fr; }
+  .cols-4060 { grid-template-columns: 4fr 6fr; }
+
+  .card {
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: 8px; padding: 1em 1.2em;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3); margin: 0.4em 0;
+  }
+  .card.amber { border-left: 3px solid var(--amber); }
+  .card.green { border-left: 3px solid var(--green); }
+  .card.purple{ border-left: 3px solid var(--purple); }
+  .card.blue  { border-left: 3px solid var(--blue); }
+  .card.red   { border-left: 3px solid var(--red); }
+  .card h3 { font-size: 1em; margin: 0 0 0.4em; }
+  .card p, .card ul  { font-size: 0.8em; margin: 0; color: #b8b8d0; }
+  .card ul { margin: 0; padding-left: 1.2em; }
+  .card li { font-size: 0.85em; color: #b8b8d0; margin-bottom: 0.25em; }
+
+  .reveal table { width: 100%; border-collapse: collapse; font-size: 0.65em; margin: 0.5em 0; }
+  .reveal table th { background: var(--bg3); color: var(--amber); font-weight: 600;
+                     padding: 0.5em 0.7em; border: 1px solid var(--border); text-align: left; font-weight: 700; }
+  .reveal table td { padding: 0.5em 0.7em; border: 1px solid var(--border); color: #ccc; vertical-align: top; }
+  .reveal table tr:nth-child(even) td { background: #0e0e18; }
+
+  .a  { color: var(--amber); font-weight: 600; }
+  .g  { color: var(--green); font-weight: 600; }
+  .p  { color: var(--purple); font-weight: 600; }
+  .b  { color: var(--blue); font-weight: 600; }
+  .r  { color: var(--red); font-weight: 600; }
+  .mono { font-family: 'JetBrains Mono', monospace; }
+
+  svg.diagram { display: block; margin: 0 auto; overflow: visible; }
+
+  .pill {
+    display: inline-block; font-family: 'JetBrains Mono', monospace;
+    font-size: 0.6em; padding: 0.15em 0.6em; border-radius: 999px;
+    border: 1px solid; margin: 0 .08em;
+  }
+  .pill.amber { color: var(--amber); border-color: var(--amber); }
+  .pill.green { color: var(--green); border-color: var(--green); }
+  .pill.purple{ color: var(--purple); border-color: var(--purple); }
+  .pill.blue  { color: var(--blue); border-color: var(--blue); }
+  .pill.red   { color: var(--red); border-color: var(--red); }
+
+  .reveal .slide-footer { display: none; }
+  .title-slide h1 { font-size: 2.4em; }
+  .title-slide .subtitle {
+    font-size: 0.85em; color: var(--green); font-family: 'DM Sans', sans-serif;
+    font-weight: 400; letter-spacing: 0.06em; margin: 0.3em 0 0.6em;
+  }
+  .title-slide .meta { font-size: 0.6em; color: var(--muted); font-family: 'JetBrains Mono', monospace; }
+
+  .arch-stack { display: flex; flex-direction: column; align-items: center; gap: 3px; margin: 0.5em auto; max-width: 700px; }
+  .arch-layer { width: 100%; padding: 0.4em 0.8em; border-radius: 6px; text-align: center; font-size: 0.75em; font-weight: 700; font-family: 'JetBrains Mono', monospace; }
+
+  .reg-box {
+    display: grid; grid-template-columns: 90px 1fr; gap: 4px; font-family: 'JetBrains Mono', monospace;
+    font-size: 0.6em; margin: 0.25em 0;
+  }
+  .reg-box .n { color: var(--amber); font-weight: 700; background: var(--bg3); padding: 0.25em 0.5em; border-radius: 3px; text-align: center; }
+  .reg-box .d { color: var(--text); background: var(--bg2); padding: 0.25em 0.5em; border-radius: 3px; border: 1px solid var(--border); }
+
+  .dim { color: var(--muted); }
+  .small { font-size: 0.65em; }
+  .smaller { font-size: 0.55em; }
+  .tiny { font-size: 0.48em; }
+
+  .reveal ul, .reveal ol { margin: .15em 0 .15em 1em; }
+
+  /* Interactive core-picker */
+  .picker {
+    display: grid; grid-template-columns: repeat(6, 1fr); gap: 4px;
+    font-family: 'JetBrains Mono', monospace; font-size: 0.6em;
+    margin: 0.5em 0;
+  }
+  .picker .btn {
+    cursor: pointer; padding: 0.4em 0.3em; border: 1px solid var(--border);
+    border-radius: 5px; background: var(--bg2); color: var(--text); text-align: center;
+    transition: all 0.15s;
+  }
+  .picker .btn:hover { border-color: var(--amber); color: var(--amber); }
+  .picker .btn.active { background: var(--amber); color: var(--bg); border-color: var(--amber); font-weight: 700; }
+  .core-info { background: var(--bg2); border: 1px solid var(--border); border-left: 3px solid var(--amber); border-radius: 6px; padding: 0.7em 1em; margin-top: 0.4em; font-size: 0.75em; min-height: 140px; }
+  .core-info .title { color: var(--amber); font-weight: 700; font-family: 'Playfair Display', serif; font-size: 1.15em; margin-bottom: 0.15em; }
+  .core-info .isa { color: var(--green); font-family: 'JetBrains Mono', monospace; font-size: 0.75em; margin-bottom: 0.4em; }
+  .core-info ul { margin: 0.2em 0 0 1em; font-size: 0.9em; }
+
+  /* State-matrix grid */
+  .state-grid {
+    display: grid; grid-template-columns: 140px 1fr 1fr; gap: 6px;
+    font-size: 0.7em; margin: 0.5em 0;
+  }
+  .state-grid .h { color: var(--amber); font-weight: 700; font-family: 'JetBrains Mono', monospace; padding: 0.4em 0.6em; background: var(--bg3); border-radius: 4px; }
+  .state-grid .c { background: var(--bg2); border: 1px solid var(--border); border-radius: 4px; padding: 0.4em 0.7em; }
+  .state-grid .c.hi { border-left: 3px solid var(--green); }
+  .state-grid .c.lo { border-left: 3px solid var(--purple); }
+</style>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+
+<section class="title-slide" data-background-color="#0a0a0f">
+  <div style="font-family:'JetBrains Mono',monospace; font-size:.5em; color:var(--muted); margin-bottom:.4em; letter-spacing:.1em;">ARM CORTEX-M · PRESENTATION 02</div>
+  <h1>Architecture &amp; Programmer's Model</h1>
+  <div class="subtitle">The Cortex-M Family · Armv6-M / v7-M / v8-M · Thumb-2 · Registers &amp; Modes</div>
+  <div style="width:60px; height:3px; background:var(--amber); margin-bottom:1.4em;"></div>
+  <div class="meta" style="margin-top:1.5em;">
+    M0 · M0+ · M3 · M4 · M7 · M23 · M33 · M35P · M52 · M55 · M85
+  </div>
+  <div class="meta" style="margin-top:1em;">Navigate: <span class="mono">→ ←</span> &nbsp;|&nbsp; Overview: <span class="mono">Esc</span> &nbsp;|&nbsp; Fullscreen: <span class="mono">F</span></div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">02</span><h2>Why Cortex-M Matters</h2></div>
+  <div class="cols cols-2" style="margin-top:0.5em;">
+    <div>
+      <ul style="font-size:0.78em;">
+        <li><strong class="a">The default 32-bit MCU ISA.</strong> Virtually every major MCU vendor (ST, NXP, Nordic, Silicon Labs, Renesas, Microchip, Infineon, TI, Ambiq, GigaDevice, Raspberry Pi) ships Cortex-M silicon.</li>
+        <li><strong class="g">Volume.</strong> Arm-based microcontrollers ship at <strong>tens of billions of units per year</strong>; Cortex-M is the largest slice.</li>
+        <li><strong class="g">Span.</strong> One family from a $0.10 Cortex-M0 to a 600 MHz cache-equipped Cortex-M85 — same toolchain, same CMSIS headers.</li>
+        <li><strong class="p">Ubiquity.</strong> Also lives <em>inside</em> bigger chips: as a secure enclave (Cortex-M33), a wake-up controller, or a peripheral offload engine in many A-profile SoCs.</li>
+      </ul>
+    </div>
+    <div>
+      <div class="card amber">
+        <h3 class="a">Interview context</h3>
+        <p>Cortex-M is the one architecture an embedded-firmware engineer is almost guaranteed to be tested on. Expect questions on the <em>exception model</em>, <em>memory map</em>, <em>NVIC</em>, <em>MPU</em>, and increasingly <em>TrustZone</em>.</p>
+      </div>
+      <div class="card blue" style="margin-top:0.6em;">
+        "The M-profile is the only 32-bit architecture designed from the ground up for deterministic interrupt latency and bit-level peripheral control — everything else is a general-purpose CPU with interrupts bolted on."
+        <br><span class="dim small">— Paraphrasing Joseph Yiu's design philosophy</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">03</span><h2>Arm Profiles: A, R, M</h2></div>
+  <table>
+    <tr><th>Profile</th><th>Target</th><th>Memory</th><th>OS</th><th>Examples</th></tr>
+    <tr>
+      <td><span class="pill amber">A</span> Application</td>
+      <td>Smartphones, servers, laptops</td>
+      <td>MMU with virtual memory (Sv39 etc.)</td>
+      <td>Linux, Android, Windows, iOS</td>
+      <td>Cortex-A78, Neoverse N2, Apple M-series</td>
+    </tr>
+    <tr>
+      <td><span class="pill green">R</span> Real-Time</td>
+      <td>Automotive, baseband, storage</td>
+      <td>MPU (protection, no virt)</td>
+      <td>AUTOSAR, QNX, bare-metal</td>
+      <td>Cortex-R52, R82</td>
+    </tr>
+    <tr>
+      <td><span class="pill blue">M</span> Microcontroller</td>
+      <td>Deeply embedded, IoT, sensors</td>
+      <td>Optional MPU · physical addresses only</td>
+      <td>FreeRTOS, Zephyr, bare-metal</td>
+      <td>Cortex-M0+, M4, M33, M85</td>
+    </tr>
+  </table>
+  <div class="cols cols-2" style="margin-top:0.4em;">
+    <div class="card green">
+      <h3 class="g">What makes M-profile different</h3>
+      <ul>
+        <li><strong>Thumb-only</strong> — no A32/A64 mode; the core <em>starts</em> in Thumb state and stays there.</li>
+        <li><strong>NVIC is architectural</strong>, not an SoC add-on. Every Cortex-M has one; every C compiler knows about it.</li>
+        <li><strong>Exception entry in hardware</strong>: automatic stacking of the caller-saved register set.</li>
+        <li><strong>No virtual memory</strong>. Addresses go directly to the bus.</li>
+      </ul>
+    </div>
+    <div class="card purple">
+      <h3 class="p">What M-profile does <em>not</em> have</h3>
+      <ul>
+        <li>No A64 (AArch64) instructions — 32-bit only.</li>
+        <li>No virtualisation extensions (EL2).</li>
+        <li>No SMP coherency protocol. Multi-core Cortex-M is asymmetric.</li>
+        <li>Caches are optional and only appear on M7/M55/M85.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">04</span><h2>The Cortex-M Family Timeline</h2></div>
+  <svg class="diagram" viewBox="0 0 1000 340" style="width:100%; max-width:960px;">
+    <!-- Timeline axis -->
+    <line x1="40" y1="300" x2="960" y2="300" stroke="#8888a8" stroke-width="2"/>
+    <g font-family="JetBrains Mono" font-size="10" fill="#8888a8">
+      <text x="70"  y="320" text-anchor="middle">2005</text>
+      <text x="200" y="320" text-anchor="middle">2009</text>
+      <text x="330" y="320" text-anchor="middle">2010</text>
+      <text x="460" y="320" text-anchor="middle">2014</text>
+      <text x="590" y="320" text-anchor="middle">2016</text>
+      <text x="720" y="320" text-anchor="middle">2019</text>
+      <text x="850" y="320" text-anchor="middle">2022</text>
+      <text x="940" y="320" text-anchor="middle">2024</text>
+    </g>
+    <!-- Armv6-M lane -->
+    <text x="5" y="90" font-family="JetBrains Mono" font-size="11" fill="#f5a623" font-weight="700">v6-M</text>
+    <g font-family="DM Sans" font-size="13" fill="#fff">
+      <rect x="150" y="70" width="70" height="34" rx="6" fill="#2a1a0a" stroke="#f5a623"/><text x="185" y="92" text-anchor="middle">M0</text>
+      <rect x="280" y="70" width="70" height="34" rx="6" fill="#2a1a0a" stroke="#f5a623"/><text x="315" y="92" text-anchor="middle">M0+</text>
+      <rect x="280" y="110" width="70" height="34" rx="6" fill="#2a1a0a" stroke="#f5a623"/><text x="315" y="132" text-anchor="middle">M1</text>
+    </g>
+    <!-- Armv7-M lane -->
+    <text x="5" y="190" font-family="JetBrains Mono" font-size="11" fill="#4ecb8d" font-weight="700">v7-M</text>
+    <g font-family="DM Sans" font-size="13" fill="#fff">
+      <rect x="50" y="170" width="70" height="34" rx="6" fill="#0a2a1a" stroke="#4ecb8d"/><text x="85" y="192" text-anchor="middle">M3</text>
+      <rect x="200" y="170" width="70" height="34" rx="6" fill="#0a2a1a" stroke="#4ecb8d"/><text x="235" y="192" text-anchor="middle">M4</text>
+      <rect x="410" y="170" width="70" height="34" rx="6" fill="#0a2a1a" stroke="#4ecb8d"/><text x="445" y="192" text-anchor="middle">M7</text>
+    </g>
+    <!-- Armv8-M lane -->
+    <text x="5" y="250" font-family="JetBrains Mono" font-size="11" fill="#a78bfa" font-weight="700">v8-M</text>
+    <g font-family="DM Sans" font-size="13" fill="#fff">
+      <rect x="540" y="230" width="70" height="34" rx="6" fill="#1a0a2a" stroke="#a78bfa"/><text x="575" y="252" text-anchor="middle">M23</text>
+      <rect x="610" y="230" width="70" height="34" rx="6" fill="#1a0a2a" stroke="#a78bfa"/><text x="645" y="252" text-anchor="middle">M33</text>
+      <rect x="700" y="230" width="70" height="34" rx="6" fill="#1a0a2a" stroke="#a78bfa"/><text x="735" y="252" text-anchor="middle">M35P</text>
+      <rect x="780" y="230" width="70" height="34" rx="6" fill="#2a0a2a" stroke="#a78bfa"/><text x="815" y="252" text-anchor="middle">M55</text>
+      <rect x="870" y="230" width="70" height="34" rx="6" fill="#2a0a2a" stroke="#a78bfa"/><text x="905" y="252" text-anchor="middle">M85</text>
+    </g>
+    <!-- v8.1-M callout -->
+    <text x="860" y="215" font-family="JetBrains Mono" font-size="10" fill="#a78bfa" font-weight="700">+Helium (v8.1-M)</text>
+    <line x1="800" y1="220" x2="800" y2="230" stroke="#a78bfa" stroke-dasharray="2,2"/>
+  </svg>
+  <p style="color:var(--muted); font-size:0.62em; text-align:center">Dates indicate initial announcement. v8.1-M (Helium/MVE) layered on top of v8-M Mainline adds the vector extension used by M52 · M55 · M85.</p>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">05</span><h2>Choose a Core — Interactive</h2></div>
+  <p class="dim small">Click a core to see its headline features. Same silicon IP block, vastly different trade-offs.</p>
+  <div class="picker" id="picker">
+    <div class="btn" data-k="m0">Cortex-M0</div>
+    <div class="btn" data-k="m0p">Cortex-M0+</div>
+    <div class="btn" data-k="m3">Cortex-M3</div>
+    <div class="btn" data-k="m4">Cortex-M4</div>
+    <div class="btn" data-k="m7">Cortex-M7</div>
+    <div class="btn" data-k="m23">Cortex-M23</div>
+    <div class="btn" data-k="m33">Cortex-M33</div>
+    <div class="btn" data-k="m35p">Cortex-M35P</div>
+    <div class="btn" data-k="m52">Cortex-M52</div>
+    <div class="btn" data-k="m55">Cortex-M55</div>
+    <div class="btn active" data-k="m85">Cortex-M85</div>
+  </div>
+  <div class="core-info" id="coreInfo">
+    <div class="title">Cortex-M85</div>
+    <div class="isa">Armv8.1-M Mainline · Helium (MVE) · 7-stage superscalar · PACBTI · Cache · TrustZone</div>
+    <ul>
+      <li>Arm's current flagship M-profile — ~6.3 CoreMark/MHz, ~4 DMIPS/MHz.</li>
+      <li>Dual-issue in-order pipeline with branch prediction.</li>
+      <li>Full Helium (MVE) vector unit — int8/int16/int32/FP16/FP32.</li>
+      <li>Optional PACBTI (pointer auth + branch-target identification) for CFI.</li>
+      <li>Target: ML-on-MCU, high-end real-time control, audio DSP.</li>
+    </ul>
+  </div>
+  <script>
+    (function(){
+      var data = {
+        m0:   { t:'Cortex-M0',    i:'Armv6-M · 3-stage · ~12k gates · Thumb subset · No MPU', b:['Smallest ARM core ever — designed to replace 8/16-bit MCUs.','~0.9 DMIPS/MHz. Single-cycle 32×32→32 multiply (option).','No bit-banding, no MPU, 32 IRQs max, 4 priority levels.','Perfect for wake-up controllers and sensor frontends.'] },
+        m0p:  { t:'Cortex-M0+',   i:'Armv6-M · 2-stage · MPU (optional) · MTB · Fast I/O port', b:['Revised M0: 2-stage pipeline reduces branch penalty & power.','Optional MPU (8 regions), single-cycle I/O for GPIO.','Micro Trace Buffer (MTB) for post-mortem branch trace.','Raspberry Pi RP2040 (dual M0+) put this in every hobbyist’s drawer.'] },
+        m3:   { t:'Cortex-M3',    i:'Armv7-M · 3-stage · Full Thumb-2 · NVIC · Bit-banding · Optional MPU', b:['The first "serious" Cortex-M. ~1.25 DMIPS/MHz.','Full Thumb-2 ISA — includes divide, bit-field insert/extract.','Bit-band regions in SRAM & peripherals.','Launched the STM32 F1 family; still a workhorse.'] },
+        m4:   { t:'Cortex-M4',    i:'Armv7E-M · 3-stage · DSP SIMD · Optional FPv4-SP FPU', b:['M3 + DSP extension (SIMD & saturating ops) + optional single-precision FPU.','~1.25 DMIPS/MHz; DSP instructions give ~4× speed-up on filter kernels.','STM32F4/F3, NXP K22, Nordic nRF52, Silicon Labs EFR32.','Still the default choice for audio/motor/IoT when a little DSP is useful.'] },
+        m7:   { t:'Cortex-M7',    i:'Armv7E-M · 6-stage dual-issue · AXI · L1 I/D$ · ITCM/DTCM · Optional FPv5-DP', b:['Highest-performance v7-M core: in-order dual-issue, branch prediction.','~2.14 DMIPS/MHz; up to 600 MHz in silicon (STM32H7).','Separate I-cache and D-cache + AXI bus interface.','Tightly-Coupled Memory (TCM) for deterministic critical code.'] },
+        m23:  { t:'Cortex-M23',   i:'Armv8-M Baseline · 2-stage · TrustZone · MPU · Optional div', b:['v8-M Baseline: basically "M0+ with TrustZone".','Adds SG instruction, banked MSP/PSP for S/NS, secure MPU.','Minimal area uplift over M0+; targets secure IoT endpoints.','Used inside A-profile SoCs as secure wake-up controllers too.'] },
+        m33:  { t:'Cortex-M33',   i:'Armv8-M Mainline · 3-stage · TrustZone · DSP opt · FPv5-SP opt · Co-proc', b:['v8-M flagship until M55. ~1.5 DMIPS/MHz, configurable DSP & FPU.','Co-processor interface (ACI) for vendor accelerators.','Huge penetration in secure MCUs: STM32L5/U5, Nordic nRF54L, NXP LPC55.','Also appears as Context/Secure Element in larger SoCs (e.g. i.MX 93).'] },
+        m35p: { t:'Cortex-M35P',  i:'Armv8-M Mainline · Physical security features · Anti-tamper', b:['M33 variant with enhanced side-channel &amp; fault-injection resistance.','Targets payment terminals, smart-card controllers, SIMs.','Physical security certifications (EMVCo, Common Criteria).'] },
+        m52:  { t:'Cortex-M52',   i:'Armv8.1-M Mainline · Helium (MVE int+FP) · TrustZone', b:['2024 release. Aimed as the Helium-capable replacement for M33 at lower cost.','Brings MVE int8/fp16 to mid-range secure MCUs — ML inference at the edge.','TrustZone &amp; PACBTI standard.'] },
+        m55:  { t:'Cortex-M55',   i:'Armv8.1-M Mainline · 4-stage · Helium (MVE) · Optional cache · TrustZone', b:['First Cortex-M with Helium. ~1.7 DMIPS/MHz + up to ~5× speed-up on ML/DSP.','Half-precision (FP16) and int8 vector ops — ideal for CMSIS-NN.','Optional I/D caches and TCM; found in Alif Ensemble, Renesas RA.'] },
+        m85:  { t:'Cortex-M85',   i:'Armv8.1-M Mainline · Helium (MVE) · 7-stage superscalar · PACBTI · Cache · TrustZone', b:['Arm’s current flagship M-profile — ~6.3 CoreMark/MHz, ~4 DMIPS/MHz.','Dual-issue in-order pipeline with branch prediction.','Full Helium (MVE) vector unit — int8/int16/int32/FP16/FP32.','Optional PACBTI (pointer auth + branch-target identification) for CFI.','Target: ML-on-MCU, high-end real-time control, audio DSP.'] }
+      };
+      var info = document.getElementById('coreInfo');
+      document.querySelectorAll('.picker .btn').forEach(function(b){
+        b.addEventListener('click', function(){
+          document.querySelectorAll('.picker .btn').forEach(function(x){ x.classList.remove('active'); });
+          b.classList.add('active');
+          var d = data[b.dataset.k];
+          info.innerHTML = '<div class="title">' + d.t + '</div><div class="isa">' + d.i + '</div><ul>' + d.b.map(function(x){return '<li>'+x+'</li>';}).join('') + '</ul>';
+        });
+      });
+    })();
+  </script>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">06</span><h2>Cortex-M Lineup at a Glance</h2></div>
+  <table style="font-size:0.55em;">
+    <tr><th>Core</th><th>Arch</th><th>Pipeline</th><th>DMIPS/MHz</th><th>DSP</th><th>FPU</th><th>Helium</th><th>TrustZone</th><th>Cache</th></tr>
+    <tr><td>M0</td>  <td>v6-M</td>   <td>3-stage</td>           <td>0.9</td>  <td>—</td><td>—</td>          <td>—</td><td>—</td><td>—</td></tr>
+    <tr><td>M0+</td> <td>v6-M</td>   <td>2-stage</td>           <td>0.95</td> <td>—</td><td>—</td>          <td>—</td><td>—</td><td>—</td></tr>
+    <tr><td>M3</td>  <td>v7-M</td>   <td>3-stage</td>           <td>1.25</td> <td>—</td><td>—</td>          <td>—</td><td>—</td><td>—</td></tr>
+    <tr><td>M4</td>  <td>v7E-M</td>  <td>3-stage</td>           <td>1.25</td> <td>✓</td><td>FPv4-SP (opt)</td><td>—</td><td>—</td><td>—</td></tr>
+    <tr><td>M7</td>  <td>v7E-M</td>  <td>6-stage dual-issue</td><td>2.14</td> <td>✓</td><td>FPv5 SP/DP (opt)</td><td>—</td><td>—</td><td>L1 I+D</td></tr>
+    <tr><td>M23</td> <td>v8-M Base</td><td>2-stage</td>         <td>0.99</td> <td>—</td><td>—</td>          <td>—</td><td>✓</td><td>—</td></tr>
+    <tr><td>M33</td> <td>v8-M Main</td><td>3-stage</td>         <td>1.5</td>  <td>opt</td><td>FPv5-SP (opt)</td><td>—</td><td>✓</td><td>—</td></tr>
+    <tr><td>M35P</td><td>v8-M Main</td><td>3-stage</td>         <td>1.5</td>  <td>opt</td><td>FPv5-SP (opt)</td><td>—</td><td>✓</td><td>—</td></tr>
+    <tr><td>M52</td> <td>v8.1-M</td> <td>4-stage</td>           <td>1.6</td>  <td>✓</td><td>FPv5 SP (opt)</td><td>✓ (int+FP)</td><td>✓</td><td>opt</td></tr>
+    <tr><td>M55</td> <td>v8.1-M</td> <td>4-stage</td>           <td>1.7</td>  <td>✓</td><td>FPv5 SP (opt)</td><td>✓ (int+FP)</td><td>✓</td><td>opt I+D</td></tr>
+    <tr><td>M85</td> <td>v8.1-M</td> <td>7-stage dual-issue</td><td>4.0</td>  <td>✓</td><td>FPv5 SP/DP (opt)</td><td>✓ (int+FP)</td><td>✓</td><td>opt I+D</td></tr>
+  </table>
+  <div class="card amber" style="font-size:0.65em;">
+    Headline numbers are upper-bound estimates from Arm's own benchmarking. Real silicon depends on memory latency, wait states, and which options the SoC vendor licensed.
+  </div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">07</span><h2>Armv6-M — The Minimal M-Profile</h2></div>
+  <div class="cols cols-2" style="margin-top:0.4em;">
+    <div>
+      <h3>Instruction set</h3>
+      <ul>
+        <li>Thumb subset: ~56 instructions.</li>
+        <li><strong class="r">No</strong> integer divide — software emulation.</li>
+        <li><strong class="r">No</strong> bit-field ops, no saturating arithmetic.</li>
+        <li>32×32→32 multiply (1-cycle or 32-cycle by option).</li>
+        <li>IT block present but limited (only 32-bit BL, SVC, MRS/MSR, DSB/DMB/ISB are 32-bit encodings).</li>
+      </ul>
+    </div>
+    <div>
+      <h3>System features</h3>
+      <ul>
+        <li><strong class="r">No</strong> bit-banding.</li>
+        <li><strong class="r">No</strong> BASEPRI — only PRIMASK for IRQ masking.</li>
+        <li>Max <strong>32 external IRQs</strong>, <strong>4 priority levels</strong>.</li>
+        <li>MPU optional on M0+ (8 regions) — not on M0/M1.</li>
+        <li>Single vector table; no VTOR on M0 (relocation via remap-to-SRAM trick on some SoCs); VTOR on M0+.</li>
+      </ul>
+    </div>
+  </div>
+  <div class="card green" style="font-size:0.7em;">
+    <strong class="g">Why it still matters:</strong> v6-M is cheap enough to drop in as a wake-up/boot controller on top of something far bigger. It is also the ISA targeted by dozens of Arm-compatible open clones.
+  </div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">08</span><h2>Armv7-M / v7E-M — Full Thumb-2</h2></div>
+  <div class="cols cols-2" style="margin-top:0.3em;">
+    <div>
+      <h3>v7-M (M3)</h3>
+      <ul>
+        <li>Full Thumb-2 (~200 instructions).</li>
+        <li>Hardware divide (SDIV/UDIV, 2–12 cycles).</li>
+        <li>Bit-field: <code>BFI</code>, <code>BFC</code>, <code>UBFX</code>, <code>SBFX</code>.</li>
+        <li>Exclusive access: <code>LDREX</code>/<code>STREX</code> (word, half, byte).</li>
+        <li>Bit-banding, NVIC, full MPU option.</li>
+        <li>Up to 240 IRQs, 8-bit priority field (implementations expose 3–8 bits).</li>
+      </ul>
+    </div>
+    <div>
+      <h3>v7E-M adds (M4, M7)</h3>
+      <ul>
+        <li><strong class="a">DSP extension</strong>: <code>SSAT</code>/<code>USAT</code>, <code>QADD</code>/<code>QSUB</code>, <code>QADD8</code>/<code>QADD16</code>, <code>SMLAD</code>, <code>SMLAL</code>, <code>SMMUL</code> etc.</li>
+        <li>Packed-operand SIMD on 32-bit registers (2×16-bit or 4×8-bit lanes).</li>
+        <li>Optional single-precision FPU (FPv4-SP on M4, FPv5-SP or FPv5-DP on M7).</li>
+      </ul>
+      <div class="card amber" style="margin-top:0.4em; font-size:0.72em;">
+        The DSP extension alone is a major interview topic for any DSP-adjacent role — see presentation 04.
+      </div>
+    </div>
+  </div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">09</span><h2>Armv8-M — TrustZone Arrives</h2></div>
+  <div class="cols cols-2" style="margin-top:0.3em;">
+    <div>
+      <h3>v8-M Baseline (M23)</h3>
+      <ul>
+        <li>Armv6-M + TrustZone (the "hardware security" part).</li>
+        <li>Adds <code>SG</code>, <code>BXNS</code>, <code>BLXNS</code>, <code>MOVW</code>/<code>MOVT</code>, hardware divide.</li>
+        <li>Keeps the small area footprint of M0+/M23.</li>
+      </ul>
+    </div>
+    <div>
+      <h3>v8-M Mainline (M33, M35P)</h3>
+      <ul>
+        <li>Superset of v7-M + TrustZone.</li>
+        <li>Introduces stack-limit registers (MSPLIM, PSPLIM) — HW-enforced stack overflow detection.</li>
+        <li>Co-processor interface (ACI) for vendor-specific instructions.</li>
+        <li>Separate S/NS banks for SP, PSPLIM, MSPLIM, CONTROL, FAULTMASK, BASEPRI, PRIMASK.</li>
+      </ul>
+    </div>
+  </div>
+  <div class="card purple" style="font-size:0.7em;">
+    <strong class="p">Armv8.1-M (M52/M55/M85)</strong> — layered on top of v8-M Mainline. Adds <em>Helium (MVE)</em>, low-overhead loops (LO Branch extension), custom-instruction framework, optional PACBTI. See presentation 04.
+  </div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">10</span><h2>Thumb-2 — Mixed 16/32-bit Encoding</h2></div>
+  <div class="cols cols-2" style="margin-top:0.3em;">
+    <div>
+      <h3>The idea</h3>
+      <ul>
+        <li>Cortex-M runs <strong>only</strong> in Thumb state — no A32 (ARM state), no A64.</li>
+        <li>Most common instructions encode in <strong>16 bits</strong> → excellent code density.</li>
+        <li>Less-common or wider-immediate variants use a <strong>32-bit</strong> encoding, distinguishable by the top-5 bits of the half-word.</li>
+        <li>Result: ≈ ARM 32-bit performance at ≈ ARM code size divided by 1.3.</li>
+      </ul>
+      <div class="card green" style="margin-top:0.3em;">
+        Code density matters more than clock speed when your flash is 64 KB and costs $0.02/KB.
+      </div>
+    </div>
+    <div>
+      <h3>Encoding at a glance</h3>
+<pre><code class="mono">; 16-bit encodings (common case)
+  MOV   r0, #42        ; 0x202A
+  ADD   r0, r1         ; 0x1840
+  LDR   r0, [r1, #4]   ; 0x6848
+
+; 32-bit encodings (wider imm, etc.)
+  MOVW  r0, #0x1234    ; F240 0234
+  BL    some_func      ; F7FF FFFE
+  UDIV  r0, r1, r2     ; FBB1 F0F2
+  SMLAL r0,r1,r2,r3    ; FBC2 0103</code></pre>
+      <p class="smaller dim">Decoder inspects the first half-word: bits[15:11] = <code>11101</code>, <code>11110</code>, or <code>11111</code> → 32-bit instruction.</p>
+    </div>
+  </div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">11</span><h2>The IT (If-Then) Block</h2></div>
+  <div class="cols cols-2" style="margin-top:0.3em;">
+    <div>
+      <p style="font-size:0.75em;">Arm A32 condition codes on every instruction — Thumb-2 instead uses a lightweight <strong class="a">IT</strong> instruction to predicate the next 1–4 instructions.</p>
+<pre><code class="mono">; if (r0 &lt; r1) r2 = r0; else r2 = r1;
+  CMP   r0, r1
+  ITE   LT          ; If Then Else
+  MOVLT r2, r0      ; IF branch
+  MOVGE r2, r1      ; ELSE branch</code></pre>
+      <ul style="font-size:0.7em;">
+        <li>Encodes "T" and "E" for up to 4 following instructions.</li>
+        <li>Avoids short branches; predictable timing → good for ISRs.</li>
+      </ul>
+    </div>
+    <div>
+      <h3>Interview gotchas</h3>
+      <ul>
+        <li>An IT block is architectural — the CPU tracks <code>ITSTATE</code> in <code>EPSR</code>. You cannot branch into the middle of one.</li>
+        <li>An exception taken inside an IT block is fine — hardware saves <code>xPSR</code> (which includes <code>ITSTATE</code>) on stack and restores it on return.</li>
+        <li>v8-M Mainline <em>deprecates</em> IT blocks of more than one instruction; v8.1-M adds branch-future alternatives for the same purpose.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">12</span><h2>Core Registers — R0 to R15</h2></div>
+  <div class="cols cols-2">
+    <div>
+      <div class="reg-box"><div class="n">R0 – R3</div><div class="d">Argument / scratch. Caller-saved. Auto-stacked on exception.</div></div>
+      <div class="reg-box"><div class="n">R4 – R11</div><div class="d">Variable registers. Callee-saved.</div></div>
+      <div class="reg-box"><div class="n">R12 (IP)</div><div class="d">Intra-procedure scratch. Used by linker veneers. Auto-stacked.</div></div>
+      <div class="reg-box"><div class="n">R13 (SP)</div><div class="d">Stack pointer — <strong class="a">banked</strong> MSP / PSP (and on v8-M, S/NS variants).</div></div>
+      <div class="reg-box"><div class="n">R14 (LR)</div><div class="d">Link register. On exception: holds <strong class="g">EXC_RETURN</strong> magic value.</div></div>
+      <div class="reg-box"><div class="n">R15 (PC)</div><div class="d">Program counter. Always even (Thumb bit live in instruction address LSB).</div></div>
+    </div>
+    <div>
+      <h3>AAPCS calling convention</h3>
+      <ul>
+        <li>Args in R0–R3, then stack.</li>
+        <li>Return value in R0 (or R0:R1 for 64-bit).</li>
+        <li>R4–R11, LR preserved across calls.</li>
+        <li>Stack 8-byte aligned at public interfaces.</li>
+      </ul>
+      <div class="card blue" style="margin-top:0.3em; font-size:0.72em;">
+        The auto-stacked set <code>{R0-R3, R12, LR, PC, xPSR}</code> = exactly the caller-saved set + return state. Hardware is effectively doing the function-prologue save for the ISR.
+      </div>
+    </div>
+  </div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">13</span><h2>xPSR — The Program Status Register</h2></div>
+  <svg class="diagram" viewBox="0 0 900 170" style="width:100%; max-width:900px;">
+    <g font-family="JetBrains Mono" font-size="11">
+      <!-- header row -->
+      <g fill="#8888a8">
+        <text x="30" y="20">31</text><text x="80" y="20">30</text><text x="130" y="20">29</text>
+        <text x="180" y="20">28</text><text x="230" y="20">27</text>
+        <text x="290" y="20">26..25</text>
+        <text x="400" y="20">24</text>
+        <text x="470" y="20">23..20</text>
+        <text x="550" y="20">19..16</text>
+        <text x="640" y="20">15..10</text>
+        <text x="740" y="20">9..8</text>
+        <text x="830" y="20">7..0</text>
+      </g>
+      <!-- bit boxes -->
+      <g font-size="14">
+        <rect x="20" y="30" width="40" height="40" fill="#2a1a0a" stroke="#f5a623"/>  <text x="40" y="56" text-anchor="middle" fill="#f5a623">N</text>
+        <rect x="70" y="30" width="40" height="40" fill="#2a1a0a" stroke="#f5a623"/>  <text x="90" y="56" text-anchor="middle" fill="#f5a623">Z</text>
+        <rect x="120" y="30" width="40" height="40" fill="#2a1a0a" stroke="#f5a623"/> <text x="140" y="56" text-anchor="middle" fill="#f5a623">C</text>
+        <rect x="170" y="30" width="40" height="40" fill="#2a1a0a" stroke="#f5a623"/> <text x="190" y="56" text-anchor="middle" fill="#f5a623">V</text>
+        <rect x="220" y="30" width="40" height="40" fill="#2a1a0a" stroke="#f5a623"/> <text x="240" y="56" text-anchor="middle" fill="#f5a623">Q</text>
+        <rect x="270" y="30" width="80" height="40" fill="#0a2a1a" stroke="#4ecb8d"/><text x="310" y="56" text-anchor="middle" fill="#4ecb8d">IT[1:0]</text>
+        <rect x="380" y="30" width="40" height="40" fill="#0a2a1a" stroke="#4ecb8d"/><text x="400" y="56" text-anchor="middle" fill="#4ecb8d">T</text>
+        <rect x="440" y="30" width="100" height="40" fill="#1a0a2a" stroke="#a78bfa"/><text x="490" y="56" text-anchor="middle" fill="#a78bfa">GE[3:0]</text>
+        <rect x="560" y="30" width="60" height="40" fill="#1a0a2a" stroke="#a78bfa"/><text x="590" y="56" text-anchor="middle" fill="#a78bfa">—</text>
+        <rect x="630" y="30" width="90" height="40" fill="#0a2a1a" stroke="#4ecb8d"/><text x="675" y="56" text-anchor="middle" fill="#4ecb8d">IT[7:2]</text>
+        <rect x="730" y="30" width="70" height="40" fill="#10101a" stroke="#8888a8"/><text x="765" y="56" text-anchor="middle" fill="#ccc">rsvd</text>
+        <rect x="810" y="30" width="80" height="40" fill="#2a0a0a" stroke="#f87171"/><text x="850" y="56" text-anchor="middle" fill="#f87171">ISR #</text>
+      </g>
+    </g>
+    <!-- labels -->
+    <g font-family="DM Sans" font-size="11" fill="#fff">
+      <text x="130" y="110" text-anchor="middle" fill="#f5a623">APSR</text>
+      <text x="130" y="125" font-size="9" text-anchor="middle" fill="#8888a8">Negative / Zero / Carry / oVerflow / Q-sticky (saturation)</text>
+      <text x="450" y="110" text-anchor="middle" fill="#4ecb8d">EPSR</text>
+      <text x="450" y="125" font-size="9" text-anchor="middle" fill="#8888a8">IT[7:0] = next-up to 4 cond-codes · T = Thumb state (always 1)</text>
+      <text x="485" y="145" text-anchor="middle" fill="#a78bfa">APSR.GE (DSP SIMD flags)</text>
+      <text x="850" y="110" text-anchor="middle" fill="#f87171">IPSR</text>
+      <text x="850" y="125" font-size="9" text-anchor="middle" fill="#8888a8">Active ISR number (0 in Thread mode)</text>
+    </g>
+  </svg>
+  <div class="card amber" style="font-size:0.7em;">
+    Three logical views of one physical register: <strong class="a">APSR</strong> (flags), <strong class="g">EPSR</strong> (execution state), <strong class="r">IPSR</strong> (active exception number). Separate <code>MRS</code>/<code>MSR</code> instructions read/write each subset. On exception entry, <em>the whole xPSR</em> is pushed as the 8th auto-stacked word.
+  </div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">14</span><h2>Special Registers</h2></div>
+  <table style="font-size:0.6em;">
+    <tr><th>Reg</th><th>Width</th><th>Purpose</th><th>Access</th></tr>
+    <tr>
+      <td><strong class="a">PRIMASK</strong></td><td>1 bit</td>
+      <td>Master IRQ disable. <code>cpsid i</code> sets; <code>cpsie i</code> clears. Blocks all exceptions <em>except</em> NMI and HardFault.</td>
+      <td>Privileged</td>
+    </tr>
+    <tr>
+      <td><strong class="a">FAULTMASK</strong></td><td>1 bit</td>
+      <td>Like PRIMASK but also blocks HardFault. Auto-cleared on return from handler.</td>
+      <td>Privileged · not on v6-M</td>
+    </tr>
+    <tr>
+      <td><strong class="a">BASEPRI</strong></td><td>8 bit</td>
+      <td>Block all IRQs of numerical priority ≥ BASEPRI (lower number = higher priority). Finer-grained than PRIMASK.</td>
+      <td>Privileged · not on v6-M</td>
+    </tr>
+    <tr>
+      <td><strong class="g">CONTROL</strong></td><td>3 bit</td>
+      <td>
+        Bit 0 (nPRIV): Thread mode privilege; 1 = unprivileged.<br>
+        Bit 1 (SPSEL): stack in use; 0 = MSP, 1 = PSP (in Thread mode).<br>
+        Bit 2 (FPCA): FPU context active — controls lazy stacking.
+      </td>
+      <td>Privileged (writing)</td>
+    </tr>
+    <tr>
+      <td><strong class="p">MSPLIM / PSPLIM</strong></td><td>32 bit</td>
+      <td>Stack-pointer lower limit. Hardware UsageFault on stack descent past limit.</td>
+      <td>Privileged · v8-M Mainline only</td>
+    </tr>
+  </table>
+  <div class="card blue" style="font-size:0.7em;">
+    <strong class="b">Interview tell:</strong> a candidate who instinctively reaches for <code>BASEPRI</code> (not <code>PRIMASK</code>) to build a critical section shows they understand priority-preemption — low-priority FreeRTOS kernel locks don't need to block NMI or a high-priority motor-control ISR.
+  </div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">15</span><h2>Operating State Matrix</h2></div>
+  <div class="state-grid">
+    <div class="h">&nbsp;</div>
+    <div class="h" style="color:var(--green)">Privileged</div>
+    <div class="h" style="color:var(--purple)">Unprivileged</div>
+
+    <div class="h">Thread mode</div>
+    <div class="c hi">
+      <strong class="g">Privileged Thread</strong><br>
+      <span class="dim smaller">Boot state · kernel code · RTOS idle task · full SCS access</span>
+    </div>
+    <div class="c lo">
+      <strong class="p">Unprivileged Thread</strong><br>
+      <span class="dim smaller">User tasks · no SCB/NVIC writes · MPU enforces memory isolation</span>
+    </div>
+
+    <div class="h">Handler mode</div>
+    <div class="c hi" style="grid-column: span 2;">
+      <strong class="a">Handler (always Privileged)</strong><br>
+      <span class="dim smaller">Every exception / interrupt runs here · always on MSP · IPSR.ISR # ≠ 0</span>
+    </div>
+  </div>
+  <div class="cols cols-2" style="margin-top:0.4em;">
+    <div class="card green">
+      <h3 class="g">Transitions — to Handler</h3>
+      <ul>
+        <li>Any exception (IRQ, fault, SVC, PendSV, SysTick).</li>
+        <li>Hardware auto-stacks 8 registers, switches SP to MSP, IPSR ← exception #.</li>
+      </ul>
+    </div>
+    <div class="card purple">
+      <h3 class="p">Transitions — back to Thread</h3>
+      <ul>
+        <li>Handler returns by loading <code>EXC_RETURN</code> value into PC (via <code>BX LR</code>, <code>POP {PC}</code>, etc.).</li>
+        <li>Magic bits in <code>EXC_RETURN</code> choose MSP vs PSP on return and restore the prior CONTROL.nPRIV.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">16</span><h2>Dual Stacks — MSP &amp; PSP</h2></div>
+  <div class="cols cols-2" style="margin-top:0.3em;">
+    <div>
+      <svg viewBox="0 0 400 260" style="width:100%; max-width:360px;">
+        <g font-family="DM Sans" font-size="13" fill="#fff">
+          <rect x="20"  y="20" width="160" height="220" fill="#0a1a2a" stroke="#60a5fa" rx="6"/>
+          <text x="100" y="42" text-anchor="middle" fill="#60a5fa" font-family="Playfair Display" font-weight="700">MSP</text>
+          <text x="100" y="60" font-size="10" text-anchor="middle" fill="#8888a8">Main Stack Pointer</text>
+          <text x="100" y="100" text-anchor="middle" font-size="11">Used by</text>
+          <text x="100" y="120" text-anchor="middle" font-size="11">• all handlers</text>
+          <text x="100" y="138" text-anchor="middle" font-size="11">• RTOS kernel</text>
+          <text x="100" y="156" text-anchor="middle" font-size="11">• boot &amp; idle</text>
+          <text x="100" y="200" text-anchor="middle" font-size="10" fill="#8888a8">SP at reset loads</text>
+          <text x="100" y="215" text-anchor="middle" font-size="10" fill="#8888a8">from vector[0]</text>
+
+          <rect x="220" y="20" width="160" height="220" fill="#1a0a2a" stroke="#a78bfa" rx="6"/>
+          <text x="300" y="42" text-anchor="middle" fill="#a78bfa" font-family="Playfair Display" font-weight="700">PSP</text>
+          <text x="300" y="60" font-size="10" text-anchor="middle" fill="#8888a8">Process Stack Pointer</text>
+          <text x="300" y="100" text-anchor="middle" font-size="11">Used by</text>
+          <text x="300" y="120" text-anchor="middle" font-size="11">• each task</text>
+          <text x="300" y="138" text-anchor="middle" font-size="11">• in Thread mode</text>
+          <text x="300" y="156" text-anchor="middle" font-size="11">when CONTROL.SPSEL=1</text>
+          <text x="300" y="200" text-anchor="middle" font-size="10" fill="#8888a8">set up by the RTOS</text>
+          <text x="300" y="215" text-anchor="middle" font-size="10" fill="#8888a8">per-task</text>
+        </g>
+      </svg>
+    </div>
+    <div>
+      <h3>Why two stacks?</h3>
+      <ul>
+        <li>MPU can restrict user-task stacks to their own PSP region without blocking the kernel's MSP.</li>
+        <li>A rogue task that blows its stack cannot corrupt kernel state above — at worst it hits MemManage on its own PSPLIM.</li>
+        <li>Exception always stacks on the currently-active SP, then switches to MSP for the handler. On return, CPU restores the previous SP selection from EXC_RETURN.</li>
+      </ul>
+      <pre style="margin-top:0.2em;"><code class="mono">; typical RTOS switch to Unpriv Thread w/ PSP
+  LDR   r0, =task_stack_top
+  MSR   PSP, r0
+  MOVS  r0, #0b011       ; SPSEL=1, nPRIV=1
+  MSR   CONTROL, r0
+  ISB
+  BX    lr               ; return to task</code></pre>
+    </div>
+  </div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">17</span><h2>Exception Stack Frame</h2></div>
+  <div class="cols cols-6040" style="margin-top:0.3em;">
+    <div>
+      <svg viewBox="0 0 520 320" style="width:100%; max-width:520px;">
+        <g font-family="JetBrains Mono" font-size="12">
+          <!-- basic frame -->
+          <rect x="20"  y="20"  width="160" height="280" fill="#10101a" stroke="#f5a623" rx="6"/>
+          <text x="100" y="38"  text-anchor="middle" fill="#f5a623" font-family="Playfair Display" font-weight="700">Basic frame (8 words)</text>
+          <g fill="#ccc">
+            <line x1="20"  y1="60"  x2="180" y2="60"  stroke="#2a2a3a"/>
+            <text x="30" y="78">  xPSR   </text><text x="170" y="78" text-anchor="end" fill="#8888a8">+0x1C</text>
+            <line x1="20"  y1="85"  x2="180" y2="85"  stroke="#2a2a3a"/>
+            <text x="30" y="100"> PC (ret)</text><text x="170" y="100" text-anchor="end" fill="#8888a8">+0x18</text>
+            <line x1="20"  y1="110" x2="180" y2="110" stroke="#2a2a3a"/>
+            <text x="30" y="125"> LR      </text><text x="170" y="125" text-anchor="end" fill="#8888a8">+0x14</text>
+            <line x1="20"  y1="135" x2="180" y2="135" stroke="#2a2a3a"/>
+            <text x="30" y="150"> R12     </text><text x="170" y="150" text-anchor="end" fill="#8888a8">+0x10</text>
+            <line x1="20"  y1="160" x2="180" y2="160" stroke="#2a2a3a"/>
+            <text x="30" y="175"> R3      </text><text x="170" y="175" text-anchor="end" fill="#8888a8">+0x0C</text>
+            <line x1="20"  y1="185" x2="180" y2="185" stroke="#2a2a3a"/>
+            <text x="30" y="200"> R2      </text><text x="170" y="200" text-anchor="end" fill="#8888a8">+0x08</text>
+            <line x1="20"  y1="210" x2="180" y2="210" stroke="#2a2a3a"/>
+            <text x="30" y="225"> R1      </text><text x="170" y="225" text-anchor="end" fill="#8888a8">+0x04</text>
+            <line x1="20"  y1="235" x2="180" y2="235" stroke="#2a2a3a"/>
+            <text x="30" y="250"> R0      </text><text x="170" y="250" text-anchor="end" fill="#8888a8">+0x00  &lt;- SP</text>
+          </g>
+
+          <!-- Extended frame -->
+          <rect x="280" y="20" width="220" height="280" fill="#10101a" stroke="#a78bfa" rx="6"/>
+          <text x="390" y="38" text-anchor="middle" fill="#a78bfa" font-family="Playfair Display" font-weight="700">Extended (FP active)</text>
+          <g fill="#ccc">
+            <text x="290" y="78">  FPSCR  </text>
+            <text x="290" y="96">  S15    </text>
+            <text x="290" y="114"> ...    </text>
+            <text x="290" y="132"> S0     </text>
+            <text x="290" y="160" fill="#f5a623">  xPSR  (as left)</text>
+            <text x="290" y="178" fill="#f5a623">  PC / LR / R12</text>
+            <text x="290" y="196" fill="#f5a623">  R3 / R2 / R1 / R0</text>
+            <text x="290" y="226" fill="#8888a8" font-size="10">26 words total</text>
+            <text x="290" y="244" fill="#8888a8" font-size="10">(18 FP + 8 basic)</text>
+            <text x="290" y="270" fill="#4ecb8d" font-size="10">Lazy: space reserved,</text>
+            <text x="290" y="285" fill="#4ecb8d" font-size="10">regs saved on first FP op.</text>
+          </g>
+        </g>
+      </svg>
+    </div>
+    <div>
+      <ul style="font-size:0.72em;">
+        <li>Hardware pushes <strong>exactly</strong> the caller-saved set. The handler may compile as an ordinary C function with no prologue tricks.</li>
+        <li>Stack is aligned to 8 bytes (AAPCS) — CPU inserts padding and flags it in bit 9 of the stacked xPSR.</li>
+        <li>If FPU is enabled and context has been touched (CONTROL.FPCA=1), an <strong>extended</strong> frame of 26 words is used.</li>
+        <li><strong class="g">Lazy stacking</strong> (v7E-M, v8-M): space is reserved but S0-S15/FPSCR are not actually written until the handler itself executes an FP instruction. Typical 17-cycle saving.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">18</span><h2>EXC_RETURN — The Magic LR</h2></div>
+  <div class="cols cols-2" style="margin-top:0.3em;">
+    <div>
+      <p style="font-size:0.75em;">On exception entry, LR is loaded with a value where bits [31:4] = <code>0xFFFFFFF</code>. Bits [3:0] encode how to return:</p>
+<pre><code class="mono">; v7-M EXC_RETURN values
+
+  0xFFFFFFF1   Handler → Handler   MSP   Basic
+  0xFFFFFFF9   Handler → Thread    MSP   Basic
+  0xFFFFFFFD   Handler → Thread    PSP   Basic
+
+  0xFFFFFFE1   Handler → Handler   MSP   Extended (FP)
+  0xFFFFFFE9   Handler → Thread    MSP   Extended
+  0xFFFFFFED   Handler → Thread    PSP   Extended</code></pre>
+      <p class="smaller dim">Executing <code>BX lr</code> with any of these forces an exception-return sequence: unstack the frame, restore xPSR / IPSR, resume.</p>
+    </div>
+    <div>
+      <h3>v8-M extensions</h3>
+      <ul>
+        <li>Extra bit [6] distinguishes <strong>Secure</strong> vs <strong>Non-Secure</strong> exception return.</li>
+        <li>Extra bit [0] (S) and bit [5] (DCRS) control whether integrity signature / additional context was stacked during a cross-domain exception.</li>
+        <li>Attempting <code>BX lr</code> with an invalid EXC_RETURN in Thread mode → UsageFault.</li>
+      </ul>
+      <div class="card red" style="font-size:0.72em;">
+        Common bug: a handler written in pure assembler clobbers LR and forgets to reload EXC_RETURN before <code>BX lr</code>. Result: random jump, HardFault, or worse.
+      </div>
+    </div>
+  </div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">19</span><h2>Pipeline Comparison</h2></div>
+  <table style="font-size:0.62em;">
+    <tr><th>Core</th><th>Stages</th><th>Pipeline</th><th>Branch prediction</th><th>Issue width</th></tr>
+    <tr><td>M0 / M3 / M4</td><td>3</td><td>Fetch — Decode — Execute</td><td>Static (predict not-taken for backward only on M3/M4)</td><td>1 (in-order)</td></tr>
+    <tr><td>M0+</td><td>2</td><td>Fetch/Decode — Execute</td><td>None (single-cycle branch target)</td><td>1</td></tr>
+    <tr><td>M23</td><td>2</td><td>Fetch — Decode/Execute</td><td>Static</td><td>1</td></tr>
+    <tr><td>M33 / M52 / M55</td><td>3 – 4</td><td>F — D — E (— WB on M55)</td><td>Static</td><td>1</td></tr>
+    <tr><td><strong class="g">M7</strong></td><td>6</td><td>F1 F2 D1 D2 EX WB</td><td>Dynamic (BHT, BTB)</td><td>Dual-issue (in-order)</td></tr>
+    <tr><td><strong class="g">M85</strong></td><td>7</td><td>F1 F2 D1 D2 I EX WB</td><td>Dynamic (BHT, BTB, RAS)</td><td>Dual-issue (in-order)</td></tr>
+  </table>
+  <div class="card amber" style="font-size:0.7em;">
+    Even the deepest Cortex-M pipelines are <strong>in-order</strong>. There is no register renaming, no out-of-order execution, no speculation past branches without rewinding. This is a deliberate design choice: <em>deterministic WCET</em> matters more than peak IPC for the target workloads.
+  </div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">20</span><h2>Endianness &amp; Alignment</h2></div>
+  <div class="cols cols-2" style="margin-top:0.3em;">
+    <div>
+      <h3>Endianness</h3>
+      <ul>
+        <li>Cortex-M supports <strong>either</strong> little- or big-endian — chosen at reset by a strap pin (BIGEND).</li>
+        <li>Every shipping silicon implementation is <strong>little-endian</strong>. Big-endian exists in the architecture but you will not see it in the wild.</li>
+        <li>Data endianness only — instructions are always stored little-endian by the linker.</li>
+        <li><code>REV</code>, <code>REV16</code>, <code>REVSH</code>, <code>RBIT</code> instructions for byte/bit swaps.</li>
+      </ul>
+    </div>
+    <div>
+      <h3>Alignment</h3>
+      <ul>
+        <li>v7-M / v7E-M / v8-M: unaligned word &amp; half-word loads/stores <strong>supported</strong> in Normal memory (split into aligned beats, several cycles).</li>
+        <li>v6-M: unaligned access always faults (UsageFault on M3/M4 too if <code>CCR.UNALIGN_TRP</code>=1).</li>
+        <li>Device &amp; Strongly-Ordered memory: unaligned always faults.</li>
+        <li>Stack <strong>must</strong> be 8-byte aligned at exception entry; hardware enforces.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">21</span><h2>Semaphore Primitives — LDREX / STREX</h2></div>
+  <div class="cols cols-4060" style="margin-top:0.3em;">
+    <div>
+<pre><code class="mono">; atomic increment of *p
+try:
+    LDREX  r1, [r0]      ; tag exclusive
+    ADDS   r1, r1, #1
+    STREX  r2, r1, [r0]  ; r2=0 ok, 1 fail
+    CMP    r2, #0
+    BNE    try
+    DMB</code></pre>
+    </div>
+    <div>
+      <ul>
+        <li>Single-core architectural primitive — maps to a local monitor in each Cortex-M.</li>
+        <li>Any exception, context switch, or write to the tagged address clears the monitor → retry.</li>
+        <li>Used by FreeRTOS (on M3+) and C11 atomics.</li>
+        <li>v8-M adds byte/half-byte variants (<code>LDREXB</code>, <code>LDREXH</code>) and clearer ordering rules.</li>
+        <li>M0 / M0+ / M23 lack LDREX/STREX — they use <code>cpsid i</code> / PRIMASK critical sections instead.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">22</span><h2>Bus Interfaces</h2></div>
+  <table>
+    <tr><th>Core</th><th>Bus</th><th>Notes</th></tr>
+    <tr><td>M0 / M0+ / M1</td><td>AHB-Lite</td><td>Single 32-bit master bus; separate PPB for CoreSight/NVIC</td></tr>
+    <tr><td>M3 / M4</td><td>AHB-Lite (I-Code / D-Code / System bus + PPB)</td><td>Code-space traffic on I-Code &amp; D-Code; everything else on System bus → SoC can arbitrate independently</td></tr>
+    <tr><td>M7</td><td><strong class="a">AXI-M</strong> + AHB peripheral + TCM + ITCM/DTCM</td><td>AXI for high-bandwidth external memory; TCM for deterministic code/data</td></tr>
+    <tr><td>M23 / M33 / M35P</td><td>AHB-5 (TrustZone-aware)</td><td>Security attributes (HNONSEC) on every transaction</td></tr>
+    <tr><td>M52 / M55 / M85</td><td>AHB-5 + optional AXI + TCM + Co-processor (ACI) bus</td><td>ACI exposes dedicated instruction opcodes to an attached accelerator</td></tr>
+  </table>
+  <div class="card green" style="font-size:0.7em;">
+    <strong class="g">Harvard-style split</strong> (I-bus / D-bus) lets the CPU fetch instructions and operate on data in parallel — critical for hitting the 1 DMIPS/MHz target on a 3-stage pipeline. The bus matrix in the SoC ultimately collapses them onto a unified memory, but the core <em>sees</em> separate paths.
+  </div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">23</span><h2>Reset Behaviour</h2></div>
+  <div class="cols cols-2" style="margin-top:0.3em;">
+    <div>
+      <h3>What the CPU does out of reset</h3>
+      <ol style="font-size:0.72em;">
+        <li>Read 32-bit word at address <strong>0x00000000</strong> → load into MSP.</li>
+        <li>Read 32-bit word at address <strong>0x00000004</strong> → load into PC (reset vector).</li>
+        <li>Enter <strong>Privileged Thread</strong> mode, MSP selected, T-bit = 1.</li>
+        <li>All NVIC IRQs disabled, VTOR = 0, SCB/MPU unconfigured.</li>
+      </ol>
+    </div>
+    <div>
+      <h3>Typical startup code</h3>
+<pre><code class="mono">Reset_Handler:
+  LDR    r0, =_sidata    ; .data init
+  LDR    r1, =_sdata
+  LDR    r2, =_edata
+copy: CMP r1, r2
+  ITT    LT
+  LDRLT  r3, [r0], #4
+  STRLT  r3, [r1], #4
+  BLT    copy
+
+  LDR    r0, =_sbss      ; .bss zero
+  LDR    r1, =_ebss
+  MOVS   r2, #0
+zero: CMP r0, r1
+  ITT    LT
+  STRLT  r2, [r0], #4
+  BLT    zero
+
+  BL     SystemInit      ; PLLs, caches, VTOR
+  BL     __libc_init_array
+  BL     main</code></pre>
+    </div>
+  </div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">24</span><h2>Vendor Variation You Will See</h2></div>
+  <div class="cols cols-3">
+    <div class="card amber">
+      <h3 class="a">ST — STM32</h3>
+      <p>Largest Cortex-M portfolio. F0 (M0), F1/F3/F4 (M3/M4), F7/H7 (M7), L5/U5 (M33), H5 (M33), U0 (M0+).</p>
+      <p class="smaller dim">Vendor HAL + LL layers on top of CMSIS.</p>
+    </div>
+    <div class="card green">
+      <h3 class="g">NXP</h3>
+      <p>LPC5500 (M33+M33), i.MX RT (M7 @ 1 GHz "crossover MCU"), Kinetis (M0+/M4), S32K (automotive M4/M7).</p>
+      <p class="smaller dim">Secure wake-up M33 often paired with a bigger A-profile.</p>
+    </div>
+    <div class="card purple">
+      <h3 class="p">Nordic · Silicon Labs · Renesas</h3>
+      <p>nRF52 (M4), nRF53 (dual M33), nRF54 (M33); EFR32 wireless (M33); Renesas RA (M33/M85).</p>
+      <p class="smaller dim">Strong wireless-stack + TrustZone story.</p>
+    </div>
+  </div>
+  <div class="cols cols-3" style="margin-top:0.4em;">
+    <div class="card blue">
+      <h3 class="b">Microchip · Infineon · TI</h3>
+      <p>SAM family (M0+/M4/M7/M23); PSoC 6 (M4+M0+); TM4C / MSP432 (M4/M4F).</p>
+    </div>
+    <div class="card amber">
+      <h3 class="a">Ambiq · Alif</h3>
+      <p>Ambiq Apollo (M4F/M55, subthreshold, &lt; 6 µA/MHz). Alif Ensemble (M55 + M55 + NPU).</p>
+      <p class="smaller dim">Edge-ML showpieces.</p>
+    </div>
+    <div class="card green">
+      <h3 class="g">Raspberry Pi</h3>
+      <p>RP2040 (dual M0+), RP2350 (dual M33 <em>or</em> dual Hazard-3 RISC-V — first official multi-arch MCU).</p>
+    </div>
+  </div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">25</span><h2>CMSIS — The Portable Layer</h2></div>
+  <div class="cols cols-2" style="margin-top:0.3em;">
+    <div>
+      <ul>
+        <li><strong class="a">CMSIS-CORE</strong> — C headers for registers, intrinsics (<code>__WFI</code>, <code>__DMB</code>), NVIC/SCB/MPU inline functions. <em>Every</em> Cortex-M vendor ships this.</li>
+        <li><strong class="g">CMSIS-DSP</strong> — fixed/float DSP kernels; uses DSP &amp; FPU instructions when available, scalar fallback when not.</li>
+        <li><strong class="g">CMSIS-NN</strong> — int8/int16 NN primitives optimised for M4 DSP and M55/M85 Helium.</li>
+        <li><strong class="p">CMSIS-RTOS v2</strong> — thin API spec; FreeRTOS/Zephyr/RTX implement it.</li>
+        <li><strong class="b">CMSIS-Pack</strong> — device description files, used by Keil µVision, VS Code embedded tools, Arm Clang.</li>
+      </ul>
+    </div>
+    <div>
+<pre><code class="mono">/* Portable: same on any Cortex-M */
+#include "cmsis_compiler.h"
+
+void enter_critical(void)
+{
+    __disable_irq();          /* cpsid i */
+    __DMB();
+}
+
+uint32_t atomic_load(uint32_t *p)
+{
+    uint32_t v = __LDREXW(p);
+    __CLREX();                /* drop monitor */
+    return v;
+}</code></pre>
+      <div class="card blue" style="margin-top:0.3em; font-size:0.7em;">
+        A <strong>huge</strong> reason Cortex-M dominates: driver code written in 2009 against CMSIS-CORE still compiles and runs on a 2024 Cortex-M85.
+      </div>
+    </div>
+  </div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">26</span><h2>Performance Snapshot</h2></div>
+  <table style="font-size:0.65em;">
+    <tr><th>Core</th><th>Typical f<sub>max</sub></th><th>CoreMark/MHz</th><th>DMIPS/MHz</th><th>Typical silicon (65/40/22 nm)</th></tr>
+    <tr><td>M0</td>   <td>~50 MHz</td>  <td>2.33</td>  <td>0.9</td>  <td>&lt; 12k gates</td></tr>
+    <tr><td>M0+</td>  <td>~50 MHz</td>  <td>2.46</td>  <td>0.95</td> <td>&lt; 12k gates</td></tr>
+    <tr><td>M3</td>   <td>~100 MHz</td> <td>3.32</td>  <td>1.25</td> <td>~30k gates</td></tr>
+    <tr><td>M4</td>   <td>~120 MHz</td> <td>3.40</td>  <td>1.25</td> <td>~35k (no FPU) / ~55k (with FPU)</td></tr>
+    <tr><td><strong class="g">M7</strong></td><td>600 MHz</td><td>5.01</td><td>2.14</td><td>~300k gates (+ caches)</td></tr>
+    <tr><td>M33</td>  <td>~160 MHz</td> <td>4.02</td>  <td>1.5</td>  <td>~45k gates</td></tr>
+    <tr><td>M55</td>  <td>~400 MHz</td> <td>4.35</td>  <td>1.7</td>  <td>~300k (with Helium)</td></tr>
+    <tr><td><strong class="g">M85</strong></td><td>~700 MHz</td><td>6.28</td><td>4.0</td><td>&gt; 600k gates (with options)</td></tr>
+  </table>
+  <p class="smaller dim">Numbers from Arm's published figures (2024/2025). Actual silicon depends heavily on library, process, and whether the vendor flushed timing to meet f<sub>max</sub> or area.</p>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">27</span><h2>Choosing a Cortex-M — Decision Flow</h2></div>
+  <svg class="diagram" viewBox="0 0 960 380" style="width:100%; max-width:960px;">
+    <defs>
+      <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+        <path d="M0 0 L10 5 L0 10 z" fill="#f5a623"/>
+      </marker>
+    </defs>
+    <g font-family="DM Sans" font-size="12">
+      <!-- start -->
+      <rect x="400" y="10" width="180" height="40" rx="8" fill="#2a1a0a" stroke="#f5a623"/>
+      <text x="490" y="35" text-anchor="middle" fill="#fff">Start: pick a Cortex-M</text>
+
+      <!-- first branch: security? -->
+      <rect x="400" y="80" width="180" height="40" rx="8" fill="#10101a" stroke="#8888a8"/>
+      <text x="490" y="105" text-anchor="middle" fill="#fff">Security isolation needed?</text>
+      <line x1="490" y1="50" x2="490" y2="80" stroke="#f5a623" marker-end="url(#arr)"/>
+
+      <!-- yes: TrustZone -->
+      <rect x="640" y="80" width="270" height="40" rx="8" fill="#1a0a2a" stroke="#a78bfa"/>
+      <text x="775" y="105" text-anchor="middle" fill="#fff">v8-M: M23 / M33 / M35P / M52 / M55 / M85</text>
+      <line x1="580" y1="100" x2="640" y2="100" stroke="#a78bfa" marker-end="url(#arr)"/>
+      <text x="610" y="95" font-size="10" fill="#a78bfa">yes</text>
+
+      <!-- no: perf -->
+      <rect x="400" y="150" width="180" height="40" rx="8" fill="#10101a" stroke="#8888a8"/>
+      <text x="490" y="175" text-anchor="middle" fill="#fff">Peak perf needed?</text>
+      <line x1="490" y1="120" x2="490" y2="150" stroke="#f5a623" marker-end="url(#arr)"/>
+      <text x="500" y="140" font-size="10" fill="#f5a623">no</text>
+
+      <!-- high perf -->
+      <rect x="640" y="150" width="270" height="40" rx="8" fill="#0a2a1a" stroke="#4ecb8d"/>
+      <text x="775" y="175" text-anchor="middle" fill="#fff">M7 (600 MHz) or M85 (700 MHz + MVE)</text>
+      <line x1="580" y1="170" x2="640" y2="170" stroke="#4ecb8d" marker-end="url(#arr)"/>
+      <text x="610" y="165" font-size="10" fill="#4ecb8d">yes</text>
+
+      <!-- dsp? -->
+      <rect x="400" y="220" width="180" height="40" rx="8" fill="#10101a" stroke="#8888a8"/>
+      <text x="490" y="245" text-anchor="middle" fill="#fff">DSP / ML workload?</text>
+      <line x1="490" y1="190" x2="490" y2="220" stroke="#f5a623" marker-end="url(#arr)"/>
+
+      <rect x="640" y="220" width="270" height="40" rx="8" fill="#2a1a0a" stroke="#f5a623"/>
+      <text x="775" y="245" text-anchor="middle" fill="#fff">M4 (DSP) · M7 · M55 / M85 (MVE)</text>
+      <line x1="580" y1="240" x2="640" y2="240" stroke="#f5a623" marker-end="url(#arr)"/>
+      <text x="610" y="235" font-size="10" fill="#f5a623">yes</text>
+
+      <!-- smallest? -->
+      <rect x="400" y="290" width="180" height="40" rx="8" fill="#10101a" stroke="#8888a8"/>
+      <text x="490" y="315" text-anchor="middle" fill="#fff">Area / power critical</text>
+      <line x1="490" y1="260" x2="490" y2="290" stroke="#f5a623" marker-end="url(#arr)"/>
+      <text x="500" y="280" font-size="10" fill="#f5a623">no</text>
+
+      <rect x="640" y="290" width="270" height="40" rx="8" fill="#2a1a0a" stroke="#f5a623"/>
+      <text x="775" y="315" text-anchor="middle" fill="#fff">M0+ (no sec) · M23 (w/ TrustZone)</text>
+      <line x1="580" y1="310" x2="640" y2="310" stroke="#f5a623" marker-end="url(#arr)"/>
+
+      <!-- default -->
+      <rect x="100" y="290" width="260" height="40" rx="8" fill="#0a2a1a" stroke="#4ecb8d"/>
+      <text x="230" y="315" text-anchor="middle" fill="#fff">Default: M4 or M33 (mid-range sweet spot)</text>
+      <line x1="400" y1="310" x2="360" y2="310" stroke="#4ecb8d" marker-end="url(#arr)"/>
+    </g>
+  </svg>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">28</span><h2>References &amp; Further Reading</h2></div>
+  <div style="max-width:90%; margin:0 auto; font-size:0.55em; line-height:1.8;">
+    <p>
+      <strong class="a">Arm</strong> — <em>Armv6-M / Armv7-M / Armv8-M Architecture Reference Manuals</em> (ARM DDI 0419, 0403, 0553)<br>
+      <strong class="a">Arm</strong> — Cortex-M0/M0+/M3/M4/M7/M23/M33/M55/M85 Technical Reference Manuals<br>
+      <strong class="a">Joseph Yiu</strong> — <em>The Definitive Guide to Arm Cortex-M23 &amp; Cortex-M33 Processors</em> (Newnes, 2021)<br>
+      <strong class="a">Joseph Yiu</strong> — <em>The Definitive Guide to Arm Cortex-M3 and Cortex-M4 Processors</em>, 3rd ed. (Newnes, 2014)<br>
+      <strong class="a">Jonathan Valvano</strong> — <em>Embedded Systems: Real-Time Interfacing to ARM Cortex-M Microcontrollers</em> (2017)<br>
+      <strong class="a">Arm Developer</strong> — <code>developer.arm.com/documentation</code> — free TRMs, QRCs, CMSIS headers<br>
+      <strong class="a">Arm Community</strong> — CMSIS-Core on GitHub (<code>github.com/ARM-software/CMSIS_5</code>)<br>
+      <strong class="a">Wikipedia</strong> — "ARM Cortex-M" family article — a surprisingly good cross-reference table
+    </p>
+    <p style="color:var(--muted); margin-top:0.8em; font-size:0.85em">
+      Presentation built with <a href="https://revealjs.com">Reveal.js 4.6</a> · Playfair Display + DM Sans + JetBrains Mono<br>
+      Educational use. Code examples provided as-is.
+    </p>
+  </div>
+</section>
+
+</div><!-- /.slides -->
+</div><!-- /.reveal -->
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/highlight/highlight.min.js"></script>
+<script>
+Reveal.initialize({
+  hash: true,
+  slideNumber: 'c/t',
+  transition: 'fade',
+  transitionSpeed: 'fast',
+  controls: true,
+  progress: true,
+  center: false,
+  width: 1100,
+  height: 900,
+  margin: 0.01,
+  plugins: [RevealHighlight],
+  highlight: { theme: 'monokai' }
+});
+</script>
+<script>
+(function(){
+  var h = Reveal.getConfig().height || 900;
+  var m = Reveal.getConfig().margin || 0.02;
+  var maxH = Math.floor(h * (1 - 2 * m)) + 'px';
+  function fixSlides(){
+    document.querySelectorAll('.reveal .slides>section,.reveal .slides>section>section').forEach(function(s){
+      s.style.display = 'block';
+      s.style.maxHeight = maxH;
+    });
+  }
+  Reveal.on('ready', fixSlides);
+  Reveal.on('slidechanged', fixSlides);
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,889 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cortex-M Exceptions, Interrupts & NVIC</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@400;500;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/black.min.css">
+<style>
+  :root {
+    --amber:  #f5a623; --green:  #4ecb8d; --purple: #a78bfa;
+    --blue:   #60a5fa; --red:    #f87171;
+    --bg:     #0a0a0f; --bg2:    #10101a; --bg3:    #181824;
+    --border: #2a2a3a; --text:   #e8e8f0; --muted:  #8888a8;
+  }
+  .reveal-viewport { background: var(--bg); }
+  .reveal .slides section { background: transparent; }
+  .reveal section { text-align: left; }
+  .reveal .slides > section { padding: 0.5em; overflow-y: auto !important; align-items: flex-start !important; justify-content: flex-start !important; }
+  .reveal .progress { color: var(--amber); height: 3px; }
+  .reveal .controls { color: var(--amber); }
+  .reveal section::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, var(--amber), var(--green)); }
+  .reveal { font-family: 'DM Sans', sans-serif; color: var(--text); font-size: 22px; }
+  .reveal .slide-number { font-family: 'JetBrains Mono', monospace; font-size: 0.7em; color: var(--muted); }
+  .reveal h1, .reveal h2, .reveal h3 { font-family: 'Playfair Display', serif; color: #fff; text-transform: none; letter-spacing: -0.01em; }
+  .reveal h1 { font-size: 2.4em; font-weight: 900; color: var(--amber); line-height: 1.1; }
+  .reveal h2 { font-size: 1.7em; font-weight: 700; color: var(--amber); margin-bottom: 0.6em; }
+  .reveal h3 { font-size: 1.2em; font-weight: 700; color: var(--green); margin-bottom: 0.3em; }
+  .reveal p  { font-size: 0.75em; line-height: 1.5; color: var(--text); }
+  .reveal li { font-size: 0.7em; line-height: 1.5; margin-bottom: 0.25em; }
+  .reveal code { font-family: 'JetBrains Mono', monospace; font-size: .72em; }
+  .reveal pre  { box-shadow: none; background: var(--bg3); border: 1px solid var(--border); border-radius: 8px; padding: 0.5em 1em; margin: 0.4em 0; width: 100%; }
+  .reveal pre code { font-size: 0.58em; line-height: 1.5; background: transparent; color: #cdd6f4; }
+  .slide-hdr { display: flex; align-items: center; gap: .4em; border-bottom: 1px solid var(--border); padding-bottom: .2em; margin-bottom: .3em; }
+  .slide-hdr .tag { font-family: 'JetBrains Mono', monospace; font-size: 0.55em; font-weight: 600; color: var(--bg); background: var(--amber); padding: .1em .4em; border-radius: 3px; letter-spacing: .04em; }
+  .slide-hdr h2 { margin: 0; font-size: 1.4em; }
+  .cols   { display: grid; gap: 1em; }
+  .cols-2 { grid-template-columns: 1fr 1fr; }
+  .cols-3 { grid-template-columns: 1fr 1fr 1fr; }
+  .cols-6040 { grid-template-columns: 6fr 4fr; }
+  .cols-4060 { grid-template-columns: 4fr 6fr; }
+  .card { background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; padding: 1em 1.2em; box-shadow: 0 4px 20px rgba(0,0,0,0.3); margin: 0.4em 0; }
+  .card.amber { border-left: 3px solid var(--amber); }
+  .card.green { border-left: 3px solid var(--green); }
+  .card.purple{ border-left: 3px solid var(--purple); }
+  .card.blue  { border-left: 3px solid var(--blue); }
+  .card.red   { border-left: 3px solid var(--red); }
+  .card h3 { font-size: 1em; margin: 0 0 0.4em; }
+  .card p, .card ul  { font-size: 0.8em; margin: 0; color: #b8b8d0; }
+  .card ul { margin: 0; padding-left: 1.2em; }
+  .card li { font-size: 0.85em; color: #b8b8d0; margin-bottom: 0.25em; }
+  .reveal table { width: 100%; border-collapse: collapse; font-size: 0.65em; margin: 0.5em 0; }
+  .reveal table th { background: var(--bg3); color: var(--amber); padding: 0.5em 0.7em; border: 1px solid var(--border); text-align: left; font-weight: 700; }
+  .reveal table td { padding: 0.5em 0.7em; border: 1px solid var(--border); color: #ccc; vertical-align: top; }
+  .reveal table tr:nth-child(even) td { background: #0e0e18; }
+  .a  { color: var(--amber); font-weight: 600; }
+  .g  { color: var(--green); font-weight: 600; }
+  .p  { color: var(--purple); font-weight: 600; }
+  .b  { color: var(--blue); font-weight: 600; }
+  .r  { color: var(--red); font-weight: 600; }
+  .mono { font-family: 'JetBrains Mono', monospace; }
+  svg.diagram { display: block; margin: 0 auto; overflow: visible; }
+  .pill { display: inline-block; font-family: 'JetBrains Mono', monospace; font-size: 0.6em; padding: 0.15em 0.6em; border-radius: 999px; border: 1px solid; margin: 0 .08em; }
+  .pill.amber { color: var(--amber); border-color: var(--amber); }
+  .pill.green { color: var(--green); border-color: var(--green); }
+  .pill.purple{ color: var(--purple); border-color: var(--purple); }
+  .pill.blue  { color: var(--blue); border-color: var(--blue); }
+  .pill.red   { color: var(--red); border-color: var(--red); }
+  .reveal .slide-footer { display: none; }
+  .title-slide h1 { font-size: 2.4em; }
+  .title-slide .subtitle { font-size: 0.85em; color: var(--green); font-family: 'DM Sans', sans-serif; font-weight: 400; letter-spacing: 0.06em; margin: 0.3em 0 0.6em; }
+  .title-slide .meta { font-size: 0.6em; color: var(--muted); font-family: 'JetBrains Mono', monospace; }
+  .arch-stack { display: flex; flex-direction: column; align-items: center; gap: 3px; margin: 0.5em auto; max-width: 700px; }
+  .arch-layer { width: 100%; padding: 0.4em 0.8em; border-radius: 6px; text-align: center; font-size: 0.75em; font-weight: 700; font-family: 'JetBrains Mono', monospace; }
+  .dim { color: var(--muted); } .small { font-size: 0.65em; } .smaller { font-size: 0.55em; } .tiny { font-size: 0.48em; }
+  .reveal ul, .reveal ol { margin: .15em 0 .15em 1em; }
+
+  /* Priority demo */
+  .prio-demo { display: grid; grid-template-columns: 150px 1fr; gap: 6px; font-family: 'JetBrains Mono', monospace; font-size: 0.65em; margin: 0.5em 0; }
+  .prio-demo .k { background: var(--bg3); color: var(--amber); padding: 0.3em 0.6em; border-radius: 4px; text-align: right; }
+  .prio-demo .v { display: flex; gap: 4px; }
+  .prio-demo .bit { width: 28px; height: 28px; border: 1px solid var(--border); background: var(--bg2); border-radius: 3px; text-align: center; line-height: 26px; color: var(--muted); }
+  .prio-demo .bit.set { background: var(--amber); color: var(--bg); border-color: var(--amber); font-weight: 700; }
+  .prio-demo .bit.sub { background: #1a0a2a; color: var(--purple); border-color: var(--purple); }
+  .prio-demo .bit.imp { background: var(--bg3); color: var(--muted); text-decoration: line-through; }
+
+  /* Sequence diagram lanes */
+  .seq { display: grid; grid-template-columns: 110px 1fr; gap: 4px; font-family: 'JetBrains Mono', monospace; font-size: 0.65em; margin: 0.2em 0; }
+  .seq .lbl { color: var(--amber); text-align: right; padding: 0.25em 0.4em; }
+  .seq .lane { display: flex; gap: 2px; }
+  .seq .tick { flex: 1; padding: 0.25em 0.3em; background: var(--bg2); border: 1px solid var(--border); border-radius: 3px; text-align: center; color: var(--text); }
+  .seq .tick.idle { background: #10101a; color: var(--muted); }
+  .seq .tick.hi   { background: #2a1a0a; color: var(--amber); border-color: var(--amber); font-weight: 700; }
+  .seq .tick.lo   { background: #0a2a1a; color: var(--green); border-color: var(--green); font-weight: 700; }
+  .seq .tick.stk  { background: #1a0a2a; color: var(--purple); border-color: var(--purple); }
+  .seq .tick.fault{ background: #2a0a0a; color: var(--red); border-color: var(--red); font-weight: 700; }
+</style>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+
+<section class="title-slide" data-background-color="#0a0a0f">
+  <div style="font-family:'JetBrains Mono',monospace; font-size:.5em; color:var(--muted); margin-bottom:.4em; letter-spacing:.1em;">ARM CORTEX-M · PRESENTATION 03</div>
+  <h1>Exceptions, Interrupts &amp; NVIC</h1>
+  <div class="subtitle">Vector Table · Priorities · Tail-Chaining · Late Arrival · Faults</div>
+  <div style="width:60px; height:3px; background:var(--amber); margin-bottom:1.4em;"></div>
+  <div class="meta">The hardware scheduler inside every Cortex-M</div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">02</span><h2>What Makes NVIC Special</h2></div>
+  <div class="cols cols-2">
+    <div>
+      <ul>
+        <li>The <strong class="a">Nested Vectored Interrupt Controller</strong> is part of the <em>core</em>, not an SoC peripheral — same register layout on every Cortex-M.</li>
+        <li>Tightly-coupled to the pipeline: <strong>vector fetch and register stacking happen concurrently</strong> during exception entry.</li>
+        <li>Up to 240 external IRQs (v6-M: 32; v8-M: up to 480).</li>
+        <li>Pre-emptive, priority-based, deterministic latency.</li>
+        <li>Exception entry &amp; exit sequences implemented in <strong>hardware</strong> — the handler looks like an ordinary C function.</li>
+      </ul>
+    </div>
+    <div>
+      <div class="card amber">
+        <h3 class="a">Compare to 8051 / AVR</h3>
+        <p>Classic MCUs jump to the vector and leave everything else to software — you write a PUSH/POP prologue. The NVIC does this in hardware and adds tail-chaining / late-arrival on top.</p>
+      </div>
+      <div class="card blue" style="margin-top:0.3em;">
+        <h3 class="b">Compare to A-profile GIC</h3>
+        <p>A GIC is a separate IP block with its own memory-mapped registers sitting across a bus. Exception entry costs ~hundreds of cycles because of the MMU &amp; bus round-trip. NVIC is in the core and exception entry is 12 cycles on M3.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">03</span><h2>Exception Model Overview</h2></div>
+  <svg class="diagram" viewBox="0 0 960 280" style="width:100%; max-width:960px;">
+    <g font-family="DM Sans" font-size="12">
+      <!-- system exceptions -->
+      <rect x="20" y="30" width="320" height="220" rx="8" fill="#2a1a0a" stroke="#f5a623"/>
+      <text x="180" y="55" text-anchor="middle" fill="#f5a623" font-family="Playfair Display" font-weight="700" font-size="16">System Exceptions (1–15)</text>
+      <g fill="#ccc" font-size="11">
+        <text x="40" y="85">   1  Reset           <tspan fill="#f87171">(fixed -3)</tspan></text>
+        <text x="40" y="102">  2  NMI             <tspan fill="#f87171">(fixed -2)</tspan></text>
+        <text x="40" y="119">  3  HardFault       <tspan fill="#f87171">(fixed -1)</tspan></text>
+        <text x="40" y="136">  4  MemManage       (prog)</text>
+        <text x="40" y="153">  5  BusFault        (prog)</text>
+        <text x="40" y="170">  6  UsageFault      (prog)</text>
+        <text x="40" y="187">  7  SecureFault     (prog, v8-M)</text>
+        <text x="40" y="204"> 11  SVCall          (prog)</text>
+        <text x="40" y="221"> 12  DebugMonitor    (prog)</text>
+        <text x="40" y="238"> 14  PendSV          (prog)</text>
+      </g>
+      <text x="180" y="263" text-anchor="middle" font-size="10" fill="#8888a8">15  SysTick</text>
+
+      <!-- external -->
+      <rect x="380" y="30" width="560" height="220" rx="8" fill="#0a2a1a" stroke="#4ecb8d"/>
+      <text x="660" y="55" text-anchor="middle" fill="#4ecb8d" font-family="Playfair Display" font-weight="700" font-size="16">External IRQs (16 …)</text>
+      <g font-size="11" fill="#ccc">
+        <text x="400" y="85">Vendor-defined peripheral interrupts:</text>
+        <text x="400" y="105">  • Timers (TIM, SysTick, RTC)</text>
+        <text x="400" y="122">  • Comms (UART, SPI, I²C, CAN, USB, Ethernet)</text>
+        <text x="400" y="139">  • ADC / DAC / comparators</text>
+        <text x="400" y="156">  • DMA channel done / error</text>
+        <text x="400" y="173">  • GPIO (EXTI) lines</text>
+        <text x="400" y="190">  • Radio / crypto engine</text>
+        <text x="400" y="212" fill="#f5a623">Max IRQs:  v6-M = 32 · v7-M = 240 · v8-M = 480</text>
+        <text x="400" y="232" fill="#8888a8" font-size="10">Each IRQ occupies vector slot (16 + IRQn).</text>
+      </g>
+    </g>
+  </svg>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">04</span><h2>System Exceptions — The Full List</h2></div>
+  <table style="font-size:0.58em;">
+    <tr><th>#</th><th>Name</th><th>Priority</th><th>Purpose</th><th>Available on</th></tr>
+    <tr><td>1</td><td>Reset</td><td class="r">-3 (fixed, highest)</td><td>Power-on, watchdog, SW reset via AIRCR.SYSRESETREQ</td><td>All</td></tr>
+    <tr><td>2</td><td>NMI</td><td class="r">-2 (fixed)</td><td>Non-maskable — clock failure, tamper, SoC-routed critical input</td><td>All</td></tr>
+    <tr><td>3</td><td>HardFault</td><td class="r">-1 (fixed)</td><td>Last-resort fault. Escalation target when another fault is disabled or nested.</td><td>All</td></tr>
+    <tr><td>4</td><td>MemManage</td><td>prog</td><td>MPU violation, XN (execute-never) violation</td><td>v7-M, v8-M Main</td></tr>
+    <tr><td>5</td><td>BusFault</td><td>prog</td><td>Bus error (abort from memory system)</td><td>v7-M, v8-M Main</td></tr>
+    <tr><td>6</td><td>UsageFault</td><td>prog</td><td>Undefined instr, unaligned, /0, stack limit hit, invalid EXC_RETURN</td><td>v7-M, v8-M Main</td></tr>
+    <tr><td>7</td><td>SecureFault</td><td>prog</td><td>TrustZone violation (NS access to S resource etc.)</td><td>v8-M only, Secure world</td></tr>
+    <tr><td>11</td><td>SVCall</td><td>prog</td><td>Supervisor call — <code>SVC #imm</code>. RTOS syscall trampoline.</td><td>All</td></tr>
+    <tr><td>12</td><td>DebugMonitor</td><td>prog</td><td>Debug events when halting debug is disabled</td><td>v7-M, v8-M</td></tr>
+    <tr><td>14</td><td>PendSV</td><td>prog</td><td>Software-pended exception — the classic RTOS context-switch vector</td><td>All</td></tr>
+    <tr><td>15</td><td>SysTick</td><td>prog</td><td>24-bit down-counter interrupt — the standard OS tick</td><td>Mostly all (optional on M1)</td></tr>
+  </table>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">05</span><h2>Vector Table Layout</h2></div>
+  <div class="cols cols-2" style="margin-top:0.3em;">
+    <div>
+      <pre><code class="mono">Offset    Word
+0x0000    Initial MSP (loaded into SP at reset)
+0x0004    Reset_Handler
+0x0008    NMI_Handler
+0x000C    HardFault_Handler
+0x0010    MemManage_Handler
+0x0014    BusFault_Handler
+0x0018    UsageFault_Handler
+0x001C    SecureFault_Handler  (v8-M)
+0x0020    (reserved)
+0x0024    (reserved)
+0x0028    (reserved)
+0x002C    SVC_Handler
+0x0030    DebugMon_Handler
+0x0034    (reserved)
+0x0038    PendSV_Handler
+0x003C    SysTick_Handler
+0x0040    IRQ0_Handler         ; vector 16
+0x0044    IRQ1_Handler
+...       ...</code></pre>
+    </div>
+    <div>
+      <ul>
+        <li>Table lives at the address held in <strong class="a">VTOR</strong> (<code>SCB-&gt;VTOR</code>, at <code>0xE000_ED08</code>).</li>
+        <li>At reset VTOR = 0, so the table must be at address 0 <em>or</em> the SoC remaps flash/ROM there.</li>
+        <li>Relocating to SRAM is a common trick: copy table, update VTOR, enable one ISR at a time.</li>
+        <li>VTOR must be aligned to the next power-of-two above <code>(num_vectors × 4)</code> — typically 128 or 256 bytes minimum, larger for big tables.</li>
+        <li>v8-M TrustZone: <strong>two VTORs</strong> — <code>VTOR_S</code> (privileged-Secure) and <code>VTOR_NS</code> (Non-Secure).</li>
+      </ul>
+      <div class="card red" style="font-size:0.72em;">
+        Forgetting the <code>__DSB();__ISB();</code> after updating VTOR → instructions in flight may still use the old table.
+      </div>
+    </div>
+  </div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">06</span><h2>Vector Table in C</h2></div>
+<pre><code class="mono">/* Classic CMSIS-style vector table for STM32F4 */
+extern uint32_t _estack;            /* provided by linker */
+
+void Reset_Handler(void);
+void Default_Handler(void);
+void NMI_Handler(void)          __attribute__((weak, alias("Default_Handler")));
+void HardFault_Handler(void)    __attribute__((weak, alias("Default_Handler")));
+void SysTick_Handler(void)      __attribute__((weak, alias("Default_Handler")));
+void EXTI0_IRQHandler(void)     __attribute__((weak, alias("Default_Handler")));
+/* … one per peripheral … */
+
+__attribute__((section(".isr_vector"), used))
+const void (* const g_vector_table[])(void) = {
+    (void (*)(void)) &amp;_estack,       /* 0x000  initial MSP */
+    Reset_Handler,                   /* 0x004 */
+    NMI_Handler,                     /* 0x008 */
+    HardFault_Handler,               /* 0x00C */
+    /* system vectors … */
+    SysTick_Handler,                 /* 0x03C */
+    EXTI0_IRQHandler,                /* 0x040 — IRQ0 */
+    /* peripherals … */
+};</code></pre>
+  <div class="card green" style="font-size:0.72em;">
+    The <strong><code>weak / alias</code></strong> pattern lets unused handlers collapse to <code>Default_Handler</code>, but a user who defines <code>EXTI0_IRQHandler</code> <em>shadows</em> the weak symbol without any registration API. Clean, zero-overhead.
+  </div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">07</span><h2>Priority Model</h2></div>
+  <div class="cols cols-2" style="margin-top:0.3em;">
+    <div>
+      <ul>
+        <li>Lower numerical value = <strong class="a">higher</strong> priority (counter-intuitive — source of many bugs).</li>
+        <li>System exceptions Reset/NMI/HardFault have <strong>fixed</strong> negative priorities and cannot be reordered.</li>
+        <li>All other exceptions (incl. configurable faults, PendSV, SysTick, external IRQs) are programmable.</li>
+        <li>Priority field is <strong>architecturally</strong> 8 bits but only the <em>top</em> N bits are implemented.</li>
+      </ul>
+    </div>
+    <div>
+      <h3>How many bits?</h3>
+      <table style="font-size:0.6em;">
+        <tr><th>Core</th><th>Priority bits</th><th>Levels</th></tr>
+        <tr><td>M0, M0+, M23</td><td>2</td><td>4</td></tr>
+        <tr><td>M1</td><td>1 or 2</td><td>2 – 4</td></tr>
+        <tr><td>M3, M4, M7</td><td>3–8 (impl. choice)</td><td>8 – 256</td></tr>
+        <tr><td>M33, M55, M85</td><td>3–8 (impl. choice)</td><td>8 – 256</td></tr>
+      </table>
+      <p class="smaller dim">Most ST/NXP STM32/LPC parts implement 4 bits → 16 levels. Nordic nRF52 implements 3 bits → 8 levels.</p>
+    </div>
+  </div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">08</span><h2>Why Priority Bits Live in the <em>Upper</em> Half</h2></div>
+  <div class="prio-demo">
+    <div class="k">Full 8-bit field</div>
+    <div class="v">
+      <div class="bit">7</div><div class="bit">6</div><div class="bit">5</div><div class="bit">4</div>
+      <div class="bit">3</div><div class="bit">2</div><div class="bit">1</div><div class="bit">0</div>
+    </div>
+
+    <div class="k">4-bit impl. (ST)</div>
+    <div class="v">
+      <div class="bit set">P</div><div class="bit set">P</div><div class="bit set">P</div><div class="bit set">P</div>
+      <div class="bit imp">—</div><div class="bit imp">—</div><div class="bit imp">—</div><div class="bit imp">—</div>
+    </div>
+
+    <div class="k">3-bit impl. (Nordic)</div>
+    <div class="v">
+      <div class="bit set">P</div><div class="bit set">P</div><div class="bit set">P</div>
+      <div class="bit imp">—</div><div class="bit imp">—</div><div class="bit imp">—</div><div class="bit imp">—</div><div class="bit imp">—</div>
+    </div>
+  </div>
+  <ul style="font-size:0.72em;">
+    <li>Implementations that add more bits keep existing software working: a 0x20 priority value retains the same relative ordering across vendors.</li>
+    <li>Writing to unimplemented low bits is harmless — they read back as 0.</li>
+    <li><strong class="r">Gotcha:</strong> a value of <code>0x01</code> on a 4-bit-impl MCU evaluates to priority 0 (identical to <code>0x0F</code>'s visible bits masked). Always set priorities via <code>NVIC_SetPriority()</code>, which handles the shift.</li>
+  </ul>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">09</span><h2>Priority Grouping — Preempt vs Sub-Priority</h2></div>
+  <div class="cols cols-4060" style="margin-top:0.3em;">
+    <div>
+      <p class="small">Each priority field is split into <strong class="a">preempt priority</strong> (upper) and <strong class="p">sub-priority</strong> (lower) by <code>AIRCR.PRIGROUP</code>.</p>
+      <div class="prio-demo">
+        <div class="k">PRIGROUP=0</div>
+        <div class="v">
+          <div class="bit set">P</div><div class="bit set">P</div><div class="bit set">P</div><div class="bit set">P</div>
+          <div class="bit imp">—</div><div class="bit imp">—</div><div class="bit imp">—</div><div class="bit imp">—</div>
+        </div>
+        <div class="k">PRIGROUP=4</div>
+        <div class="v">
+          <div class="bit set">P</div><div class="bit set">P</div><div class="bit set">P</div>
+          <div class="bit sub">S</div>
+          <div class="bit imp">—</div><div class="bit imp">—</div><div class="bit imp">—</div><div class="bit imp">—</div>
+        </div>
+        <div class="k">PRIGROUP=7</div>
+        <div class="v">
+          <div class="bit sub">S</div><div class="bit sub">S</div><div class="bit sub">S</div><div class="bit sub">S</div>
+          <div class="bit imp">—</div><div class="bit imp">—</div><div class="bit imp">—</div><div class="bit imp">—</div>
+        </div>
+      </div>
+      <p class="smaller dim"><strong class="a">Preempt</strong> = can I interrupt another ISR?<br><strong class="p">Sub</strong> = who runs first if multiple are simultaneously pending at the same preempt level?</p>
+    </div>
+    <div>
+      <div class="card blue" style="font-size:0.72em;">
+        <h3 class="b">Practical advice</h3>
+        <ul>
+          <li>On FreeRTOS, <code>configPRIO_BITS</code> is the implemented priority-bit count; FreeRTOS demands all preempt (PRIGROUP = 0). Sub-priority complicates reasoning — pick one.</li>
+          <li>For kernel-aware interrupts (that may call <code>xQueueSendFromISR</code>), priority <strong>must</strong> be numerically ≥ <code>configMAX_SYSCALL_INTERRUPT_PRIORITY</code>.</li>
+          <li>Higher-priority (smaller number) ISRs may run "above the kernel" and must not touch RTOS objects.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">10</span><h2>Exception Entry Sequence (M3/M4)</h2></div>
+  <div class="seq">
+    <div class="lbl">cycle</div>
+    <div class="lane"><div class="tick">1</div><div class="tick">2</div><div class="tick">3</div><div class="tick">4</div><div class="tick">5</div><div class="tick">6</div><div class="tick">7</div><div class="tick">8</div><div class="tick">9</div><div class="tick">10</div><div class="tick">11</div><div class="tick">12</div></div>
+
+    <div class="lbl">pipeline</div>
+    <div class="lane"><div class="tick lo">Thr</div><div class="tick lo">Thr</div><div class="tick stk">Stk</div><div class="tick stk">Stk</div><div class="tick stk">Stk</div><div class="tick stk">Stk</div><div class="tick stk">Stk</div><div class="tick stk">Stk</div><div class="tick stk">Stk</div><div class="tick stk">Stk</div><div class="tick hi">ISR1</div><div class="tick hi">ISR2</div></div>
+
+    <div class="lbl">bus D</div>
+    <div class="lane"><div class="tick idle">—</div><div class="tick idle">—</div><div class="tick">W xPSR</div><div class="tick">W PC</div><div class="tick">W LR</div><div class="tick">W R12</div><div class="tick">W R3</div><div class="tick">W R2</div><div class="tick">W R1</div><div class="tick">W R0</div><div class="tick idle">—</div><div class="tick idle">—</div></div>
+
+    <div class="lbl">bus I</div>
+    <div class="lane"><div class="tick">F thr</div><div class="tick">F thr</div><div class="tick">F vec</div><div class="tick">F vec</div><div class="tick idle">—</div><div class="tick idle">—</div><div class="tick idle">—</div><div class="tick idle">—</div><div class="tick idle">—</div><div class="tick">F ISR0</div><div class="tick">F ISR1</div><div class="tick">F ISR2</div></div>
+  </div>
+  <div class="cols cols-2" style="margin-top:0.3em;">
+    <div>
+      <h3>Entry (12 cycles)</h3>
+      <ul>
+        <li>Stacking of 8 words overlapped with vector fetch.</li>
+        <li>Load PC from vector → start fetching ISR.</li>
+        <li>On M7 (dual-issue + cache), typical entry is 10 cycles best-case from a hit.</li>
+      </ul>
+    </div>
+    <div>
+      <h3>Exit (12 cycles)</h3>
+      <ul>
+        <li><code>BX lr</code> with EXC_RETURN pattern triggers unstack.</li>
+        <li>8 words popped; IPSR &amp; control restored; instructions of pre-empted code resume.</li>
+        <li>Unless a new exception is pending at equal-or-higher priority → <strong>tail-chain</strong> (next slide).</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">11</span><h2>Tail-Chaining</h2></div>
+  <div class="cols cols-2" style="margin-top:0.3em;">
+    <div>
+      <h3>Without tail-chaining (hypothetical)</h3>
+      <div class="seq">
+        <div class="lbl">phase</div>
+        <div class="lane"><div class="tick lo">Thr</div><div class="tick stk">Stk (8w)</div><div class="tick hi">ISR1</div><div class="tick stk">Unstk</div><div class="tick stk">Stk</div><div class="tick hi">ISR2</div><div class="tick stk">Unstk</div><div class="tick lo">Thr</div></div>
+      </div>
+      <p class="smaller dim">Two 12-cycle stacks + two 12-cycle unstacks = 48 cycles of pure overhead.</p>
+    </div>
+    <div>
+      <h3>With tail-chaining (actual)</h3>
+      <div class="seq">
+        <div class="lbl">phase</div>
+        <div class="lane"><div class="tick lo">Thr</div><div class="tick stk">Stk (8w)</div><div class="tick hi">ISR1</div><div class="tick stk">Chain (6 cyc)</div><div class="tick hi">ISR2</div><div class="tick stk">Unstk</div><div class="tick lo">Thr</div></div>
+      </div>
+      <p class="smaller dim">Frame stays on stack; only 6 cycles to fetch new vector &amp; enter ISR2. Saves ~20 cycles per chained pair.</p>
+    </div>
+  </div>
+  <div class="card amber" style="font-size:0.72em;">
+    Tail-chaining triggers whenever the NVIC sees a pending exception at or above the current handler's priority <em>at the moment of return</em>. The CPU simply re-uses the existing stack frame and does a new vector fetch.
+  </div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">12</span><h2>Late-Arrival Preemption</h2></div>
+  <div class="cols cols-2" style="margin-top:0.3em;">
+    <div>
+      <h3>Scenario</h3>
+      <p class="small">A low-priority IRQ fires → CPU starts stacking. Midway through, a higher-priority IRQ fires.</p>
+      <div class="seq">
+        <div class="lbl">cycles</div>
+        <div class="lane"><div class="tick">1</div><div class="tick">2</div><div class="tick">3</div><div class="tick">4</div><div class="tick">5</div><div class="tick">6</div><div class="tick">7</div><div class="tick">8</div><div class="tick">9</div></div>
+        <div class="lbl">normal</div>
+        <div class="lane"><div class="tick lo">Thr</div><div class="tick stk">Stk</div><div class="tick stk">Stk</div><div class="tick stk">Stk</div><div class="tick stk">Stk</div><div class="tick stk">Stk</div><div class="tick stk">Stk</div><div class="tick stk">Stk</div><div class="tick lo">LO</div></div>
+        <div class="lbl">late arr.</div>
+        <div class="lane"><div class="tick lo">Thr</div><div class="tick stk">Stk</div><div class="tick stk">Stk</div><div class="tick fault">!HI pending</div><div class="tick stk">Stk</div><div class="tick stk">Stk</div><div class="tick stk">Stk</div><div class="tick stk">Stk</div><div class="tick hi">HI</div></div>
+      </div>
+    </div>
+    <div>
+      <ul>
+        <li>The NVIC monitors pending IRQs <strong>during</strong> stacking.</li>
+        <li>If a higher-priority exception arrives, CPU completes the in-flight stacking (frame is valid) and <strong>redirects the vector fetch</strong> to the new target.</li>
+        <li>The lower-priority exception becomes pending → eventually tail-chains after the higher one.</li>
+      </ul>
+      <div class="card green" style="font-size:0.72em;">
+        <strong class="g">Net effect:</strong> worst-case interrupt latency for a high-priority ISR is bounded by the stack time of <em>any</em> in-flight entry — not by the low-priority ISR executing to completion.
+      </div>
+    </div>
+  </div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">13</span><h2>Pop-Preemption</h2></div>
+  <div class="cols cols-4060" style="margin-top:0.3em;">
+    <div>
+      <h3>During exit unstacking…</h3>
+      <div class="seq">
+        <div class="lbl">cycles</div>
+        <div class="lane"><div class="tick">1</div><div class="tick">2</div><div class="tick">3</div><div class="tick">4</div><div class="tick">5</div><div class="tick">6</div></div>
+        <div class="lbl">state</div>
+        <div class="lane"><div class="tick hi">HI</div><div class="tick stk">Pop</div><div class="tick stk">Pop</div><div class="tick fault">!HI2</div><div class="tick stk">abort pop</div><div class="tick hi">HI2</div></div>
+      </div>
+    </div>
+    <div>
+      <ul>
+        <li>If another IRQ preempts while the CPU is in the <em>middle</em> of unstacking, pop is aborted.</li>
+        <li>The current frame is reused — no re-push — and the new ISR vector is fetched.</li>
+        <li>Requires the frame to still be valid on the current stack; CPU guarantees that by only aborting in the early pop cycles.</li>
+      </ul>
+    </div>
+  </div>
+  <div class="card blue" style="font-size:0.72em;">
+    Tail-chaining, late arrival, and pop-preemption together give Cortex-M a worst-case interrupt latency dominated by the 8-word stacking, <em>not</em> by handler-chain unwinding. This is the core reason the family dominates hard-real-time niches.
+  </div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">14</span><h2>Lazy Floating-Point Stacking</h2></div>
+  <div class="cols cols-2" style="margin-top:0.3em;">
+    <div>
+      <h3>Without lazy stacking</h3>
+      <ul>
+        <li>On exception entry, if FPU is active, CPU always pushes 18 extra FP words (S0–S15, FPSCR, padding).</li>
+        <li>~17 extra cycles on M4, 20+ on M7.</li>
+        <li>Wasted if the ISR does not touch the FPU.</li>
+      </ul>
+      <h3>With lazy stacking</h3>
+      <ul>
+        <li>CPU <em>reserves</em> space (advances SP by 18 words) but skips the writes.</li>
+        <li>Sets <code>FPCCR.LSPACT = 1</code>.</li>
+        <li>If the ISR ever executes an FP instruction → hardware detects this, performs the deferred save, then continues.</li>
+        <li>If it never does → no FP registers written. Full save / restore avoided.</li>
+      </ul>
+    </div>
+    <div>
+<pre><code class="mono">/* Enable lazy stacking (default on M4F with FPU on) */
+#define FPCCR   (*(volatile uint32_t*)0xE000EF34)
+#define FPCCR_ASPEN  (1U &lt;&lt; 31)
+#define FPCCR_LSPEN  (1U &lt;&lt; 30)
+
+/* Most startup code sets both:
+   ASPEN = automatic FP state preservation on exception
+   LSPEN = lazy — defer until the handler uses FPU */
+FPCCR |= FPCCR_ASPEN | FPCCR_LSPEN;</code></pre>
+      <div class="card red" style="font-size:0.72em;">
+        <strong class="r">Trap:</strong> if a non-task context (e.g. hard fault handler) executes an FP instruction with the frame partially written, and the frame pointer is wrong, you get chaos. In fault handlers: disable FPU (or never touch it).
+      </div>
+    </div>
+  </div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">15</span><h2>Wake-up Interrupt Controller (WIC)</h2></div>
+  <div class="cols cols-4060" style="margin-top:0.3em;">
+    <div>
+      <svg viewBox="0 0 400 240" style="width:100%;">
+        <g font-family="DM Sans" font-size="11">
+          <rect x="40" y="40" width="140" height="60" rx="6" fill="#2a1a0a" stroke="#f5a623"/>
+          <text x="110" y="60" text-anchor="middle" fill="#f5a623" font-weight="700">Core + NVIC</text>
+          <text x="110" y="78" text-anchor="middle" fill="#fff" font-size="10">clock gated in</text>
+          <text x="110" y="92" text-anchor="middle" fill="#fff" font-size="10">deep sleep</text>
+
+          <rect x="40" y="150" width="140" height="60" rx="6" fill="#0a2a1a" stroke="#4ecb8d"/>
+          <text x="110" y="170" text-anchor="middle" fill="#4ecb8d" font-weight="700">WIC</text>
+          <text x="110" y="188" text-anchor="middle" fill="#fff" font-size="10">always clocked by</text>
+          <text x="110" y="202" text-anchor="middle" fill="#fff" font-size="10">32 kHz / LF clock</text>
+
+          <rect x="240" y="90" width="140" height="60" rx="6" fill="#1a0a2a" stroke="#a78bfa"/>
+          <text x="310" y="110" text-anchor="middle" fill="#a78bfa" font-weight="700">IRQ sources</text>
+          <text x="310" y="128" text-anchor="middle" fill="#fff" font-size="10">(UART RX, GPIO,</text>
+          <text x="310" y="142" text-anchor="middle" fill="#fff" font-size="10">RTC tick…)</text>
+
+          <line x1="240" y1="105" x2="180" y2="75" stroke="#8888a8" stroke-dasharray="2 2"/>
+          <line x1="240" y1="135" x2="180" y2="180" stroke="#4ecb8d"/>
+          <line x1="110" y1="150" x2="110" y2="100" stroke="#f5a623" stroke-width="2" marker-end="url(#arrA)"/>
+          <defs><marker id="arrA" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#f5a623"/></marker></defs>
+          <text x="120" y="128" fill="#f5a623" font-size="10">wake</text>
+        </g>
+      </svg>
+    </div>
+    <div>
+      <ul>
+        <li>WIC is a small always-on block that duplicates the NVIC's <em>mask</em> logic.</li>
+        <li>In deep sleep, core &amp; NVIC are clock-gated (M7+) or power-gated (state-retentive).</li>
+        <li>When a masked-in IRQ asserts → WIC asserts WAKEUP to the power-management IP → clocks restore → NVIC takes the interrupt normally.</li>
+        <li>Entry latency grows by clock-start time (typ. a few µs to ~100 µs depending on LDO/PLL).</li>
+      </ul>
+      <p class="smaller dim">Needed because without the WIC, the NVIC cannot sense the IRQ line while its clock is off. With the WIC, sub-µA deep sleep with IRQ wake is possible.</p>
+    </div>
+  </div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">16</span><h2>SVCall vs PendSV — Two Roles</h2></div>
+  <div class="cols cols-2" style="margin-top:0.3em;">
+    <div>
+      <h3 class="a">SVCall <span class="pill amber">synchronous</span></h3>
+      <ul>
+        <li>Triggered by the <code>SVC #imm</code> instruction in user code.</li>
+        <li>Runs at <strong>configured priority</strong> (typically high) — returns via unstack as normal.</li>
+        <li>Classic use: <em>syscall trampoline</em> — user task requests kernel action; handler reads the imm byte to dispatch.</li>
+        <li>On v8-M, <code>SVC</code> from Non-Secure traps into NS handler; S-side has its own.</li>
+      </ul>
+    </div>
+    <div>
+      <h3 class="g">PendSV <span class="pill green">software-pended</span></h3>
+      <ul>
+        <li>Set by writing <code>SCB-&gt;ICSR.PENDSVSET</code>.</li>
+        <li>Runs at its own priority slot; <strong>typically configured as the lowest priority</strong>.</li>
+        <li>Used by RTOS kernels for the context switch — PendSV is guaranteed to run <em>after</em> all higher-priority IRQs finish, so the switch can never pre-empt a critical ISR.</li>
+        <li>Classic FreeRTOS pattern: SysTick or kernel syscall pends PendSV → PendSV_Handler performs the switch.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">17</span><h2>SysTick — The Built-in Tick Timer</h2></div>
+  <div class="cols cols-2" style="margin-top:0.3em;">
+    <div>
+      <ul>
+        <li>24-bit down-counter in the SCS. Counts at core clock or external (impl.-defined) clock.</li>
+        <li>Fires <strong>SysTick exception</strong> (#15) on reload.</li>
+        <li>Register set:
+          <ul>
+            <li><code>SYST_CSR</code> — enable, tickint, clksource, countflag.</li>
+            <li><code>SYST_RVR</code> — reload value.</li>
+            <li><code>SYST_CVR</code> — current.</li>
+            <li><code>SYST_CALIB</code> — implementation-provided 10 ms calibration constant.</li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+    <div>
+<pre><code class="mono">/* 1 kHz tick on a 168 MHz M4 */
+#define SYST_CSR  (*(volatile uint32_t*)0xE000E010)
+#define SYST_RVR  (*(volatile uint32_t*)0xE000E014)
+#define SYST_CVR  (*(volatile uint32_t*)0xE000E018)
+
+void systick_init(uint32_t core_hz, uint32_t tick_hz)
+{
+    SYST_RVR = core_hz / tick_hz - 1; /* 167 999 */
+    SYST_CVR = 0;                     /* clear */
+    SYST_CSR = (1U&lt;&lt;2) |   /* CLKSOURCE = core */
+               (1U&lt;&lt;1) |   /* TICKINT */
+               (1U&lt;&lt;0);    /* ENABLE */
+}</code></pre>
+      <p class="smaller dim">A single 24-bit counter means max interval at 168 MHz ≈ 99.9 ms. Tickless RTOS designs pair SysTick with the RTC for longer sleeps.</p>
+    </div>
+  </div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">18</span><h2>Fault Taxonomy</h2></div>
+  <svg class="diagram" viewBox="0 0 900 260" style="width:100%;">
+    <g font-family="DM Sans" font-size="12">
+      <rect x="20" y="20" width="160" height="50" rx="6" fill="#2a0a0a" stroke="#f87171"/>
+      <text x="100" y="40" text-anchor="middle" fill="#f87171" font-weight="700">HardFault</text>
+      <text x="100" y="58" text-anchor="middle" fill="#fff" font-size="10">catch-all / escalation</text>
+
+      <rect x="250" y="20" width="160" height="50" rx="6" fill="#2a1a0a" stroke="#f5a623"/>
+      <text x="330" y="40" text-anchor="middle" fill="#f5a623" font-weight="700">MemManage</text>
+      <text x="330" y="58" text-anchor="middle" fill="#fff" font-size="10">MPU / XN violation</text>
+
+      <rect x="430" y="20" width="160" height="50" rx="6" fill="#2a1a0a" stroke="#f5a623"/>
+      <text x="510" y="40" text-anchor="middle" fill="#f5a623" font-weight="700">BusFault</text>
+      <text x="510" y="58" text-anchor="middle" fill="#fff" font-size="10">bus error abort</text>
+
+      <rect x="610" y="20" width="160" height="50" rx="6" fill="#2a1a0a" stroke="#f5a623"/>
+      <text x="690" y="40" text-anchor="middle" fill="#f5a623" font-weight="700">UsageFault</text>
+      <text x="690" y="58" text-anchor="middle" fill="#fff" font-size="10">undefined / div0 / align…</text>
+
+      <rect x="250" y="120" width="160" height="50" rx="6" fill="#1a0a2a" stroke="#a78bfa"/>
+      <text x="330" y="140" text-anchor="middle" fill="#a78bfa" font-weight="700">SecureFault</text>
+      <text x="330" y="158" text-anchor="middle" fill="#fff" font-size="10">v8-M TrustZone only</text>
+
+      <line x1="330" y1="70" x2="140" y2="70" stroke="#8888a8" stroke-dasharray="3 3"/>
+      <line x1="510" y1="70" x2="140" y2="70" stroke="#8888a8" stroke-dasharray="3 3"/>
+      <line x1="690" y1="70" x2="140" y2="70" stroke="#8888a8" stroke-dasharray="3 3"/>
+      <line x1="330" y1="120" x2="140" y2="80" stroke="#8888a8" stroke-dasharray="3 3"/>
+      <text x="420" y="105" font-size="10" fill="#8888a8">escalate if disabled / nested</text>
+
+      <rect x="20" y="200" width="870" height="40" rx="6" fill="#10101a" stroke="#2a2a3a"/>
+      <text x="455" y="226" text-anchor="middle" fill="#ccc" font-size="11">Configurable fault → HardFault if (a) not enabled in SHCSR, (b) same-/higher-priority fault nests, (c) fault in NMI/HardFault itself, (d) vector fetch failure</text>
+    </g>
+  </svg>
+  <div class="card amber" style="font-size:0.7em;">
+    Enable <code>SCB-&gt;SHCSR</code>.{MEMFAULTENA, BUSFAULTENA, USGFAULTENA} at boot so specific faults have distinct handlers. Otherwise every fault looks like HardFault, which is harder to debug.
+  </div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">19</span><h2>Decoding a HardFault</h2></div>
+  <div class="cols cols-2" style="margin-top:0.3em;">
+    <div>
+      <h3>Where the evidence lives</h3>
+      <ul>
+        <li><code>SCB-&gt;HFSR</code> — hard-fault status. FORCED=1 means an escalated configurable fault.</li>
+        <li><code>SCB-&gt;CFSR</code> — configurable fault status register. Three bytes: MMFSR / BFSR / UFSR.</li>
+        <li><code>SCB-&gt;MMFAR</code> — fault address if <code>MMARVALID</code>.</li>
+        <li><code>SCB-&gt;BFAR</code> — bus-fault address if <code>BFARVALID</code>.</li>
+        <li>Auto-stacked frame holds the <strong class="r">faulting</strong> PC, LR, xPSR.</li>
+      </ul>
+    </div>
+    <div>
+<pre><code class="mono">__attribute__((naked))
+void HardFault_Handler(void)
+{
+    __asm volatile (
+        "TST lr, #4          \n"
+        "ITE EQ              \n"
+        "MRSEQ r0, MSP       \n"
+        "MRSNE r0, PSP       \n"
+        "B hard_fault_c      \n");
+}
+
+void hard_fault_c(uint32_t *sf)
+{
+    uint32_t pc   = sf[6];
+    uint32_t lr   = sf[5];
+    uint32_t psr  = sf[7];
+    uint32_t cfsr = SCB-&gt;CFSR;
+    /* write to RTT / flash / UART, then NVIC_SystemReset */
+}</code></pre>
+      <p class="smaller dim">Pattern: find the stack used at fault (MSP/PSP via bit 2 of LR/EXC_RETURN), grab stacked PC + CFSR, log it, reset.</p>
+    </div>
+  </div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">20</span><h2>Common Fault Causes — Recipes</h2></div>
+  <table style="font-size:0.62em;">
+    <tr><th>Symptom</th><th>CFSR bit</th><th>Typical cause</th></tr>
+    <tr><td>UsageFault — UNDEFINSTR</td><td>UFSR.UNDEFINSTR</td><td>Jumped into data; bit-rot flash; wrong Thumb bit in function pointer.</td></tr>
+    <tr><td>UsageFault — INVPC</td><td>UFSR.INVPC</td><td>EXC_RETURN corrupted (stack smash, bad handler asm).</td></tr>
+    <tr><td>UsageFault — UNALIGNED</td><td>UFSR.UNALIGNED</td><td><code>CCR.UNALIGN_TRP=1</code>; unaligned word/halfword on v6-M or to Device memory.</td></tr>
+    <tr><td>UsageFault — DIVBYZERO</td><td>UFSR.DIVBYZERO</td><td><code>CCR.DIV_0_TRP=1</code>; signed/unsigned divide by 0.</td></tr>
+    <tr><td>BusFault — PRECISERR</td><td>BFSR.PRECISERR</td><td>Illegal peripheral address; access to region with no mapped slave.</td></tr>
+    <tr><td>BusFault — IMPRECISERR</td><td>BFSR.IMPRECISERR</td><td>Write-buffered error — fault address is <strong>not</strong> in BFAR; force DSB after writes or disable write buffer while debugging.</td></tr>
+    <tr><td>MemManage — DACCVIOL / IACCVIOL</td><td>MMFSR.DACC/IACC</td><td>MPU denied the access — check permissions &amp; region config.</td></tr>
+    <tr><td>Stack-limit hit</td><td>UFSR.STKOF (v8-M)</td><td>SP went below PSPLIM/MSPLIM — add overflow check via CMSIS.</td></tr>
+  </table>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">21</span><h2>CMSIS NVIC API</h2></div>
+  <div class="cols cols-2" style="margin-top:0.3em;">
+    <div>
+<pre><code class="mono">/* Enable a peripheral IRQ at priority 0x50 */
+NVIC_SetPriority(EXTI0_IRQn, 0x50);
+NVIC_EnableIRQ(EXTI0_IRQn);
+
+/* Pend in software */
+NVIC_SetPendingIRQ(EXTI0_IRQn);
+
+/* Get active ISR# (nonzero in Handler mode) */
+uint32_t vect = __get_IPSR();
+
+/* Atomic critical section for BASEPRI-filterable IRQs */
+uint32_t prev = __get_BASEPRI();
+__set_BASEPRI(0x20);
+/* … */
+__set_BASEPRI(prev);</code></pre>
+    </div>
+    <div>
+      <h3>Under the hood</h3>
+      <ul>
+        <li><code>NVIC_EnableIRQ(n)</code> → sets bit <code>n%32</code> in <code>NVIC-&gt;ISER[n/32]</code>.</li>
+        <li><code>NVIC_SetPriority(n, p)</code> → writes the upper <code>__NVIC_PRIO_BITS</code> bits of <code>p</code> to <code>NVIC-&gt;IPR[n]</code>.</li>
+        <li>Faults / PendSV / SysTick use <code>SCB-&gt;SHPR[1..3]</code> instead of IPR.</li>
+        <li>CMSIS macros on v8-M automatically target the Secure or NS register bank based on the current state — no source changes needed when moving code S↔NS.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">22</span><h2>ISR Design Patterns</h2></div>
+  <div class="cols cols-3">
+    <div class="card amber">
+      <h3 class="a">Top-half only</h3>
+      <p>ISR does the whole job — short, deterministic, no RTOS calls. Fits GPIO debouncing, simple UART byte echo, timer tick that just sets a flag.</p>
+    </div>
+    <div class="card green">
+      <h3 class="g">Top + bottom half</h3>
+      <p>ISR captures hardware state into a lock-free queue / ring buffer, then returns fast. Worker thread or deferred procedure handles the slow part. Use <code>xQueueSendFromISR</code>/<code>xTaskNotifyFromISR</code> with the <code>pxHigherPriorityTaskWoken</code> pattern.</p>
+    </div>
+    <div class="card purple">
+      <h3 class="p">Tickless / event-driven</h3>
+      <p>Two priority bands — <em>hard RT</em> IRQs above <code>configMAX_SYSCALL_INTERRUPT_PRIORITY</code> must not touch the RTOS; <em>soft RT</em> IRQs below it may signal tasks.</p>
+    </div>
+  </div>
+  <div class="card blue" style="font-size:0.72em;">
+    <strong class="b">Golden rule:</strong> an ISR should return in tens of microseconds at most. Anything longer steals determinism from every lower-priority source. If the work is unbounded, use DMA + completion IRQ, or defer.
+  </div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">23</span><h2>FreeRTOS — Exception Priority Rules</h2></div>
+  <svg class="diagram" viewBox="0 0 840 220" style="width:100%;">
+    <g font-family="DM Sans" font-size="11">
+      <!-- priority axis -->
+      <line x1="40" y1="180" x2="800" y2="180" stroke="#8888a8" stroke-width="1"/>
+      <text x="40"  y="200" fill="#f5a623">0 (highest)</text>
+      <text x="800" y="200" text-anchor="end" fill="#4ecb8d">255 (lowest)</text>
+
+      <!-- "above kernel" -->
+      <rect x="60" y="70" width="280" height="100" rx="6" fill="#2a0a0a" stroke="#f87171"/>
+      <text x="200" y="92" text-anchor="middle" fill="#f87171" font-weight="700">Above kernel IRQs</text>
+      <text x="200" y="110" text-anchor="middle" font-size="10" fill="#fff">may NOT call FromISR APIs</text>
+      <text x="200" y="126" text-anchor="middle" font-size="10" fill="#fff">can preempt the scheduler</text>
+      <text x="200" y="148" text-anchor="middle" font-size="10" fill="#ccc">e.g. motor-control 20 kHz PWM ISR</text>
+
+      <!-- "kernel" -->
+      <rect x="360" y="70" width="280" height="100" rx="6" fill="#0a2a1a" stroke="#4ecb8d"/>
+      <text x="500" y="92" text-anchor="middle" fill="#4ecb8d" font-weight="700">Kernel-safe IRQs</text>
+      <text x="500" y="110" text-anchor="middle" font-size="10" fill="#fff">may call xQueueSendFromISR etc.</text>
+      <text x="500" y="126" text-anchor="middle" font-size="10" fill="#fff">blocked by taskENTER_CRITICAL</text>
+      <text x="500" y="148" text-anchor="middle" font-size="10" fill="#ccc">e.g. UART, DMA completion</text>
+
+      <!-- "PendSV/SysTick" -->
+      <rect x="660" y="70" width="150" height="100" rx="6" fill="#1a0a2a" stroke="#a78bfa"/>
+      <text x="735" y="92" text-anchor="middle" fill="#a78bfa" font-weight="700">PendSV / SysTick</text>
+      <text x="735" y="110" text-anchor="middle" font-size="10" fill="#fff">lowest priority</text>
+      <text x="735" y="126" text-anchor="middle" font-size="10" fill="#fff">kernel own use</text>
+
+      <!-- sep lines -->
+      <line x1="340" y1="50" x2="340" y2="180" stroke="#f87171" stroke-dasharray="3 3"/>
+      <text x="340" y="45" text-anchor="middle" font-size="10" fill="#f87171">configMAX_SYSCALL_INTERRUPT_PRIORITY</text>
+    </g>
+  </svg>
+  <p class="smaller dim">The exact numerical threshold is configured per port. With 4 impl. bits on STM32, a typical split is kernel-safe above 0x50 and PendSV/SysTick at 0xF0.</p>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">24</span><h2>Common Bugs</h2></div>
+  <div class="cols cols-2">
+    <div>
+      <div class="card red" style="font-size:0.72em;">
+        <h3 class="r">1. Priority inversion via PRIMASK</h3>
+        <p>FreeRTOS <code>taskENTER_CRITICAL()</code> sets BASEPRI — not PRIMASK — so high-priority "above-kernel" IRQs can still fire. Calling <code>__disable_irq()</code> in user code defeats this.</p>
+      </div>
+      <div class="card red" style="font-size:0.72em;">
+        <h3 class="r">2. Setting NVIC priority before clearing pending</h3>
+        <p>Changing priority of an ISR that is already pending has implementation-defined timing. Always disable IRQ, clear pending, set priority, then enable.</p>
+      </div>
+      <div class="card red" style="font-size:0.72em;">
+        <h3 class="r">3. Calling FromISR on a too-high-priority IRQ</h3>
+        <p>Silent corruption of kernel state; often manifests as a random HardFault hours later. Assert priority in the ISR.</p>
+      </div>
+    </div>
+    <div>
+      <div class="card red" style="font-size:0.72em;">
+        <h3 class="r">4. Forgetting to clear peripheral pending bit</h3>
+        <p>NVIC pending bit clears on entry, but the <em>peripheral</em> flag still asserts → re-entry forever. Always acknowledge in the peripheral's status register.</p>
+      </div>
+      <div class="card red" style="font-size:0.72em;">
+        <h3 class="r">5. Write-buffered imprecise BusFault</h3>
+        <p>Fault arrives cycles after the offending store — PC in the stacked frame is not where the bug is. <code>DSB</code> after suspect writes, or disable write-buffer via <code>ACTLR.DISDEFWBUF</code> during debug.</p>
+      </div>
+      <div class="card red" style="font-size:0.72em;">
+        <h3 class="r">6. FPU touched in a fault handler with lazy stacking on</h3>
+        <p>Partial frame + float op = spectacular crash. Mark fault handlers <code>__attribute__((target("no-float")))</code> or disable FPU.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">25</span><h2>v8-M / TrustZone Additions</h2></div>
+  <div class="cols cols-2" style="margin-top:0.3em;">
+    <div>
+      <ul>
+        <li><strong class="p">Two vector tables</strong>: <code>VTOR_S</code> (Secure) and <code>VTOR_NS</code> (Non-Secure). Every exception is either S or NS depending on target state.</li>
+        <li>Each fault type can be <strong>banked</strong> — S and NS each has its own MemManage/Bus/Usage handler.</li>
+        <li>When an exception crosses domains, hardware stacks <strong>additional context</strong> (DCRS bit in EXC_RETURN).</li>
+        <li>NMI and HardFault can be configured to always target Secure (<code>AIRCR.BFHFNMINS</code>).</li>
+      </ul>
+    </div>
+    <div>
+      <ul>
+        <li>Stacking of additional state + an integrity signature prevents NS code from forging a return into S.</li>
+        <li>Priority register banks: NS code cannot raise its priority above the <em>NS-Prio boundary</em> set by S at boot.</li>
+        <li><strong class="r">SecureFault</strong> (exception #7) is dedicated to TZ violations — separate from MemManage/Bus/Usage.</li>
+      </ul>
+      <div class="card purple" style="font-size:0.72em;">
+        Covered in depth in Presentation 07 — TrustZone.
+      </div>
+    </div>
+  </div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">26</span><h2>References</h2></div>
+  <div style="max-width:90%; margin:0 auto; font-size:0.58em; line-height:1.8;">
+    <p>
+      <strong class="a">Arm</strong> — <em>Armv7-M / Armv8-M Architecture Reference Manual</em> — section B1 (Exception model)<br>
+      <strong class="a">Arm</strong> — <em>Cortex-M3 / M4 / M7 Devices Generic User Guide</em> (DUI0553, DUI0552, DUI0646)<br>
+      <strong class="a">Joseph Yiu</strong> — <em>Definitive Guide to Cortex-M3/M4</em> — chapters 7–9<br>
+      <strong class="a">Joseph Yiu</strong> — <em>Cortex-M23/M33 Definitive Guide</em> — chapters 10–12 for TrustZone exception entry<br>
+      <strong class="a">FreeRTOS</strong> — Cortex-M interrupt priority behaviour (<code>freertos.org</code> → "Cortex-M interrupt priorities")<br>
+      <strong class="a">ARM Community blog</strong> — "Cutting through the confusion with Cortex-M interrupt priorities" by Joseph Yiu<br>
+      <strong class="a">Segger</strong> — "Cortex-M Fault Analysis" application note
+    </p>
+    <p style="color:var(--muted); margin-top:0.8em; font-size:0.85em">
+      Presentation built with <a href="https://revealjs.com">Reveal.js 4.6</a> · Playfair Display + DM Sans + JetBrains Mono<br>
+      Educational use.
+    </p>
+  </div>
+</section>
+
+</div></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/highlight/highlight.min.js"></script>
+<script>
+Reveal.initialize({
+  hash: true, slideNumber: 'c/t', transition: 'fade', transitionSpeed: 'fast',
+  controls: true, progress: true, center: false,
+  width: 1100, height: 900, margin: 0.01,
+  plugins: [RevealHighlight], highlight: { theme: 'monokai' }
+});
+</script>
+<script>
+(function(){
+  var h = Reveal.getConfig().height || 900;
+  var m = Reveal.getConfig().margin || 0.02;
+  var maxH = Math.floor(h * (1 - 2 * m)) + 'px';
+  function fixSlides(){
+    document.querySelectorAll('.reveal .slides>section,.reveal .slides>section>section').forEach(function(s){
+      s.style.display = 'block'; s.style.maxHeight = maxH;
+    });
+  }
+  Reveal.on('ready', fixSlides); Reveal.on('slidechanged', fixSlides);
+})();
+</script>
+</body>
+</html>

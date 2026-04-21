@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cortex-M Memory System & MPU</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@400;500;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/black.min.css">
+<style>
+  :root {
+    --amber:#f5a623;--green:#4ecb8d;--purple:#a78bfa;--blue:#60a5fa;--red:#f87171;
+    --bg:#0a0a0f;--bg2:#10101a;--bg3:#181824;--border:#2a2a3a;--text:#e8e8f0;--muted:#8888a8;
+  }
+  .reveal-viewport { background: var(--bg); }
+  .reveal .slides section { background: transparent; }
+  .reveal section { text-align: left; }
+  .reveal .slides > section { padding: 0.5em; overflow-y: auto !important; align-items: flex-start !important; justify-content: flex-start !important; }
+  .reveal .progress { color: var(--amber); height: 3px; }
+  .reveal .controls { color: var(--amber); }
+  .reveal section::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, var(--amber), var(--green)); }
+  .reveal { font-family: 'DM Sans', sans-serif; color: var(--text); font-size: 22px; }
+  .reveal .slide-number { font-family: 'JetBrains Mono', monospace; font-size: 0.7em; color: var(--muted); }
+  .reveal h1, .reveal h2, .reveal h3 { font-family: 'Playfair Display', serif; color: #fff; text-transform: none; letter-spacing: -0.01em; }
+  .reveal h1 { font-size: 2.4em; font-weight: 900; color: var(--amber); line-height: 1.1; }
+  .reveal h2 { font-size: 1.7em; font-weight: 700; color: var(--amber); margin-bottom: 0.6em; }
+  .reveal h3 { font-size: 1.2em; font-weight: 700; color: var(--green); margin-bottom: 0.3em; }
+  .reveal p  { font-size: 0.75em; line-height: 1.5; color: var(--text); }
+  .reveal li { font-size: 0.7em; line-height: 1.5; margin-bottom: 0.25em; }
+  .reveal code { font-family: 'JetBrains Mono', monospace; font-size: .72em; }
+  .reveal pre  { background: var(--bg3); border: 1px solid var(--border); border-radius: 8px; padding: 0.5em 1em; margin: 0.4em 0; width: 100%; box-shadow: none; }
+  .reveal pre code { font-size: 0.58em; line-height: 1.5; background: transparent; color: #cdd6f4; }
+  .slide-hdr { display: flex; align-items: center; gap: .4em; border-bottom: 1px solid var(--border); padding-bottom: .2em; margin-bottom: .3em; }
+  .slide-hdr .tag { font-family: 'JetBrains Mono', monospace; font-size: 0.55em; font-weight: 600; color: var(--bg); background: var(--amber); padding: .1em .4em; border-radius: 3px; letter-spacing: .04em; }
+  .slide-hdr h2 { margin: 0; font-size: 1.4em; }
+  .cols{display:grid;gap:1em;} .cols-2{grid-template-columns:1fr 1fr;} .cols-3{grid-template-columns:1fr 1fr 1fr;} .cols-6040{grid-template-columns:6fr 4fr;} .cols-4060{grid-template-columns:4fr 6fr;}
+  .card { background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; padding: 1em 1.2em; box-shadow: 0 4px 20px rgba(0,0,0,0.3); margin: 0.4em 0; }
+  .card.amber { border-left: 3px solid var(--amber); } .card.green { border-left: 3px solid var(--green); } .card.purple{ border-left: 3px solid var(--purple); } .card.blue  { border-left: 3px solid var(--blue); } .card.red   { border-left: 3px solid var(--red); }
+  .card h3 { font-size: 1em; margin: 0 0 0.4em; }
+  .card p, .card ul  { font-size: 0.8em; margin: 0; color: #b8b8d0; } .card ul { padding-left: 1.2em; } .card li { font-size: 0.85em; margin-bottom: 0.25em; }
+  .reveal table { width: 100%; border-collapse: collapse; font-size: 0.65em; margin: 0.5em 0; }
+  .reveal table th { background: var(--bg3); color: var(--amber); padding: 0.5em 0.7em; border: 1px solid var(--border); text-align: left; font-weight: 700; }
+  .reveal table td { padding: 0.5em 0.7em; border: 1px solid var(--border); color: #ccc; vertical-align: top; }
+  .reveal table tr:nth-child(even) td { background: #0e0e18; }
+  .a{color:var(--amber);font-weight:600;} .g{color:var(--green);font-weight:600;} .p{color:var(--purple);font-weight:600;} .b{color:var(--blue);font-weight:600;} .r{color:var(--red);font-weight:600;} .mono{font-family:'JetBrains Mono',monospace;}
+  svg.diagram { display: block; margin: 0 auto; overflow: visible; }
+  .pill { display: inline-block; font-family: 'JetBrains Mono', monospace; font-size: 0.6em; padding: 0.15em 0.6em; border-radius: 999px; border: 1px solid; margin: 0 .08em; }
+  .pill.amber{color:var(--amber);border-color:var(--amber);} .pill.green{color:var(--green);border-color:var(--green);} .pill.purple{color:var(--purple);border-color:var(--purple);} .pill.blue{color:var(--blue);border-color:var(--blue);} .pill.red{color:var(--red);border-color:var(--red);}
+  .title-slide h1 { font-size: 2.4em; } .title-slide .subtitle { font-size: 0.85em; color: var(--green); font-weight: 400; letter-spacing: 0.06em; margin: 0.3em 0 0.6em; } .title-slide .meta { font-size: 0.6em; color: var(--muted); font-family: 'JetBrains Mono', monospace; }
+  .dim { color: var(--muted); } .small { font-size: 0.65em; } .smaller { font-size: 0.55em; } .tiny { font-size: 0.48em; }
+  .reveal ul, .reveal ol { margin: .15em 0 .15em 1em; }
+
+  /* Memory map */
+  .memmap { display: grid; grid-template-columns: 130px 1fr; gap: 2px; font-family: 'JetBrains Mono', monospace; font-size: 0.7em; margin: 0.4em 0; }
+  .memmap .addr { color: var(--amber); text-align: right; padding: 0.4em 0.6em; font-weight: 700; }
+  .memmap .r    { padding: 0.4em 0.8em; border-radius: 4px; border-left: 3px solid; }
+  .memmap .r.code { background: #0a2a2a; border-color: var(--blue); color: #cdd6f4; }
+  .memmap .r.sram { background: #0a2a1a; border-color: var(--green); color: #cdd6f4; }
+  .memmap .r.peri { background: #2a1a0a; border-color: var(--amber); color: #fde6ba; }
+  .memmap .r.eram { background: #1a1a2a; border-color: var(--purple); color: #e0d4f8; }
+  .memmap .r.edev { background: #2a0a1a; border-color: var(--red);   color: #ffd4d4; }
+  .memmap .r.ppb  { background: #1a1a3a; border-color: #7ab8ff;       color: #cdd6f4; font-weight:700; }
+  .memmap .r small { color: var(--muted); display: block; font-size: 0.75em; margin-top: 2px; }
+
+  /* Bit-band visual */
+  .bitband { display:grid; grid-template-columns: 1fr 1fr; gap: 1em; margin: 0.4em 0; }
+  .bitband .col { font-family: 'JetBrains Mono', monospace; font-size: 0.62em; }
+  .word { display: flex; gap: 2px; margin: 0.3em 0; }
+  .word .bit { flex: 1; text-align: center; padding: 0.3em 0.2em; background: var(--bg2); border: 1px solid var(--border); border-radius: 3px; }
+  .word .bit.on { background: var(--amber); color: var(--bg); font-weight: 700; border-color: var(--amber); }
+  .word .bit.sel { background: var(--green); color: var(--bg); font-weight: 700; border-color: var(--green); }
+
+  /* MPU region picker */
+  .mpu-tbl { font-family: 'JetBrains Mono', monospace; font-size: 0.65em; }
+  .mpu-tbl .row { display: grid; grid-template-columns: 40px 130px 120px 1fr; gap: 4px; padding: 0.2em 0; border-bottom: 1px solid var(--border); }
+  .mpu-tbl .row.h { color: var(--amber); font-weight: 700; }
+  .mpu-tbl .row .n { color: var(--amber); text-align: center; }
+
+  /* Barriers */
+  .bar-tbl { display: grid; grid-template-columns: 70px 1fr; gap: 4px; font-family: 'JetBrains Mono', monospace; font-size: 0.65em; }
+  .bar-tbl .k { background: var(--bg3); color: var(--amber); padding: 0.3em 0.6em; border-radius: 4px; text-align: center; font-weight: 700; }
+  .bar-tbl .v { background: var(--bg2); border-left: 3px solid var(--border); padding: 0.3em 0.7em; border-radius: 4px; }
+</style>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+
+<section class="title-slide" data-background-color="#0a0a0f">
+  <div style="font-family:'JetBrains Mono',monospace;font-size:.5em;color:var(--muted);margin-bottom:.4em;letter-spacing:.1em;">ARM CORTEX-M · PRESENTATION 04</div>
+  <h1>Memory System &amp; MPU</h1>
+  <div class="subtitle">Memory Map · Bit-Banding · Barriers · MPU · Caches · TCM</div>
+  <div style="width:60px;height:3px;background:var(--amber);margin-bottom:1.4em;"></div>
+  <div class="meta">No MMU. No virtual memory. Just a carefully-partitioned 4 GiB of physical address space.</div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">02</span><h2>Why a Fixed Memory Map?</h2></div>
+  <div class="cols cols-2">
+    <div>
+      <ul>
+        <li>Every Cortex-M sees the <strong>same 4 GiB map</strong>. The architecture fixes eight regions, each with default attributes and semantics.</li>
+        <li>A vendor SoC maps its flash, SRAM, peripherals and external memories <em>inside</em> these regions — but the region boundaries and defaults are architectural.</li>
+        <li>The compiler / linker can therefore <strong>assume memory semantics</strong> (e.g. that <code>0x4000_0000</code> is Device memory) without device-specific macros.</li>
+        <li>The NVIC, SCB, MPU, FPU, SysTick, and CoreSight components live at <em>fixed</em> addresses inside the Private Peripheral Bus (PPB).</li>
+      </ul>
+    </div>
+    <div>
+      <div class="card amber">
+        <h3 class="a">Consequence</h3>
+        <p>If you port an RTOS port from STM32 to Nordic to NXP, the address of <code>SCB-&gt;VTOR</code> is identical. The peripheral offsets change; the core does not.</p>
+      </div>
+      <div class="card green" style="margin-top:0.4em;">
+        <h3 class="g">Consequence</h3>
+        <p>Attributes like "Normal" vs "Device" memory are <em>typed</em> by the region (default), but the <strong>MPU</strong> can override them on a region-by-region basis.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">03</span><h2>The Eight Regions</h2></div>
+  <div class="memmap">
+    <div class="addr">0xFFFF_FFFF</div><div class="r ppb">Vendor (reserved)</div>
+    <div class="addr">0xE010_0000</div><div class="r ppb">Private Peripheral Bus (PPB) &nbsp;—&nbsp; <small>NVIC · SCB · SysTick · FPU · MPU · CoreSight (Strongly-Ordered)</small></div>
+    <div class="addr">0xE000_0000</div><div class="r edev">External Device &nbsp;—&nbsp; <small>off-chip devices: eMMC controllers etc. (Device memory)</small></div>
+    <div class="addr">0xA000_0000</div><div class="r eram">External RAM &nbsp;—&nbsp; <small>off-chip SDRAM / HyperRAM / QSPI-XIP (Normal memory, cacheable)</small></div>
+    <div class="addr">0x6000_0000</div><div class="r peri">Peripheral &nbsp;—&nbsp; <small>on-chip peripherals, DMAs, GPIO, AHB/APB blocks (Device memory)</small></div>
+    <div class="addr">0x4000_0000</div><div class="r sram">SRAM &nbsp;—&nbsp; <small>on-chip SRAM; bit-band alias at 0x2200_0000 (Normal memory)</small></div>
+    <div class="addr">0x2000_0000</div><div class="r code">Code &nbsp;—&nbsp; <small>flash / ROM; vector table at reset (Normal memory, executable)</small></div>
+    <div class="addr">0x0000_0000</div><div class="r code"><strong class="a">▲</strong></div>
+  </div>
+  <p class="smaller dim">Each region is 512 MiB. The PPB is Strongly-Ordered — every access must complete in program order; no speculative fetch, no write-buffer.</p>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">04</span><h2>Code Region — 0x0000_0000</h2></div>
+  <div class="cols cols-2">
+    <div>
+      <ul>
+        <li>Vector table <strong>must be reachable</strong> at address 0 after reset.</li>
+        <li>Most SoCs "alias" flash to 0x0000_0000 (e.g. STM32 BOOT0 pin selects flash vs system-memory vs SRAM).</li>
+        <li>Normal memory semantics — cacheable, bufferable, executable.</li>
+        <li>Instructions can also be fetched from the SRAM region, but performance on M3/M4 is lower because of the bus matrix design — M7 mitigates this via I-cache + AXI.</li>
+      </ul>
+    </div>
+    <div>
+      <h3>Layout inside Code region (vendor pattern)</h3>
+<pre><code class="mono">0x0000_0000   (boot alias — remapped by OPTR)
+0x0800_0000   main flash — STM32
+0x1FFF_0000   system memory (DfU bootloader)
+0x1FFF_7800   OTP / option bytes
+0x1FFF_F800   engineering bytes</code></pre>
+      <p class="smaller dim">Exact map depends entirely on the vendor. The <em>architecture</em> only guarantees reset reads from 0x0000_0000/4.</p>
+    </div>
+  </div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">05</span><h2>SRAM Region — 0x2000_0000</h2></div>
+  <div class="cols cols-2">
+    <div>
+      <ul>
+        <li>Canonical home for stack, heap, <code>.data</code>, <code>.bss</code>.</li>
+        <li>Normal memory — cacheable (on cored MCUs), bufferable, non-executable <em>unless</em> XN disabled (rarely).</li>
+        <li>First <strong>1 MiB</strong> (<code>0x2000_0000 – 0x200F_FFFF</code>) is the <strong>bit-band</strong> region on M3/M4 — single-bit atomic access via the alias.</li>
+        <li>Parity / ECC on many SoCs — a soft error on a word you never touched can still faultingly propagate via speculative load on M7.</li>
+      </ul>
+    </div>
+    <div>
+      <div class="card green">
+        <h3 class="g">Linker placement</h3>
+<pre style="margin:0.2em 0;"><code class="mono">MEMORY {
+  FLASH (rx)  : ORIGIN = 0x08000000, LENGTH = 1M
+  SRAM  (rwx) : ORIGIN = 0x20000000, LENGTH = 192K
+  CCM   (rw)  : ORIGIN = 0x10000000, LENGTH = 64K
+}
+SECTIONS {
+  .text  : { *(.isr_vector) *(.text*) *(.rodata*) } &gt;FLASH
+  .data  : { *(.data*) } &gt;SRAM AT&gt;FLASH
+  .bss   : { *(.bss*)  } &gt;SRAM
+  .ccm   : { *(.ccm*)  } &gt;CCM
+}</code></pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">06</span><h2>Peripheral Region — 0x4000_0000</h2></div>
+  <div class="cols cols-2">
+    <div>
+      <ul>
+        <li>Default attributes: <strong class="a">Device memory</strong> — no speculation, no merging, ordering preserved between accesses to the same peripheral.</li>
+        <li>Execute-never by default (XN): even if MPU is off, CPU refuses to fetch instructions from this region.</li>
+        <li>First <strong>1 MiB</strong> has a <strong>bit-band</strong> alias at <code>0x4200_0000</code> (M3/M4 only).</li>
+        <li>All the GPIO, timers, UART, SPI, I²C, DMA etc. on the chip live here — so does the on-chip ADC / USB / Ethernet MAC.</li>
+      </ul>
+    </div>
+    <div>
+      <div class="card amber">
+        <h3 class="a">Device-memory semantics</h3>
+        <p>Consecutive writes to a peripheral register are guaranteed to reach it <em>in order</em>, but may still be <em>posted</em> by the bus. Reads may be stalled to the peripheral. No coalescing: two <code>str</code> instructions generate two bus transactions.</p>
+      </div>
+      <div class="card red" style="margin-top:0.3em;">
+        <strong class="r">Hazard:</strong> "write-and-forget" semantics mean a <code>str</code> that raises a bus fault may not fault precisely — see <em>imprecise bus fault</em> in presentation 02.
+      </div>
+    </div>
+  </div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">07</span><h2>PPB — Private Peripheral Bus</h2></div>
+  <div class="cols cols-6040">
+    <div>
+      <table>
+        <tr><th>Address</th><th>Block</th><th>Role</th></tr>
+        <tr><td>0xE000_0000</td><td>ITM</td><td>Instrumentation Trace Macrocell (printf over SWO)</td></tr>
+        <tr><td>0xE000_1000</td><td>DWT</td><td>Data Watchpoint &amp; Trace (cycle counter, watchpoints)</td></tr>
+        <tr><td>0xE000_2000</td><td>FPB</td><td>Flash Patch &amp; Breakpoint</td></tr>
+        <tr><td>0xE000_E000</td><td>SCS</td><td>System Control Space — NVIC, SCB, MPU, SysTick, FPU</td></tr>
+        <tr><td>0xE004_0000</td><td>TPIU</td><td>Trace Port Interface Unit</td></tr>
+        <tr><td>0xE004_1000</td><td>ETM</td><td>Embedded Trace Macrocell (optional)</td></tr>
+        <tr><td>0xE00F_0000</td><td>ROM tables</td><td>CoreSight component enumeration</td></tr>
+      </table>
+    </div>
+    <div>
+      <div class="card purple">
+        <h3 class="p">Strongly-Ordered</h3>
+        <p>Every PPB access completes before the next begins. No speculation. No reordering. No write buffer. Good for configuring NVIC / MPU safely but means PPB writes are never fast.</p>
+      </div>
+      <div class="card blue" style="margin-top:0.4em;">
+        <strong class="b">Privileged only</strong> — PPB addresses respond <em>RAZ/WI</em> to unprivileged accesses (read-as-zero, write-ignored), <em>except</em> the ITM stimulus ports and FPU if so configured.
+      </div>
+    </div>
+  </div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">08</span><h2>Bit-Banding — Concept</h2></div>
+  <div class="cols cols-2">
+    <div>
+      <p>On Cortex-M3 / M4, a <strong>bit-band</strong> alias region lets each bit of a 32-bit word in <em>bit-band memory</em> be addressed as its own 32-bit word in the alias.</p>
+      <ul>
+        <li>Read from alias → returns 0 or 1 (padded to 32 bits).</li>
+        <li>Write to alias → atomically sets or clears the corresponding bit.</li>
+        <li>The bus translates the access — no RMW cycle in CPU, no IRQ masking needed.</li>
+        <li><strong class="r">Dropped</strong> from Cortex-M7 and all Armv8-M cores — use exclusive load/store or atomic bit-set/clear peripherals instead.</li>
+      </ul>
+    </div>
+    <div>
+      <h3>Addressing math</h3>
+<pre><code class="mono">alias = band_base + (word_offset &lt;&lt; 5)
+                  + (bit_offset  &lt;&lt; 2)
+
+/* SRAM band:   0x2000_0000 … 0x200F_FFFF (1 MiB)
+   SRAM alias:  0x2200_0000 … 0x23FF_FFFF (32 MiB) */
+
+#define BIT_BAND_SRAM(byte, bit)   \
+    (*(volatile uint32_t *)        \
+       (0x22000000u +               \
+        ((uint32_t)(byte) - 0x20000000u) * 32 + \
+        (bit) * 4))</code></pre>
+      <p class="smaller dim">Every bit in the 1 MiB band has exactly one 4-byte alias — so 8 MiB of bit × 4 bytes = 32 MiB alias.</p>
+    </div>
+  </div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">09</span><h2>Bit-Banding — Atomic RMW for Free</h2></div>
+  <div class="bitband">
+    <div class="col">
+      <h3 class="g">Without bit-banding</h3>
+<pre><code class="mono">; set bit 5 of *p atomically
+disable_irq:     cpsid i
+                 ldr   r1, [r0]
+                 orr   r1, r1, #0x20
+                 str   r1, [r0]
+enable_irq:      cpsie i</code></pre>
+      <p class="smaller dim">4 instructions + IRQ mask window.</p>
+    </div>
+    <div class="col">
+      <h3 class="a">With bit-banding</h3>
+<pre><code class="mono">; set bit 5 of address p via alias
+ldr  r0, =0x22000000 + ((p-0x20000000)*32) + (5*4)
+movs r1, #1
+str  r1, [r0]</code></pre>
+      <p class="smaller dim">1 store. No IRQ mask. The bus atomically performs the RMW on CPU's behalf.</p>
+    </div>
+  </div>
+  <div class="card blue" style="font-size:0.72em;">
+    <strong class="b">Killer use-case (back in the day):</strong> toggling a GPIO pin from an ISR, setting/clearing a flag shared between a timer ISR and mainline code, incrementing a 1-bit semaphore — all truly atomic without touching PRIMASK. The feature was quietly dropped on M7+ because caches make the alias semantics hard.
+  </div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">10</span><h2>Memory Types</h2></div>
+  <table>
+    <tr><th>Type</th><th>Speculative fetch</th><th>Merging writes</th><th>Ordering</th><th>Typical use</th></tr>
+    <tr>
+      <td><span class="pill green">Normal</span></td>
+      <td>Yes</td>
+      <td>Yes (within a beat)</td>
+      <td>Weak — CPU may reorder</td>
+      <td>Code, SRAM, cached external RAM</td>
+    </tr>
+    <tr>
+      <td><span class="pill amber">Device</span></td>
+      <td>No</td>
+      <td>No (each access separate)</td>
+      <td>Preserved <em>within</em> same type</td>
+      <td>Peripheral registers</td>
+    </tr>
+    <tr>
+      <td><span class="pill red">Strongly-Ordered</span></td>
+      <td>No</td>
+      <td>No</td>
+      <td>Preserved globally; each access completes before next</td>
+      <td>PPB / NVIC / MPU / CoreSight</td>
+    </tr>
+  </table>
+  <div class="cols cols-2">
+    <div class="card green" style="font-size:0.72em;">
+      <h3 class="g">Normal memory attributes</h3>
+      <ul>
+        <li><strong>Cacheable</strong> — may live in I-cache / D-cache (M7/M55/M85).</li>
+        <li><strong>Bufferable</strong> — writes may be posted in the write buffer.</li>
+        <li><strong>Shareable</strong> — shared with other masters (DMA, second core, system DMA).</li>
+      </ul>
+    </div>
+    <div class="card amber" style="font-size:0.72em;">
+      <h3 class="a">Why "Device" exists</h3>
+      <p>A peripheral register might have side-effects on read. Two reads must produce two bus cycles; the CPU cannot coalesce or speculate.</p>
+    </div>
+  </div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">11</span><h2>Memory Barriers</h2></div>
+  <div class="bar-tbl">
+    <div class="k">DMB</div><div class="v"><strong>Data Memory Barrier.</strong> All explicit memory accesses before DMB are observed before any after. Does <em>not</em> flush the pipeline or wait for completion — only ordering.</div>
+    <div class="k">DSB</div><div class="v"><strong>Data Synchronization Barrier.</strong> All explicit accesses before DSB <em>complete</em> before any instruction after DSB executes. Blocks until stores are drained.</div>
+    <div class="k">ISB</div><div class="v"><strong>Instruction Synchronization Barrier.</strong> Flushes the pipeline; subsequent instructions are <em>refetched</em>. Needed after changing system state that affects instruction fetch (VTOR, MPU, priv level).</div>
+  </div>
+  <div class="cols cols-2" style="margin-top:0.3em;">
+    <div class="card blue">
+      <h3 class="b">When DMB is enough</h3>
+      <p>Ordering between two software threads or between code and a DMA that shares Normal memory.</p>
+<pre><code class="mono">msg.payload = 0xDEADBEEF;
+__DMB();
+msg.ready   = 1;              /* consumer reads ready then payload */</code></pre>
+    </div>
+    <div class="card amber">
+      <h3 class="a">When DSB is needed</h3>
+      <p>Before code that assumes a side-effect has taken hold — e.g. starting a DMA after programming its registers; kicking the watchdog.</p>
+<pre><code class="mono">DMA1-&gt;CHENA |= 1;
+__DSB();                      /* ensure reg write hit the peripheral */</code></pre>
+    </div>
+  </div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">12</span><h2>Barriers — When &amp; Why</h2></div>
+  <table style="font-size:0.62em;">
+    <tr><th>Situation</th><th>Barrier</th><th>Why</th></tr>
+    <tr><td>Writing <code>SCB-&gt;VTOR</code> then enabling IRQs</td><td>DSB + ISB</td><td>Later vector fetches use the new table</td></tr>
+    <tr><td>Enabling MPU / updating a region</td><td>DSB + ISB</td><td>Later fetches see new permissions</td></tr>
+    <tr><td>Changing CONTROL (switch to PSP / unprivileged)</td><td>ISB</td><td>Pipeline flush: instructions already in flight used the old mode</td></tr>
+    <tr><td>Self-modifying code (e.g. flash programming)</td><td>DSB + ISB + cache invalidate</td><td>Ensure cache coherency and pipeline reload</td></tr>
+    <tr><td>Configuring DMA registers then enabling</td><td>DSB</td><td>Make sure writes hit the DMA before enable</td></tr>
+    <tr><td>Clearing NVIC pending then enabling IRQ</td><td>DSB (optional)</td><td>Belt-and-braces; usually PPB writes are strongly-ordered anyway</td></tr>
+    <tr><td>Writing to flash configuration bytes</td><td>DSB</td><td>Ensure store drained before issuing program command</td></tr>
+    <tr><td>Clearing FPU CONTROL.FPCA</td><td>DSB + ISB</td><td>Avoid lazy-stacking ambiguity</td></tr>
+  </table>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">13</span><h2>MPU — v7-M PMSA</h2></div>
+  <div class="cols cols-2">
+    <div>
+      <ul>
+        <li>Memory Protection Unit — a <strong>region-based</strong> permission checker (no translation, no virtualisation).</li>
+        <li>8 regions (optionally 16 on some M3/M4) plus one "background" region for privileged fall-through.</li>
+        <li>Each region must be <strong>power-of-two size</strong>, between 32 B and 4 GiB.</li>
+        <li>Must be <strong>naturally aligned</strong> (base address must be a multiple of size).</li>
+        <li>Higher-numbered region wins when they overlap.</li>
+      </ul>
+    </div>
+    <div>
+      <h3>Per-region attributes</h3>
+      <ul>
+        <li>Base address (<code>RBAR</code>).</li>
+        <li>Size (<code>RASR.SIZE</code> = log₂(size) − 1).</li>
+        <li>Access permission: no / RW-privileged / RW-unpriv / RO.</li>
+        <li>Type attrs: cacheable, bufferable, shareable, TEX encoding.</li>
+        <li>Execute-never bit.</li>
+        <li><strong class="a">Sub-region disable (SRD)</strong> — an 8-bit field that carves the region into 8 equal slices; set bit → that slice is disabled.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">14</span><h2>v7-M MPU — Typical Setup</h2></div>
+<pre><code class="mono">#include "core_cm4.h"
+
+static void mpu_setup(void)
+{
+    __DMB();
+    MPU-&gt;CTRL = 0;                 /* disable while editing */
+
+    /* Region 0: entire Code region, RO, executable, normal cacheable */
+    MPU-&gt;RNR  = 0;
+    MPU-&gt;RBAR = 0x00000000UL;
+    MPU-&gt;RASR = (0  &lt;&lt; 28) |       /* XN=0, executable */
+                (6  &lt;&lt; 24) |       /* AP = RO priv+unpriv */
+                (0  &lt;&lt; 19) |       /* TEX=0 */
+                (1  &lt;&lt; 18) |       /* S=1  shareable */
+                (1  &lt;&lt; 17) |       /* C=1  cacheable */
+                (1  &lt;&lt; 16) |       /* B=1  bufferable */
+                (0  &lt;&lt; 8)  |       /* SRD = 0 */
+                ((32-1) &lt;&lt; 1) |    /* SIZE = 2^32 */
+                (1  &lt;&lt; 0);         /* ENABLE */
+
+    /* Region 1: SRAM RW priv, RO unpriv */
+    MPU-&gt;RNR  = 1;
+    MPU-&gt;RBAR = 0x20000000UL;
+    MPU-&gt;RASR = (1  &lt;&lt; 28) |       /* XN=1 no exec */
+                (2  &lt;&lt; 24) |       /* AP priv RW, unpriv RO */
+                (1  &lt;&lt; 18) | (1&lt;&lt;17) | (1&lt;&lt;16) |
+                ((18-1) &lt;&lt; 1) |    /* SIZE = 256 KiB */
+                1;
+
+    MPU-&gt;CTRL = MPU_CTRL_PRIVDEFENA_Msk |    /* default map for priv */
+                MPU_CTRL_ENABLE_Msk;
+    __DSB(); __ISB();
+}</code></pre>
+  <p class="smaller dim">After enabling, any unprivileged write to <code>0x2000_0000+</code> fires a MemManage fault — kernel stays in control.</p>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">15</span><h2>MPU — v8-M PMSAv8</h2></div>
+  <div class="cols cols-2">
+    <div>
+      <h3>What's different</h3>
+      <ul>
+        <li><strong>Base + Limit</strong> addressing (not base + power-of-two size). Any 32-byte granularity.</li>
+        <li>Attribute-indirect: region carries a 3-bit <strong>AttrIdx</strong> pointing into a shared <code>MPU_MAIR</code> pair of 32-bit registers (à la A-profile MAIR).</li>
+        <li>No sub-region disable — arbitrary limits make it unnecessary.</li>
+        <li>Separate banks in TrustZone: <strong>MPU_S</strong> for Secure, <strong>MPU_NS</strong> for Non-Secure.</li>
+        <li>8 or 16 regions configurable at implementation.</li>
+      </ul>
+    </div>
+    <div>
+<pre><code class="mono">/* Set attr 0 = Normal WB inner+outer cacheable */
+MPU-&gt;MAIR0 = (0xFFu &lt;&lt; 0);
+
+/* Region 0: flash 0x0800_0000 .. 0x082F_FFFF */
+MPU-&gt;RNR   = 0;
+MPU-&gt;RBAR  = 0x08000000 | (0u&lt;&lt;3) /* AttrIdx */
+                         | (5u&lt;&lt;1) /* AP = priv RO, unpriv RO */
+                         | 0;       /* XN=0, executable */
+MPU-&gt;RLAR  = 0x082FFFE0 | 1;       /* limit, ENABLE=1 */
+
+MPU-&gt;CTRL = 1 | (1&lt;&lt;2);            /* ENABLE + PRIVDEFENA */</code></pre>
+      <p class="smaller dim">Cleaner &amp; more orthogonal than v7-M MPU. RTOSes target both via a single abstraction (e.g. FreeRTOS MPU port).</p>
+    </div>
+  </div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">16</span><h2>MPU in RTOS Context</h2></div>
+  <svg class="diagram" viewBox="0 0 860 260" style="width:100%;">
+    <g font-family="DM Sans" font-size="11">
+      <!-- kernel region -->
+      <rect x="30" y="30" width="380" height="90" rx="6" fill="#0a2a1a" stroke="#4ecb8d"/>
+      <text x="220" y="52" text-anchor="middle" fill="#4ecb8d" font-weight="700">Kernel region (always present)</text>
+      <text x="220" y="72" text-anchor="middle" font-size="10" fill="#fff">Privileged RW · code + kernel data · MSP stack</text>
+      <text x="220" y="90" text-anchor="middle" font-size="10" fill="#fff">Background region covers remaining map</text>
+      <text x="220" y="108" text-anchor="middle" font-size="10" fill="#8888a8">unchanged across context switches</text>
+
+      <!-- task regions -->
+      <rect x="440" y="30" width="390" height="90" rx="6" fill="#2a1a0a" stroke="#f5a623"/>
+      <text x="635" y="52" text-anchor="middle" fill="#f5a623" font-weight="700">Per-task regions (reprogrammed on switch)</text>
+      <text x="635" y="72" text-anchor="middle" font-size="10" fill="#fff">Task stack · task data · task-owned peripheral</text>
+      <text x="635" y="92" text-anchor="middle" font-size="10" fill="#fff">Context switch swaps RBAR/RASR for regions 4–7</text>
+
+      <!-- violation -->
+      <rect x="30" y="160" width="800" height="80" rx="6" fill="#2a0a0a" stroke="#f87171"/>
+      <text x="430" y="182" text-anchor="middle" fill="#f87171" font-weight="700">Violation → MemManage</text>
+      <text x="430" y="204" text-anchor="middle" font-size="10" fill="#fff">MMFAR holds faulting address · MMFSR reports type (DACCVIOL, IACCVIOL, MLSPERR …)</text>
+      <text x="430" y="222" text-anchor="middle" font-size="10" fill="#ccc">Kernel kills the offending task, logs the fault, reclaims its resources</text>
+    </g>
+  </svg>
+  <p class="smaller dim">FreeRTOS &amp; Zephyr have MPU-enforced "user-mode" tasks (<code>xTaskCreateRestricted</code>, Zephyr <code>user</code> threads) that use this split.</p>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">17</span><h2>Caches — M7 / M55 / M85</h2></div>
+  <div class="cols cols-2">
+    <div>
+      <h3>Cortex-M7</h3>
+      <ul>
+        <li>Optional L1 I-cache + D-cache, configurable 4–64 KiB each, 2-way or 4-way set-assoc.</li>
+        <li>Write-back or write-through per region (via MPU attrs).</li>
+        <li>Caches are <strong>not coherent</strong> with DMA — software managed.</li>
+        <li>Separate <code>SCB_InvalidateICache</code>, <code>SCB_CleanDCache</code>, <code>SCB_InvalidateDCache</code> operations in CMSIS.</li>
+      </ul>
+      <h3>M55 / M85</h3>
+      <ul>
+        <li>Optional, up to 16 / 32 KiB I+D cache (impl-defined upper bound on M85).</li>
+        <li>Added <code>MSCR</code> bits for easier cache maintenance from C.</li>
+      </ul>
+    </div>
+    <div>
+      <div class="card purple">
+        <h3 class="p">Why not coherent?</h3>
+        <p>The bus IP choices (AXI, AHB-5) on MCUs don't implement a full snooping protocol. Full MOESI/MESI would cost area and power that an MCU class cannot afford.</p>
+      </div>
+      <div class="card red" style="margin-top:0.3em;">
+        <h3 class="r">Consequence</h3>
+        <p>DMA buffers must be placed in <strong>non-cacheable</strong> memory (via MPU attrs on the region, or in a bypass region) <strong>or</strong> the code must <em>clean</em> before sending / <em>invalidate</em> before receiving.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">18</span><h2>DMA + Cache — The Coherence Recipe</h2></div>
+  <div class="cols cols-2">
+    <div>
+      <h3>CPU → peripheral (TX)</h3>
+<pre><code class="mono">memcpy(tx_buf, src, n);
+
+/* push dirty lines out before DMA reads */
+SCB_CleanDCache_by_Addr((uint32_t*)tx_buf, n);
+
+dma_start(tx_buf, n);</code></pre>
+    </div>
+    <div>
+      <h3>Peripheral → CPU (RX)</h3>
+<pre><code class="mono">/* make sure we don't have stale lines */
+SCB_InvalidateDCache_by_Addr((uint32_t*)rx_buf, n);
+
+dma_start(rx_buf, n);
+wait_for_dma_done();
+
+/* after DMA writes, invalidate again so CPU reads from RAM */
+SCB_InvalidateDCache_by_Addr((uint32_t*)rx_buf, n);
+/* buffer now safe to use from CPU */</code></pre>
+    </div>
+  </div>
+  <div class="card amber" style="font-size:0.72em;">
+    <strong class="a">Alignment:</strong> <code>rx_buf</code> must be <strong>32-byte aligned</strong> and <strong>sized in multiples of 32 B</strong> on M7 — <em>Invalidate</em> operates by cache line, and partial lines would clobber adjacent variables. Use <code>__attribute__((aligned(32)))</code> + round-up the length.
+  </div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">19</span><h2>Cache Maintenance — Granular vs Full</h2></div>
+  <table style="font-size:0.62em;">
+    <tr><th>Operation</th><th>Cost</th><th>When</th></tr>
+    <tr><td><code>SCB_EnableDCache()</code></td><td>one-time</td><td>Boot. Invalidates whole cache.</td></tr>
+    <tr><td><code>SCB_InvalidateDCache()</code></td><td>full-cache flush</td><td>Rare — after a big external memory change, before first DMA.</td></tr>
+    <tr><td><code>SCB_InvalidateDCache_by_Addr(p,n)</code></td><td>~n/32 cycles</td><td>Before every DMA receive into a cacheable buffer.</td></tr>
+    <tr><td><code>SCB_CleanDCache_by_Addr(p,n)</code></td><td>~n/32 cycles</td><td>Before every DMA transmit from a cacheable buffer.</td></tr>
+    <tr><td><code>SCB_CleanInvalidateDCache_by_Addr(p,n)</code></td><td>~n/32 cycles</td><td>Bidirectional DMA (rare).</td></tr>
+    <tr><td><code>SCB_InvalidateICache()</code></td><td>full I-flush</td><td>After self-modifying code or flash-patched code region.</td></tr>
+  </table>
+  <div class="card green" style="font-size:0.72em;">
+    <strong class="g">Shortcut for DMA-heavy designs:</strong> allocate DMA buffers in a dedicated <strong>non-cacheable MPU region</strong> (set C=0). The maintenance code goes away — at the cost of slower CPU access to those buffers. Typical trade-off on M7 audio/USB.
+  </div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">20</span><h2>Tightly-Coupled Memory (TCM)</h2></div>
+  <div class="cols cols-2">
+    <div>
+      <h3>What it is</h3>
+      <ul>
+        <li>SRAM physically attached to the CPU's instruction and data buses, outside the main bus matrix.</li>
+        <li><strong>ITCM</strong> at low address in Code region (e.g. <code>0x0000_0000</code> on STM32H7 when BOOT_ADD0 selects it).</li>
+        <li><strong>DTCM</strong> at low address in SRAM region (<code>0x2000_0000</code> on STM32H7, 128 KiB).</li>
+        <li>Single-cycle access, no wait-states, no cache involvement.</li>
+        <li>Typical size: 16–128 KiB per TCM. Visible only to <em>one</em> master (the core).</li>
+      </ul>
+    </div>
+    <div>
+      <h3>What to put there</h3>
+      <ul>
+        <li>ISRs that must start in &lt; 20 ns regardless of cache state (audio DSP, motor control PWM update).</li>
+        <li>Tightest FIR/IIR kernel data.</li>
+        <li>The exception stack — bounded, predictable.</li>
+      </ul>
+      <div class="card amber" style="font-size:0.72em; margin-top:0.3em;">
+        <strong class="a">Trap:</strong> DMA cannot access TCM on most M7 SoCs (TCM is on the CPU's private side of the bus matrix). Double-buffer into AXI SRAM, or use the "shared" variant if the vendor provides one.
+      </div>
+    </div>
+  </div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">21</span><h2>Typical Memory Layout — Cortex-M7 SoC</h2></div>
+  <svg class="diagram" viewBox="0 0 900 280" style="width:100%;">
+    <g font-family="DM Sans" font-size="11">
+      <!-- CPU -->
+      <rect x="30" y="40" width="120" height="200" rx="8" fill="#2a1a0a" stroke="#f5a623"/>
+      <text x="90" y="62" text-anchor="middle" fill="#f5a623" font-weight="700">Cortex-M7</text>
+      <text x="90" y="86" text-anchor="middle" font-size="10" fill="#fff">+ I$ 16 KiB</text>
+      <text x="90" y="100" text-anchor="middle" font-size="10" fill="#fff">+ D$ 16 KiB</text>
+      <text x="90" y="150" text-anchor="middle" font-size="10" fill="#4ecb8d">ITCM 64 KiB</text>
+      <text x="90" y="170" text-anchor="middle" font-size="10" fill="#4ecb8d">DTCM 128 KiB</text>
+
+      <!-- matrix -->
+      <rect x="200" y="40" width="160" height="200" rx="8" fill="#10101a" stroke="#60a5fa"/>
+      <text x="280" y="62" text-anchor="middle" fill="#60a5fa" font-weight="700">AXI bus matrix</text>
+      <text x="280" y="82" text-anchor="middle" font-size="10" fill="#fff">I-bus / D-bus / S-bus</text>
+
+      <!-- flash -->
+      <rect x="420" y="40" width="140" height="50" rx="6" fill="#0a2a2a" stroke="#7ab8ff"/>
+      <text x="490" y="62" text-anchor="middle" fill="#7ab8ff" font-weight="700">Flash 2 MiB</text>
+      <text x="490" y="80" text-anchor="middle" font-size="10" fill="#fff">0x0800_0000</text>
+
+      <!-- sram banks -->
+      <rect x="420" y="100" width="140" height="50" rx="6" fill="#0a2a1a" stroke="#4ecb8d"/>
+      <text x="490" y="122" text-anchor="middle" fill="#4ecb8d" font-weight="700">AXI-SRAM 512 KiB</text>
+      <text x="490" y="140" text-anchor="middle" font-size="10" fill="#fff">0x2400_0000 (cacheable)</text>
+
+      <rect x="420" y="160" width="140" height="50" rx="6" fill="#2a1a0a" stroke="#f5a623"/>
+      <text x="490" y="182" text-anchor="middle" fill="#f5a623" font-weight="700">SRAM1 128 KiB</text>
+      <text x="490" y="200" text-anchor="middle" font-size="10" fill="#fff">0x3000_0000 (DMA shared)</text>
+
+      <!-- peripherals -->
+      <rect x="600" y="40" width="140" height="50" rx="6" fill="#2a1a0a" stroke="#f5a623"/>
+      <text x="670" y="62" text-anchor="middle" fill="#f5a623" font-weight="700">APB peripherals</text>
+      <text x="670" y="80" text-anchor="middle" font-size="10" fill="#fff">0x4000_0000 (Device)</text>
+
+      <rect x="600" y="100" width="140" height="50" rx="6" fill="#2a1a0a" stroke="#f5a623"/>
+      <text x="670" y="122" text-anchor="middle" fill="#f5a623" font-weight="700">AHB peripherals</text>
+      <text x="670" y="140" text-anchor="middle" font-size="10" fill="#fff">0x4002_0000 (Device)</text>
+
+      <!-- external memory -->
+      <rect x="600" y="160" width="140" height="50" rx="6" fill="#1a1a2a" stroke="#a78bfa"/>
+      <text x="670" y="182" text-anchor="middle" fill="#a78bfa" font-weight="700">QSPI XIP 16 MiB</text>
+      <text x="670" y="200" text-anchor="middle" font-size="10" fill="#fff">0x9000_0000 (Normal)</text>
+
+      <!-- lines -->
+      <g stroke="#8888a8" stroke-width="1">
+        <line x1="150" y1="80" x2="200" y2="80"/>
+        <line x1="150" y1="180" x2="200" y2="180"/>
+        <line x1="360" y1="60"  x2="420" y2="60"/>
+        <line x1="360" y1="120" x2="420" y2="120"/>
+        <line x1="360" y1="180" x2="420" y2="180"/>
+        <line x1="560" y1="60"  x2="600" y2="60"/>
+        <line x1="560" y1="120" x2="600" y2="120"/>
+        <line x1="560" y1="180" x2="600" y2="180"/>
+      </g>
+    </g>
+  </svg>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">22</span><h2>Endianness Revisited</h2></div>
+  <div class="cols cols-2">
+    <div>
+      <ul>
+        <li>Data loads/stores obey the CPU's configured endianness.</li>
+        <li>Instruction fetches are always little-endian regardless (instructions are bytes in ROM written out by the linker).</li>
+        <li>Byte-swap intrinsics map to single-cycle instructions: <code>__REV</code>, <code>__REV16</code>, <code>__REVSH</code>, <code>__RBIT</code>.</li>
+        <li>Network-byte-order conversion is therefore <em>free</em> compared to 8051-era MCUs where bswap takes 4 instructions.</li>
+      </ul>
+    </div>
+    <div>
+<pre><code class="mono">/* 'be32toh' on little-endian Cortex-M */
+static inline uint32_t be32toh(uint32_t v)
+{
+    uint32_t out;
+    __asm volatile ("rev %0, %1" : "=r"(out) : "r"(v));
+    return out;
+}
+
+/* Compiler already emits REV for __builtin_bswap32 */
+uint32_t net = __builtin_bswap32(host);</code></pre>
+    </div>
+  </div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">23</span><h2>Stack-Limit Registers (v8-M)</h2></div>
+  <div class="cols cols-2">
+    <div>
+      <ul>
+        <li><code>MSPLIM</code>, <code>PSPLIM</code> — 32-bit, 8-byte aligned lower-bound for each stack.</li>
+        <li>Hardware checks on every push / stack-frame write: if <code>SP &lt; SPLIM</code> → <strong>UsageFault</strong> with <code>UFSR.STKOF</code>.</li>
+        <li>Completely replaces the old guard-page hack (unmapped region at the bottom of the stack enforced by MPU).</li>
+        <li>Banked per security state on TrustZone cores: <code>MSPLIM_S</code>, <code>PSPLIM_S</code>, <code>MSPLIM_NS</code>, <code>PSPLIM_NS</code>.</li>
+      </ul>
+    </div>
+    <div>
+<pre><code class="mono">/* FreeRTOS v8-M port snippet */
+void vPortSetupTaskStack(StackType_t *top, StackType_t *bottom)
+{
+    __set_PSPLIM((uint32_t)bottom);
+}
+
+/* Stack overflow → UsageFault at first push past limit */
+void UsageFault_Handler(void)
+{
+    if (SCB-&gt;CFSR &amp; SCB_CFSR_STKOF_Msk) {
+        /* current task smashed its stack — reschedule */
+        configASSERT(!"stack overflow");
+    }
+    for (;;);
+}</code></pre>
+    </div>
+  </div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">24</span><h2>Memory Design Patterns</h2></div>
+  <div class="cols cols-3">
+    <div class="card amber">
+      <h3 class="a">DMA in non-cacheable SRAM</h3>
+      <p>Dedicate a small MPU region or a separate SRAM bank with C=B=0. All DMA descriptors and buffers live there. No cache maintenance ever needed.</p>
+    </div>
+    <div class="card green">
+      <h3 class="g">Critical code in TCM</h3>
+      <p><code>__attribute__((section(".itcm")))</code> for the fast path of the motor-control PWM ISR &amp; the FIR kernel. Deterministic 1-cycle fetch; no I-cache jitter.</p>
+    </div>
+    <div class="card purple">
+      <h3 class="p">Split .rodata for XIP</h3>
+      <p>Large LUTs (sine tables, glyphs) in QSPI XIP region (0x9000_0000). Hot data in internal flash / AXI-SRAM. Linker script manages placement.</p>
+    </div>
+  </div>
+  <div class="cols cols-3" style="margin-top:0.4em;">
+    <div class="card blue">
+      <h3 class="b">Kernel-only region</h3>
+      <p>MPU region 0 covers SRAM top-slice RW priv, no unpriv. RTOS puts control blocks there; user tasks can never corrupt them.</p>
+    </div>
+    <div class="card amber">
+      <h3 class="a">Scratchpad ping-pong</h3>
+      <p>Two buffers aligned to 32 B. DMA-receive into A while CPU processes B; on done, swap and invalidate D-cache for the newly-filled one.</p>
+    </div>
+    <div class="card green">
+      <h3 class="g">ECC-aware .bss</h3>
+      <p>Zero-init <em>every</em> word at boot to avoid ECC "uninitialised" traps on the first read — even on variables nominally uninitialised.</p>
+    </div>
+  </div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">25</span><h2>References</h2></div>
+  <div style="max-width:90%;margin:0 auto;font-size:0.58em;line-height:1.8;">
+    <p>
+      <strong class="a">Arm</strong> — <em>Armv7-M / Armv8-M Architecture Reference Manual</em> — Chapter B3 (Memory model)<br>
+      <strong class="a">Arm</strong> — <em>Cortex-M7 Technical Reference Manual</em> (Section on cache maintenance, TCM)<br>
+      <strong class="a">Arm</strong> — <em>Cortex-M Memory Protection Unit Programming Guide</em> (Application note 321)<br>
+      <strong class="a">Joseph Yiu</strong> — <em>Definitive Guide to Cortex-M3/M4</em>, chapters on MPU, memory, bit-banding<br>
+      <strong class="a">STM32H7 Programming Manual</strong> (PM0253) — MPU, cache maintenance, TCM examples<br>
+      <strong class="a">ARM Community</strong> — "Cortex-M7 Cache maintenance for DMA" app note<br>
+      <strong class="a">Jean Labrosse</strong> — <em>μC/OS-III Memory Management</em> chapter — MPU + RTOS integration
+    </p>
+    <p style="color:var(--muted);margin-top:0.8em;font-size:0.85em">
+      Presentation built with <a href="https://revealjs.com">Reveal.js 4.6</a> · Playfair Display + DM Sans + JetBrains Mono<br>
+      Educational use.
+    </p>
+  </div>
+</section>
+
+</div></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/highlight/highlight.min.js"></script>
+<script>
+Reveal.initialize({ hash: true, slideNumber: 'c/t', transition: 'fade', transitionSpeed: 'fast', controls: true, progress: true, center: false, width: 1100, height: 900, margin: 0.01, plugins: [RevealHighlight], highlight: { theme: 'monokai' } });
+</script>
+<script>
+(function(){ var h = Reveal.getConfig().height || 900; var m = Reveal.getConfig().margin || 0.02; var maxH = Math.floor(h * (1 - 2 * m)) + 'px'; function fixSlides(){ document.querySelectorAll('.reveal .slides>section,.reveal .slides>section>section').forEach(function(s){ s.style.display = 'block'; s.style.maxHeight = maxH; }); } Reveal.on('ready', fixSlides); Reveal.on('slidechanged', fixSlides); })();
+</script>
+</body>
+</html>

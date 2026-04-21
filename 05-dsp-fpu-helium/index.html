@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cortex-M DSP, FPU & Helium</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@400;500;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/black.min.css">
+<style>
+  :root {
+    --amber:#f5a623;--green:#4ecb8d;--purple:#a78bfa;--blue:#60a5fa;--red:#f87171;
+    --bg:#0a0a0f;--bg2:#10101a;--bg3:#181824;--border:#2a2a3a;--text:#e8e8f0;--muted:#8888a8;
+  }
+  .reveal-viewport { background: var(--bg); } .reveal .slides section { background: transparent; } .reveal section { text-align: left; }
+  .reveal .slides > section { padding: 0.5em; overflow-y: auto !important; align-items: flex-start !important; justify-content: flex-start !important; }
+  .reveal .progress { color: var(--amber); height: 3px; } .reveal .controls { color: var(--amber); }
+  .reveal section::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, var(--amber), var(--green)); }
+  .reveal { font-family: 'DM Sans', sans-serif; color: var(--text); font-size: 22px; }
+  .reveal .slide-number { font-family: 'JetBrains Mono', monospace; font-size: 0.7em; color: var(--muted); }
+  .reveal h1, .reveal h2, .reveal h3 { font-family: 'Playfair Display', serif; color: #fff; text-transform: none; letter-spacing: -0.01em; }
+  .reveal h1 { font-size: 2.4em; font-weight: 900; color: var(--amber); line-height: 1.1; }
+  .reveal h2 { font-size: 1.7em; font-weight: 700; color: var(--amber); margin-bottom: 0.6em; }
+  .reveal h3 { font-size: 1.2em; font-weight: 700; color: var(--green); margin-bottom: 0.3em; }
+  .reveal p { font-size: 0.75em; line-height: 1.5; color: var(--text); } .reveal li { font-size: 0.7em; line-height: 1.5; margin-bottom: 0.25em; }
+  .reveal code { font-family: 'JetBrains Mono', monospace; font-size: .72em; }
+  .reveal pre { background: var(--bg3); border: 1px solid var(--border); border-radius: 8px; padding: 0.5em 1em; margin: 0.4em 0; width: 100%; box-shadow: none; }
+  .reveal pre code { font-size: 0.58em; line-height: 1.5; background: transparent; color: #cdd6f4; }
+  .slide-hdr { display: flex; align-items: center; gap: .4em; border-bottom: 1px solid var(--border); padding-bottom: .2em; margin-bottom: .3em; }
+  .slide-hdr .tag { font-family: 'JetBrains Mono', monospace; font-size: 0.55em; font-weight: 600; color: var(--bg); background: var(--amber); padding: .1em .4em; border-radius: 3px; letter-spacing: .04em; }
+  .slide-hdr h2 { margin: 0; font-size: 1.4em; }
+  .cols{display:grid;gap:1em;} .cols-2{grid-template-columns:1fr 1fr;} .cols-3{grid-template-columns:1fr 1fr 1fr;} .cols-6040{grid-template-columns:6fr 4fr;} .cols-4060{grid-template-columns:4fr 6fr;}
+  .card { background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; padding: 1em 1.2em; box-shadow: 0 4px 20px rgba(0,0,0,0.3); margin: 0.4em 0; }
+  .card.amber { border-left: 3px solid var(--amber); } .card.green { border-left: 3px solid var(--green); } .card.purple { border-left: 3px solid var(--purple); } .card.blue { border-left: 3px solid var(--blue); } .card.red { border-left: 3px solid var(--red); }
+  .card h3 { font-size: 1em; margin: 0 0 0.4em; }
+  .card p, .card ul { font-size: 0.8em; margin: 0; color: #b8b8d0; } .card ul { padding-left: 1.2em; } .card li { font-size: 0.85em; margin-bottom: 0.25em; }
+  .reveal table { width: 100%; border-collapse: collapse; font-size: 0.65em; margin: 0.5em 0; }
+  .reveal table th { background: var(--bg3); color: var(--amber); padding: 0.5em 0.7em; border: 1px solid var(--border); text-align: left; font-weight: 700; }
+  .reveal table td { padding: 0.5em 0.7em; border: 1px solid var(--border); color: #ccc; vertical-align: top; }
+  .reveal table tr:nth-child(even) td { background: #0e0e18; }
+  .a{color:var(--amber);font-weight:600;} .g{color:var(--green);font-weight:600;} .p{color:var(--purple);font-weight:600;} .b{color:var(--blue);font-weight:600;} .r{color:var(--red);font-weight:600;} .mono{font-family:'JetBrains Mono',monospace;}
+  svg.diagram { display: block; margin: 0 auto; overflow: visible; }
+  .pill { display: inline-block; font-family: 'JetBrains Mono', monospace; font-size: 0.6em; padding: 0.15em 0.6em; border-radius: 999px; border: 1px solid; margin: 0 .08em; }
+  .pill.amber{color:var(--amber);border-color:var(--amber);} .pill.green{color:var(--green);border-color:var(--green);} .pill.purple{color:var(--purple);border-color:var(--purple);} .pill.blue{color:var(--blue);border-color:var(--blue);} .pill.red{color:var(--red);border-color:var(--red);}
+  .title-slide h1 { font-size: 2.4em; } .title-slide .subtitle { font-size: 0.85em; color: var(--green); font-weight: 400; letter-spacing: 0.06em; margin: 0.3em 0 0.6em; } .title-slide .meta { font-size: 0.6em; color: var(--muted); font-family: 'JetBrains Mono', monospace; }
+  .dim { color: var(--muted); } .small { font-size: 0.65em; } .smaller { font-size: 0.55em; } .tiny { font-size: 0.48em; }
+  .reveal ul, .reveal ol { margin: .15em 0 .15em 1em; }
+
+  /* Lane visual for SIMD */
+  .lanes { display: flex; gap: 4px; margin: 0.3em 0; font-family: 'JetBrains Mono', monospace; font-size: 0.62em; }
+  .lanes .ln { flex: 1; padding: 0.4em 0.2em; text-align: center; border: 1px solid var(--border); border-radius: 4px; background: var(--bg2); }
+  .lanes .ln.a { background: #2a1a0a; border-color: var(--amber); color: var(--amber); }
+  .lanes .ln.b { background: #0a2a1a; border-color: var(--green); color: var(--green); }
+  .lanes .ln.c { background: #1a0a2a; border-color: var(--purple); color: var(--purple); }
+  .lanes .lbl { flex: 0 0 80px; padding: 0.4em 0.3em; text-align: right; color: var(--muted); border: none; background: transparent; }
+
+  /* Helium beat visualisation */
+  .beats { display: grid; grid-template-columns: 90px repeat(4, 1fr); gap: 4px; font-family: 'JetBrains Mono', monospace; font-size: 0.62em; margin: 0.3em 0; }
+  .beats .lbl { color: var(--amber); text-align: right; padding: 0.3em 0.4em; font-weight: 700; }
+  .beats .cell { padding: 0.3em 0.3em; border: 1px solid var(--border); border-radius: 3px; text-align: center; background: var(--bg2); }
+  .beats .cell.t1 { background: #2a1a0a; border-color: var(--amber); color: #fde6ba; }
+  .beats .cell.t2 { background: #0a2a1a; border-color: var(--green); color: #b8f0d0; }
+  .beats .cell.t3 { background: #1a0a2a; border-color: var(--purple); color: #d8c8f8; }
+</style>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+
+<section class="title-slide" data-background-color="#0a0a0f">
+  <div style="font-family:'JetBrains Mono',monospace;font-size:.5em;color:var(--muted);margin-bottom:.4em;letter-spacing:.1em;">ARM CORTEX-M · PRESENTATION 05</div>
+  <h1>DSP, FPU &amp; Helium (MVE)</h1>
+  <div class="subtitle">Saturating Arithmetic · FPv4 / FPv5 · 128-bit Vector · CMSIS-DSP · CMSIS-NN</div>
+  <div style="width:60px;height:3px;background:var(--amber);margin-bottom:1.4em;"></div>
+  <div class="meta">From M4 SIMD to M85 TinyML</div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">02</span><h2>Why Cortex-M Cares About Signal Processing</h2></div>
+  <div class="cols cols-2">
+    <div>
+      <ul>
+        <li>Modern MCUs run 48 kHz audio codecs, 250 kHz motor-control current loops, BLE radio baseband post-processing, always-on KWS (keyword spotting) NNs.</li>
+        <li>Until 2010, these needed either a <strong>second chip</strong> (TI C28x DSP, ADSP Blackfin) or a bigger A-profile.</li>
+        <li>Adding a targeted set of SIMD &amp; saturating instructions let a Cortex-M4 displace all of that for the mid-range.</li>
+        <li>In 2020 Arm did it again with <strong>Helium (MVE)</strong> — putting 128-bit vector execution on an MCU for edge-ML.</li>
+      </ul>
+    </div>
+    <div>
+      <div class="card amber">
+        <h3 class="a">Three tiers today</h3>
+        <ul>
+          <li><strong>DSP extension (v7E-M / v8-M Main)</strong> — 32-bit SIMD on M4, M7, M33, M35P, M55, M85.</li>
+          <li><strong>FPU</strong> — optional IEEE 754 single- and double-precision on M4 / M7 / M33 / M52 / M55 / M85.</li>
+          <li><strong>Helium (v8.1-M MVE)</strong> — 128-bit beat-wise SIMD on M52, M55, M85. First Arm vector extension outside A-profile.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">03</span><h2>The DSP Extension — Packed-Operand SIMD</h2></div>
+  <div class="cols cols-2">
+    <div>
+      <p class="small">32-bit GPRs are <em>already</em> on the core. The DSP extension reinterprets them as packed vectors and adds instructions that operate on all lanes at once.</p>
+      <div class="lanes">
+        <div class="lbl">32 bits:</div>
+        <div class="ln a">int32</div>
+      </div>
+      <div class="lanes">
+        <div class="lbl">2 × 16:</div>
+        <div class="ln b">int16</div><div class="ln b">int16</div>
+      </div>
+      <div class="lanes">
+        <div class="lbl">4 × 8:</div>
+        <div class="ln c">i8</div><div class="ln c">i8</div><div class="ln c">i8</div><div class="ln c">i8</div>
+      </div>
+    </div>
+    <div>
+      <ul>
+        <li>No new register file — reuses R0–R12.</li>
+        <li>Adds ~30 instructions: QADD8, QSUB8, SADD16, SSUB16, QADD16, SMLAD, SMLSD, SMMUL, SMMLA, SEL, USAT, SSAT, PKHBT, PKHTB, UXTAB, SXTB16, …</li>
+        <li>Saturating variants clip to type limits (±32767 for int16 etc.) instead of wrapping — and set the sticky <code>APSR.Q</code> flag.</li>
+        <li>Total cost: ~5 kgate in the ALU datapath.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">04</span><h2>SIMD Instructions — Reference</h2></div>
+  <table style="font-size:0.6em;">
+    <tr><th>Instruction</th><th>Operation</th><th>Lanes</th><th>Typical use</th></tr>
+    <tr><td>SADD16 / SSUB16</td><td>signed add/sub</td><td>2 × int16</td><td>FIR half-word addition</td></tr>
+    <tr><td>QADD16 / QSUB16</td><td>saturating add/sub</td><td>2 × int16</td><td>Audio clipping-safe mix</td></tr>
+    <tr><td>SADD8 / QADD8</td><td>add / saturating add</td><td>4 × int8</td><td>Image-processing blend</td></tr>
+    <tr><td>SMUL/SMLAD/SMLSD</td><td>signed mult-acc of two 16-bit pairs</td><td>2 × int16</td><td>FIR / IIR kernel inner loop</td></tr>
+    <tr><td>SMLAL / SMLALD</td><td>signed mult-acc, 64-bit accumulator</td><td>2 × int16</td><td>Large accumulators for long FIRs</td></tr>
+    <tr><td>SMMUL / SMMLA</td><td>signed &lt;&lt;32 multiply high-word</td><td>1 × Q31</td><td>Q31 fixed-point IIR</td></tr>
+    <tr><td>USAT / SSAT</td><td>saturate scalar to N-bit</td><td>1 × 32</td><td>Post-multiply saturation to Q15 / Q7</td></tr>
+    <tr><td>SEL</td><td>byte-wise select using GE flags</td><td>4 × int8</td><td>Conditional pack after compare</td></tr>
+    <tr><td>PKHBT / PKHTB</td><td>pack bottom+top halfwords</td><td>2 × int16</td><td>Reassembling after shifted ops</td></tr>
+    <tr><td>UXTB16 / SXTB16</td><td>unpack two bytes → two halfwords</td><td>2 × int8→int16</td><td>Load 4 bytes, unpack for FIR</td></tr>
+  </table>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">05</span><h2>DSP Example — Q15 FIR Kernel</h2></div>
+  <div class="cols cols-4060">
+    <div>
+<pre><code class="mono">/* coeffs packed 2×Q15 per word;
+   samples packed 2×Q15 per word.
+   Produces acc in Q31. */
+q31_t acc = 0;
+for (i = 0; i &lt; numTaps/2; i++) {
+    q31_t s = *(q31_t *)(pS + 2*i);      /* s1 | s0 */
+    q31_t c = *(q31_t *)(pC + 2*i);      /* c1 | c0 */
+    acc = __SMLALD(s, c, acc);           /* acc += s0*c0 + s1*c1 */
+}
+acc = __SSAT(acc &gt;&gt; 15, 16);</code></pre>
+    </div>
+    <div>
+      <ul>
+        <li>Each loop iteration now does <strong>two MACs</strong> per cycle.</li>
+        <li>Compare to scalar C:
+<pre style="margin:0.2em 0;"><code class="mono">for (i=0;i&lt;N;i++) acc += s[i]*c[i];</code></pre>
+        which is 1 MAC per iteration + loop overhead.</li>
+        <li>Measured speed-up on STM32F4: <strong>~3.5×</strong> for a 64-tap FIR.</li>
+        <li>CMSIS-DSP's <code>arm_fir_q15</code> uses this pattern with further unrolling.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">06</span><h2>Saturating Arithmetic &amp; the Q Flag</h2></div>
+  <div class="cols cols-2">
+    <div>
+      <ul>
+        <li><code>APSR.Q</code> — a <strong>sticky</strong> bit set by any saturating op that actually clipped.</li>
+        <li>Reset only by writing 0 with <code>MSR APSR_nzcvq</code>.</li>
+        <li>Lets an algorithm check at end-of-frame whether any sample saturated — warn or reduce gain.</li>
+        <li>Hardware saturation is free (no conditional branch in the inner loop).</li>
+      </ul>
+    </div>
+    <div>
+<pre><code class="mono">/* check overall saturation for a block */
+__set_APSR_nzcvq(0);              /* clear Q */
+for (i=0; i&lt;N; i++)
+    out[i] = __QADD16(a[i], b[i]);
+
+if (__get_APSR() &amp; (1U &lt;&lt; 27))    /* Q flag */
+    gain_control_reduce();</code></pre>
+      <div class="card blue" style="font-size:0.72em; margin-top:0.3em;">
+        Audio DSP loves this. It maps closely to DSP culture from 90s Motorola 56k processors — Arm deliberately modelled the feature on that experience.
+      </div>
+    </div>
+  </div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">07</span><h2>The FPU — FPv4 / FPv5</h2></div>
+  <table>
+    <tr><th>Variant</th><th>Cores</th><th>Precision</th><th>Registers</th><th>IEEE compliance</th></tr>
+    <tr><td>FPv4-SP</td><td>M4, M33</td><td>single (32-bit)</td><td>32 × S (or 16 × D)</td><td>IEEE 754-2008, default rounding, some exceptions trapped</td></tr>
+    <tr><td>FPv5-SP</td><td>M7, M52, M55, M85</td><td>single</td><td>32 × S</td><td>Same, plus VRINT / VSEL / VMINMAX</td></tr>
+    <tr><td>FPv5-DP</td><td>M7 option, M85 option</td><td>single + double</td><td>32 × D (64-bit each)</td><td>Full IEEE 754 double</td></tr>
+    <tr><td>FPv5-HP</td><td>M55, M85</td><td>+ half (16-bit)</td><td>adds FP16</td><td>Half-precision lanes, used with Helium</td></tr>
+  </table>
+  <div class="cols cols-2">
+    <div>
+      <h3>Register set</h3>
+      <ul>
+        <li>S0–S31 (32 × 32-bit) or aliased as D0–D15 (16 × 64-bit).</li>
+        <li>Single FPSCR — rounding mode, condition flags, sticky exceptions.</li>
+        <li>Separate bank from integer R0–R12 — no pressure on GPRs.</li>
+      </ul>
+    </div>
+    <div>
+      <h3>Calling convention</h3>
+      <ul>
+        <li>Hard-float ABI: FP args in S0–S15 / D0–D7; return in S0 / D0.</li>
+        <li>Soft-float ABI: FP args in R0–R3 (uses integer regs) — what v6-M must use.</li>
+        <li>GCC flag: <code>-mfloat-abi=hard -mfpu=fpv5-sp-d16</code>.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">08</span><h2>FPU Context &amp; Lazy Stacking</h2></div>
+  <div class="cols cols-2">
+    <div>
+      <h3><code>CPACR</code> — enable FPU</h3>
+<pre><code class="mono">/* Grant privileged + unpriv access to CP10/CP11 */
+SCB-&gt;CPACR |= (3u &lt;&lt; 20) | (3u &lt;&lt; 22);
+__DSB(); __ISB();</code></pre>
+      <h3><code>FPCCR</code> — context behaviour</h3>
+      <ul>
+        <li><strong>ASPEN</strong> (Automatic State Preservation Enable) — save FP regs on exception entry if FPCA=1.</li>
+        <li><strong>LSPEN</strong> (Lazy Save Enable) — defer the actual writes until the handler touches the FPU.</li>
+        <li><strong>FPCA</strong> in CONTROL — set by the first FP instr; cleared by EXC_RETURN with basic-frame bit.</li>
+      </ul>
+    </div>
+    <div>
+      <div class="card amber">
+        <h3 class="a">Lazy stacking in a frame</h3>
+        <ol>
+          <li>IRQ fires; CPU reserves 18-word extended frame; writes only the basic 8.</li>
+          <li>Handler runs scalar code — no FP writes yet.</li>
+          <li>If handler does <code>vmul.f32 s0,s1,s2</code>, CPU stalls, writes the 18 FP words, then continues.</li>
+          <li>On return, CPU pops the 18 words only if they were written.</li>
+        </ol>
+      </div>
+      <div class="card red" style="margin-top:0.3em; font-size:0.72em;">
+        <strong class="r">Gotcha:</strong> if the handler uses <code>memcpy</code>, newer GCC/libc may emit VMOV/VLDM on 8-byte aligned buffers. Disable with <code>-mno-unaligned-access</code> or <code>-mfloat-abi=soft</code> for the handler's TU.
+      </div>
+    </div>
+  </div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">09</span><h2>Fixed-Point vs Floating-Point</h2></div>
+  <table>
+    <tr><th></th><th>Q15 / Q31 (DSP)</th><th>float32 (FPv4/5)</th></tr>
+    <tr><td>Range</td><td>−1 … +1 − 2⁻¹⁵ or 2⁻³¹</td><td>±3.4×10³⁸</td></tr>
+    <tr><td>Precision</td><td>Uniform (15 or 31 bits)</td><td>~23 bits mantissa (worse at small values? <em>better</em>)</td></tr>
+    <tr><td>Instruction cost</td><td>1 cycle MAC (packed)</td><td>1 cycle VMLA.F32</td></tr>
+    <tr><td>Memory</td><td>halfwords (FIR), packs well</td><td>words, may double buffer size</td></tr>
+    <tr><td>Determinism</td><td>Exact, bit-reproducible</td><td>Rounding depends on FPSCR mode; sticky exceptions</td></tr>
+    <tr><td>Good for</td><td>Audio DSP, motor control, wireless</td><td>Sensor fusion, Kalman filter, geometric compute, float-trained ML</td></tr>
+  </table>
+  <div class="card green" style="font-size:0.72em;">
+    Cortex-M4 with FPU often ends up doing both: critical inner loops in Q15/Q31 DSP, outer-loop housekeeping (<em>gain, state vectors</em>) in float — best of both worlds without two cores.
+  </div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">10</span><h2>Helium (M-Profile Vector Extension)</h2></div>
+  <div class="cols cols-2">
+    <div>
+      <ul>
+        <li>Introduced with <strong>Armv8.1-M</strong> (2019). Shipping in <strong>Cortex-M52, M55, M85</strong>.</li>
+        <li>Eight <strong>128-bit vector registers</strong> <code>Q0–Q7</code>. Each is also accessible as <code>D</code> doublewords and <code>S</code> singlewords (aliased with the FPU register bank).</li>
+        <li>Lane configurations: 16 × int8, 8 × int16, 4 × int32, 8 × float16, 4 × float32.</li>
+        <li>Fused multiply-accumulate (FMA), multiply-accumulate with round, saturating, scatter-gather addressing.</li>
+        <li><strong>Tail predication</strong> — a vector loop handles the non-multiple-of-lane remainder without a scalar tail.</li>
+        <li><strong>Low-Overhead Branch (LOB)</strong> — <code>DLS</code>/<code>WLS</code>/<code>LE</code> — a counted loop that compiles to zero-overhead branches.</li>
+      </ul>
+    </div>
+    <div>
+      <div class="card amber">
+        <h3 class="a">Design trade-off</h3>
+        <p>NEON on A-profile is a full 128-bit datapath. Helium uses a <strong>beat-wise</strong> execution model: one 32-bit beat per cycle by default, so silicon area is roughly ¼ of a NEON block — while retaining the same instruction encoding and most of the peak throughput on tight loops.</p>
+      </div>
+      <div class="card green" style="margin-top:0.3em;">
+        <h3 class="g">Why the name?</h3>
+        <p>Helium is the lightweight of the vector extensions. Compared to Arm's SVE / SVE2 (bigger, more dynamic), it's small &amp; dense — like the element.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">11</span><h2>Helium — Beat-Wise Execution</h2></div>
+  <div class="beats">
+    <div class="lbl">register</div>
+    <div class="cell">lane 3</div><div class="cell">lane 2</div><div class="cell">lane 1</div><div class="cell">lane 0</div>
+    <div class="lbl">beat 1</div>
+    <div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell t1">compute</div>
+    <div class="lbl">beat 2</div>
+    <div class="cell"></div><div class="cell"></div><div class="cell t1">compute</div><div class="cell t2">compute</div>
+    <div class="lbl">beat 3</div>
+    <div class="cell"></div><div class="cell t1">compute</div><div class="cell t2">compute</div><div class="cell t3">compute</div>
+    <div class="lbl">beat 4</div>
+    <div class="cell t1">compute</div><div class="cell t2">compute</div><div class="cell t3">compute</div><div class="cell">—</div>
+  </div>
+  <div class="cols cols-2">
+    <div>
+      <h3>1-beat implementations (M55)</h3>
+      <p class="small">One 32-bit lane per cycle → a 4-lane op takes 4 cycles. But the compiler overlaps independent operations so the back-to-back throughput matches a 4-beat design.</p>
+    </div>
+    <div>
+      <h3>2-beat and dual-beat (M85)</h3>
+      <p class="small">Two lanes per cycle → 4-lane op in 2 cycles. M85 dual-issues a vector and a scalar per cycle — roughly 2× M55 throughput.</p>
+    </div>
+  </div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">12</span><h2>Helium — Hello World</h2></div>
+<pre><code class="mono">#include &lt;arm_mve.h&gt;        /* intrinsics */
+
+void vadd_i16(const int16_t *a, const int16_t *b,
+              int16_t *c, uint32_t n)
+{
+    while (n &gt; 0) {
+        mve_pred16_t p = vctp16q(n);              /* tail predicate */
+        int16x8_t va = vld1q_z_s16(a, p);         /* load up to 8 */
+        int16x8_t vb = vld1q_z_s16(b, p);
+        int16x8_t vc = vaddq_x_s16(va, vb, p);    /* masked add */
+        vst1q_p_s16(c, vc, p);                    /* masked store */
+        a += 8; b += 8; c += 8;
+        n  = n &gt; 8 ? n - 8 : 0;
+    }
+}</code></pre>
+  <div class="card blue" style="font-size:0.72em;">
+    <code>vctp16q(n)</code> builds a predicate "active if lane index &lt; n". The predicate argument form (<code>vaddq_x</code>, <code>vld1q_z</code>) tells the CPU which lanes to compute / load. On the last iteration where <code>n &lt; 8</code>, the CPU masks lanes automatically — <strong>no scalar tail loop needed</strong>.
+  </div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">13</span><h2>Low-Overhead Loop Branch</h2></div>
+  <div class="cols cols-4060">
+    <div>
+<pre><code class="mono">; Classic loop
+    MOV    r0, #N
+1:  ; ... body ...
+    SUBS   r0, r0, #1
+    BNE    1b
+
+; With LOB (Armv8.1-M)
+    DLS    lr, #N      ; set LR=N, start of loop
+1:  ; ... body ...
+    LE     lr, 1b      ; dec LR; branch-if-not-zero</code></pre>
+    </div>
+    <div>
+      <ul>
+        <li><strong>DLS</strong> (Do-Loop-Start) or <strong>WLS</strong> (While-Loop-Start) initialises LR = count, records the branch target.</li>
+        <li><strong>LE</strong> (Loop End) decrements LR; if non-zero, branches to the recorded target; if zero, falls through.</li>
+        <li>The CPU <em>predicts</em> LE perfectly — no branch-miss penalty, no loop-overhead instructions.</li>
+        <li>Helium <code>LETP</code> / <code>DLSTP</code> variants also set up the tail predicate automatically.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">14</span><h2>Helium for TinyML</h2></div>
+  <div class="cols cols-2">
+    <div>
+      <ul>
+        <li>Quantised NN inference uses int8 activations + int8 weights + int32 accumulator.</li>
+        <li>Helium executes 16 × int8 multiply-accumulates per instruction (VMLAV, VMLAVA — "across" reductions).</li>
+        <li>Combined with the VMLADAVA (dual-lane dot-product) and scatter-gather loads for depthwise convs, CMSIS-NN achieves ~5× speed-up on M55 vs M4 for MobileNet-v1 kernels.</li>
+        <li>FP16 path: fast pre-post processing (resize, normalise, softmax) without falling back to float32.</li>
+      </ul>
+    </div>
+    <div>
+      <div class="card green">
+        <h3 class="g">Real numbers</h3>
+        <table style="font-size:0.6em;">
+          <tr><th>Kernel</th><th>M4 DSP</th><th>M55 Helium</th><th>Speed-up</th></tr>
+          <tr><td>int8 conv2d 1×1</td><td>1.0×</td><td>~4.8×</td><td>4.8×</td></tr>
+          <tr><td>int8 depthwise 3×3</td><td>1.0×</td><td>~4.2×</td><td>4.2×</td></tr>
+          <tr><td>int8 FC matmul</td><td>1.0×</td><td>~5.6×</td><td>5.6×</td></tr>
+          <tr><td>fp16 softmax (N=128)</td><td>1.0×</td><td>~3.1×</td><td>3.1×</td></tr>
+        </table>
+        <p class="smaller dim" style="margin-top:0.3em;">From Arm's CMSIS-NN v5 benchmarks on an Alif Ensemble eval board.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">15</span><h2>Helium Instruction Classes</h2></div>
+  <table style="font-size:0.62em;">
+    <tr><th>Class</th><th>Examples</th><th>Purpose</th></tr>
+    <tr><td>Load / Store</td><td>VLD1Q, VST1Q, VLD2/3/4</td><td>Contiguous and interleaved loads</td></tr>
+    <tr><td>Scatter / Gather</td><td>VLDRB/H/W.Q (vector-of-addresses)</td><td>Sparse indexing — LUTs, interpolation, hash</td></tr>
+    <tr><td>Integer arithmetic</td><td>VADDQ, VSUBQ, VMULQ, VQADDQ (sat)</td><td>SIMD int8/16/32 math</td></tr>
+    <tr><td>Multiply-accumulate</td><td>VMLA, VMLAV, VMLADAVA</td><td>FIR, GEMM, NN MAC</td></tr>
+    <tr><td>Float</td><td>VADD.F16/F32, VMLA.F16</td><td>Half/float SIMD</td></tr>
+    <tr><td>Compare</td><td>VCMP, VCMPEQ, building predicates</td><td>Masked execution</td></tr>
+    <tr><td>Shuffle / Permute</td><td>VREV, VMOVN, VMOVL, VSHRN</td><td>Data reshape, narrowing, widening</td></tr>
+    <tr><td>Reduction</td><td>VADDV, VMINAV, VMAXAV</td><td>Scalar result from a vector</td></tr>
+    <tr><td>Predicate / loop</td><td>VPT / VPTT / LETP / WLSTP</td><td>Tail predication, LOB</td></tr>
+  </table>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">16</span><h2>CMSIS-DSP</h2></div>
+  <div class="cols cols-2">
+    <div>
+      <ul>
+        <li>Arm's portable DSP library in C.</li>
+        <li>Hand-tuned implementations per core: scalar / DSP-SIMD / Helium.</li>
+        <li>APIs unchanged across cores — only link-time library differs.</li>
+        <li>Covers:
+          <ul>
+            <li>Filters (FIR, IIR, biquad, LMS, normalised LMS)</li>
+            <li>Transforms (FFT radix-2/4/8, DCT)</li>
+            <li>Matrix ops (multiply, inverse, Cholesky)</li>
+            <li>Controller math (PID)</li>
+            <li>Statistics, distance functions</li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+    <div>
+<pre><code class="mono">#include "arm_math.h"
+
+arm_fir_instance_q15 fir;
+q15_t taps[NUM_TAPS];
+q15_t state[NUM_TAPS + BLOCK_SIZE - 1];
+
+arm_fir_init_q15(&amp;fir, NUM_TAPS, taps, state,
+                 BLOCK_SIZE);
+
+for (;;) {
+    wait_for_dma_block(in);
+    arm_fir_q15(&amp;fir, in, out, BLOCK_SIZE);
+    send_to_dac(out);
+}</code></pre>
+      <p class="smaller dim">Same code runs on M0 (scalar), M4 (DSP SIMD), M7 (DSP + FPU), M55 (Helium) — just relink against the right libcmsisdsp.a.</p>
+    </div>
+  </div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">17</span><h2>CMSIS-NN</h2></div>
+  <div class="cols cols-2">
+    <div>
+      <ul>
+        <li>Companion library for int8 / int16 NN inference.</li>
+        <li>Kernels: fully-connected, conv2d, depthwise conv, softmax, pooling, batch-norm fusion, LSTM cell.</li>
+        <li>Maps to DSP SIMD on M4/M7/M33 and to Helium on M52/M55/M85.</li>
+        <li>The runtime for TensorFlow Lite for Microcontrollers (tflite-micro) and for ExecuTorch on MCU.</li>
+      </ul>
+    </div>
+    <div>
+      <div class="card amber">
+        <h3 class="a">End-to-end speed</h3>
+        <p>With CMSIS-NN + Helium on a 400 MHz Cortex-M55:</p>
+        <ul>
+          <li>MobileNet-v1 0.25× @ 128×128 int8 → ~14 ms / frame.</li>
+          <li>Keyword-spotting DS-CNN → ~2.4 ms / inference at 100 MHz.</li>
+          <li>Person-detection MobileNetV1 → ~80 ms / frame at 400 MHz.</li>
+        </ul>
+        <p class="smaller dim">Compare to M4F (no Helium): same models are 4–6× slower.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">18</span><h2>Autovectorisation vs Intrinsics</h2></div>
+  <div class="cols cols-3">
+    <div class="card amber">
+      <h3 class="a">Autovectorise</h3>
+      <p>Arm Compiler 6 and GCC 13+ with <code>-march=armv8.1-m.main+mve.fp</code> can auto-vectorise simple loops. Good for portable code; rarely optimal for tight kernels.</p>
+    </div>
+    <div class="card green">
+      <h3 class="g">Intrinsics (<code>arm_mve.h</code>)</h3>
+      <p>Portable across compilers, close to the metal, easy to reason about. Preferred for DSP / NN kernels. Takes on CPU knowledge of the programmer.</p>
+    </div>
+    <div class="card purple">
+      <h3 class="p">Inline assembly</h3>
+      <p>Last resort — needed only when the intrinsic set doesn't expose a feature (rare) or for precise cycle-count tuning. Pin to a specific core.</p>
+    </div>
+  </div>
+  <div class="card blue" style="font-size:0.72em;">
+    <strong class="b">Best practice:</strong> write the <em>kernel</em> with intrinsics (benchmark vs scalar); leave everything else in portable C and let the compiler auto-vec it. CMSIS-DSP uses this pattern pervasively.
+  </div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">19</span><h2>FPU Common Pitfalls</h2></div>
+  <div class="cols cols-2">
+    <div>
+      <div class="card red">
+        <h3 class="r">1. Forgot to enable CPACR</h3>
+        <p>First FPU instruction → UsageFault (NOCP). <code>SCB-&gt;CPACR |= (3u&lt;&lt;20)|(3u&lt;&lt;22);</code> early in <code>SystemInit</code>.</p>
+      </div>
+      <div class="card red">
+        <h3 class="r">2. Float in ISR without hardfp ABI</h3>
+        <p>ISR compiled with softfp while library is hardfp → wrong register usage. Compile everything with the same <code>-mfloat-abi</code>.</p>
+      </div>
+      <div class="card red">
+        <h3 class="r">3. VCVT between int and float in tight loop</h3>
+        <p>VCVT.F32.S32 costs ~10 cycles on M4. Batch the converts — or stay in fixed-point.</p>
+      </div>
+    </div>
+    <div>
+      <div class="card red">
+        <h3 class="r">4. Denormal floats</h3>
+        <p>Denormals on the FPU can be ~30× slower than normals. Set <code>FPSCR.FZ=1</code> (flush-to-zero) for DSP code. Audio &amp; control loops should always run FZ.</p>
+      </div>
+      <div class="card red">
+        <h3 class="r">5. Shared volatile FP state</h3>
+        <p>If two priorities use the FPU and only one enables ASPEN+LSPEN correctly, context leaks. Always use the CMSIS defaults.</p>
+      </div>
+      <div class="card red">
+        <h3 class="r">6. Saturation without clearing Q</h3>
+        <p>Any saturating op leaves APSR.Q=1 until a new <code>MSR APSR_nzcvq, #0</code>. Old code + sticky Q = false "clipping" alarms.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">20</span><h2>Helium Common Pitfalls</h2></div>
+  <div class="cols cols-2">
+    <div>
+      <div class="card red">
+        <h3 class="r">1. FPU not enabled</h3>
+        <p>Helium shares the FP register file. <code>CPACR</code> CP10/CP11 must grant access <em>before</em> any MVE instruction.</p>
+      </div>
+      <div class="card red">
+        <h3 class="r">2. Mismatched lane width in predicate</h3>
+        <p><code>vctp16q</code> builds a predicate for 8-lane int16 ops. Using it with an int8 op masks the wrong lanes.</p>
+      </div>
+      <div class="card red">
+        <h3 class="r">3. Unaligned scatter-gather</h3>
+        <p>Scatter-gather accesses at unaligned base may trap on Device memory and miss cache lines. Align data.</p>
+      </div>
+    </div>
+    <div>
+      <div class="card red">
+        <h3 class="r">4. Tail predication vs cache coherence</h3>
+        <p>On M55 with D-cache, a predicated store <em>still touches</em> a cache line. Pad DMA buffers to lane width.</p>
+      </div>
+      <div class="card red">
+        <h3 class="r">5. Mixing SVE-style pragmas</h3>
+        <p>Helium is not SVE. <code>#pragma arm vector</code> directives differ. Use <code>__attribute__((target("mve.fp")))</code> for Helium.</p>
+      </div>
+      <div class="card red">
+        <h3 class="r">6. Beat-wise ordering assumptions</h3>
+        <p>Do not assume lane ordering in time. Architecturally, beats are observed in program order, but <em>within</em> a beat no ordering is guaranteed.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">21</span><h2>Comparative: M4 vs M7 vs M55 vs M85</h2></div>
+  <table style="font-size:0.62em;">
+    <tr><th>Feature</th><th>M4</th><th>M7</th><th>M55</th><th>M85</th></tr>
+    <tr><td>DSP extension</td><td>✓</td><td>✓</td><td>✓</td><td>✓</td></tr>
+    <tr><td>FPU</td><td>FPv4-SP</td><td>FPv5-SP/DP</td><td>FPv5-SP + HP</td><td>FPv5-SP/DP + HP</td></tr>
+    <tr><td>Helium (MVE)</td><td>—</td><td>—</td><td>✓ (1-beat)</td><td>✓ (2-beat)</td></tr>
+    <tr><td>Cache</td><td>—</td><td>L1 I+D</td><td>opt I+D</td><td>opt I+D</td></tr>
+    <tr><td>Dual-issue</td><td>—</td><td>✓</td><td>—</td><td>✓</td></tr>
+    <tr><td>Max clock</td><td>~200 MHz</td><td>600 MHz</td><td>~400 MHz</td><td>~700 MHz</td></tr>
+    <tr><td>Typical FIR GMAC/s</td><td>0.2</td><td>0.9</td><td>1.6</td><td>3.5</td></tr>
+    <tr><td>Typical int8 NN GOP/s</td><td>~0.3</td><td>~1.0</td><td>~1.6</td><td>~3.0</td></tr>
+  </table>
+  <p class="smaller dim">Rough headline numbers; actual performance depends on memory system, cache config, and whether the code is auto-vectorised or hand-tuned.</p>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">22</span><h2>When to Choose What</h2></div>
+  <div class="cols cols-3">
+    <div class="card amber">
+      <h3 class="a">Stay with scalar Cortex-M0/M0+/M23</h3>
+      <p>UI glue, low-bandwidth sensors, protocol stacks. No DSP needed.</p>
+    </div>
+    <div class="card green">
+      <h3 class="g">Use Cortex-M4 DSP</h3>
+      <p>Audio codecs up to 48 kHz stereo; 10–50 kHz motor control; light wireless DSP (CRC, scrambling). Great price.</p>
+    </div>
+    <div class="card purple">
+      <h3 class="p">Use Cortex-M7 + FPv5</h3>
+      <p>Heavy FFT workloads, graphics compositing, bridging between DSP and MPU world. Cache + AXI earn their cost.</p>
+    </div>
+  </div>
+  <div class="cols cols-3" style="margin-top:0.4em;">
+    <div class="card blue">
+      <h3 class="b">Use Cortex-M55</h3>
+      <p>TinyML inference &lt; 100 ms latency, multi-channel audio, camera pre-processing. First-generation Helium silicon (Alif, Renesas RA8).</p>
+    </div>
+    <div class="card amber">
+      <h3 class="a">Use Cortex-M85</h3>
+      <p>ML + DSP + TrustZone in one core; highest-performance single-core MCU. PACBTI bonus for safety.</p>
+    </div>
+    <div class="card green">
+      <h3 class="g">Consider a dedicated NPU</h3>
+      <p>Arm Ethos-U55 / U65 pairs with M55/M85 for &gt; 100 GOPS int8 — Helium handles non-convolution layers, NPU does conv.</p>
+    </div>
+  </div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">23</span><h2>Ecosystem &amp; Tools</h2></div>
+  <div class="cols cols-2">
+    <div>
+      <ul>
+        <li><strong class="a">CMSIS-DSP / CMSIS-NN</strong> — Arm's portable libraries (github.com/ARM-software/CMSIS-DSP, CMSIS-NN).</li>
+        <li><strong class="a">TensorFlow Lite for Microcontrollers</strong> — uses CMSIS-NN as its reference MCU backend.</li>
+        <li><strong class="a">ExecuTorch on MCU</strong> — new PyTorch path using Helium + Ethos-U.</li>
+        <li><strong class="a">Arm KEIL uVision &amp; Arm Compiler 6</strong> — strongest auto-vec support for Helium today.</li>
+        <li><strong class="a">GCC 13+ / Clang 17+</strong> — Helium intrinsics &amp; auto-vec supported.</li>
+        <li><strong class="a">Corstone-300 / Corstone-310</strong> — Arm reference subsystems containing M55 + Ethos-U55 for rapid SoC design.</li>
+      </ul>
+    </div>
+    <div>
+      <div class="card blue">
+        <h3 class="b">DSP interview checklist</h3>
+        <ul>
+          <li>Explain the difference between <code>SMLAD</code> and <code>SMLALD</code> (32-bit vs 64-bit accumulator).</li>
+          <li>Describe when <code>APSR.Q</code> gets sticky.</li>
+          <li>Walk through the FPU register file and how it shares with Helium.</li>
+          <li>Explain tail-predication and why it makes vector loops branch-free.</li>
+          <li>Why lazy stacking (FPCCR.LSPEN) exists.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr"><span class="tag">24</span><h2>References</h2></div>
+  <div style="max-width:90%;margin:0 auto;font-size:0.58em;line-height:1.8;">
+    <p>
+      <strong class="a">Arm</strong> — <em>Arm Cortex-M Helium Technology</em> white paper (2019, updated 2023)<br>
+      <strong class="a">Arm</strong> — <em>Helium Programmer's Guide</em> (developer.arm.com/documentation/102102)<br>
+      <strong class="a">Arm</strong> — <em>Cortex-M55 Software Optimization Guide</em>; <em>Cortex-M85 Optimization Guide</em><br>
+      <strong class="a">CMSIS-DSP &amp; CMSIS-NN</strong> — github.com/ARM-software/CMSIS-DSP, github.com/ARM-software/CMSIS-NN — reference kernels<br>
+      <strong class="a">Cameron Hughes</strong> — <em>Digital Signal Processing with Arm Cortex-M Microcontrollers</em> (Mouser/Arm, 2020)<br>
+      <strong class="a">Donoghue, J.</strong> — "Efficient quantized NN inference on Cortex-M55 with Helium" (Arm AI Virtual Tech Talks, 2022)<br>
+      <strong class="a">Warden / Situnayake</strong> — <em>TinyML</em> (O'Reilly, 2019) — baseline for the MCU inference field
+    </p>
+    <p style="color:var(--muted);margin-top:0.8em;font-size:0.85em">
+      Presentation built with <a href="https://revealjs.com">Reveal.js 4.6</a> · Playfair Display + DM Sans + JetBrains Mono<br>
+      Educational use.
+    </p>
+  </div>
+</section>
+
+</div></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/highlight/highlight.min.js"></script>
+<script>
+Reveal.initialize({ hash: true, slideNumber: 'c/t', transition: 'fade', transitionSpeed: 'fast', controls: true, progress: true, center: false, width: 1100, height: 900, margin: 0.01, plugins: [RevealHighlight], highlight: { theme: 'monokai' } });
+</script>
+<script>
+(function(){ var h = Reveal.getConfig().height || 900; var m = Reveal.getConfig().margin || 0.02; var maxH = Math.floor(h * (1 - 2 * m)) + 'px'; function fixSlides(){ document.querySelectorAll('.reveal .slides>section,.reveal .slides>section>section').forEach(function(s){ s.style.display = 'block'; s.style.maxHeight = maxH; }); } Reveal.on('ready', fixSlides); Reveal.on('slidechanged', fixSlides); })();
+</script>
+</body>
+</html>
