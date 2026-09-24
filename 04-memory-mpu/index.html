@@ -11,8 +11,8 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/black.min.css">
 <style>
   :root {
-    --amber:#f5a623;--green:#4ecb8d;--purple:#a78bfa;--blue:#60a5fa;--red:#f87171;
-    --bg:#0a0a0f;--bg2:#10101a;--bg3:#181824;--border:#2a2a3a;--text:#e8e8f0;--muted:#8888a8;
+    --amber:#f4c44d;--green:#87d5bb;--purple:#c7b9fe;--blue:#a5dcfe;--red:#fd8c79;
+    --bg:#10294a;--bg2:#143154;--bg3:#18375d;--border:#305782;--text:#ecf1f7;--muted:#8eaac7;
   }
   .reveal-viewport { background: var(--bg); }
   .reveal .slides section { background: transparent; }
@@ -23,7 +23,7 @@
   .reveal section::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, var(--amber), var(--green)); }
   .reveal { font-family: 'DM Sans', sans-serif; color: var(--text); font-size: 22px; }
   .reveal .slide-number { font-family: 'JetBrains Mono', monospace; font-size: 0.7em; color: var(--muted); }
-  .reveal h1, .reveal h2, .reveal h3 { font-family: 'Playfair Display', serif; color: #fff; text-transform: none; letter-spacing: -0.01em; }
+  .reveal h1, .reveal h2, .reveal h3 { font-family: 'Playfair Display', serif; color: #ffffff; text-transform: none; letter-spacing: -0.01em; }
   .reveal h1 { font-size: 2.4em; font-weight: 900; color: var(--amber); line-height: 1.1; }
   .reveal h2 { font-size: 1.7em; font-weight: 700; color: var(--amber); margin-bottom: 0.6em; }
   .reveal h3 { font-size: 1.2em; font-weight: 700; color: var(--green); margin-bottom: 0.3em; }
@@ -31,19 +31,19 @@
   .reveal li { font-size: 0.7em; line-height: 1.5; margin-bottom: 0.25em; }
   .reveal code { font-family: 'JetBrains Mono', monospace; font-size: .72em; }
   .reveal pre  { background: var(--bg3); border: 1px solid var(--border); border-radius: 8px; padding: 0.5em 1em; margin: 0.4em 0; width: 100%; box-shadow: none; }
-  .reveal pre code { font-size: 0.58em; line-height: 1.5; background: transparent; color: #cdd6f4; }
+  .reveal pre code { font-size: 0.58em; line-height: 1.5; background: transparent; color: #dbe5ef; }
   .slide-hdr { display: flex; align-items: center; gap: .4em; border-bottom: 1px solid var(--border); padding-bottom: .2em; margin-bottom: .3em; }
   .slide-hdr .tag { font-family: 'JetBrains Mono', monospace; font-size: 0.55em; font-weight: 600; color: var(--bg); background: var(--amber); padding: .1em .4em; border-radius: 3px; letter-spacing: .04em; }
   .slide-hdr h2 { margin: 0; font-size: 1.4em; }
   .cols{display:grid;gap:1em;} .cols-2{grid-template-columns:1fr 1fr;} .cols-3{grid-template-columns:1fr 1fr 1fr;} .cols-6040{grid-template-columns:6fr 4fr;} .cols-4060{grid-template-columns:4fr 6fr;}
-  .card { background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; padding: 1em 1.2em; box-shadow: 0 4px 20px rgba(0,0,0,0.3); margin: 0.4em 0; }
+  .card { background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; padding: 1em 1.2em; box-shadow: 0 4px 20px rgba(10,31,58,0.3); margin: 0.4em 0; }
   .card.amber { border-left: 3px solid var(--amber); } .card.green { border-left: 3px solid var(--green); } .card.purple{ border-left: 3px solid var(--purple); } .card.blue  { border-left: 3px solid var(--blue); } .card.red   { border-left: 3px solid var(--red); }
   .card h3 { font-size: 1em; margin: 0 0 0.4em; }
-  .card p, .card ul  { font-size: 0.8em; margin: 0; color: #b8b8d0; } .card ul { padding-left: 1.2em; } .card li { font-size: 0.85em; margin-bottom: 0.25em; }
+  .card p, .card ul  { font-size: 0.8em; margin: 0; color: #bfd1e2; } .card ul { padding-left: 1.2em; } .card li { font-size: 0.85em; margin-bottom: 0.25em; }
   .reveal table { width: 100%; border-collapse: collapse; font-size: 0.65em; margin: 0.5em 0; }
   .reveal table th { background: var(--bg3); color: var(--amber); padding: 0.5em 0.7em; border: 1px solid var(--border); text-align: left; font-weight: 700; }
-  .reveal table td { padding: 0.5em 0.7em; border: 1px solid var(--border); color: #ccc; vertical-align: top; }
-  .reveal table tr:nth-child(even) td { background: #0e0e18; }
+  .reveal table td { padding: 0.5em 0.7em; border: 1px solid var(--border); color: #d0ddea; vertical-align: top; }
+  .reveal table tr:nth-child(even) td { background: #132f51; }
   .a{color:var(--amber);font-weight:600;} .g{color:var(--green);font-weight:600;} .p{color:var(--purple);font-weight:600;} .b{color:var(--blue);font-weight:600;} .r{color:var(--red);font-weight:600;} .mono{font-family:'JetBrains Mono',monospace;}
   svg.diagram { display: block; margin: 0 auto; overflow: visible; }
   .pill { display: inline-block; font-family: 'JetBrains Mono', monospace; font-size: 0.6em; padding: 0.15em 0.6em; border-radius: 999px; border: 1px solid; margin: 0 .08em; }
@@ -56,12 +56,12 @@
   .memmap { display: grid; grid-template-columns: 130px 1fr; gap: 2px; font-family: 'JetBrains Mono', monospace; font-size: 0.7em; margin: 0.4em 0; }
   .memmap .addr { color: var(--amber); text-align: right; padding: 0.4em 0.6em; font-weight: 700; }
   .memmap .r    { padding: 0.4em 0.8em; border-radius: 4px; border-left: 3px solid; }
-  .memmap .r.code { background: #0a2a2a; border-color: var(--blue); color: #cdd6f4; }
-  .memmap .r.sram { background: #0a2a1a; border-color: var(--green); color: #cdd6f4; }
-  .memmap .r.peri { background: #2a1a0a; border-color: var(--amber); color: #fde6ba; }
-  .memmap .r.eram { background: #1a1a2a; border-color: var(--purple); color: #e0d4f8; }
-  .memmap .r.edev { background: #2a0a1a; border-color: var(--red);   color: #ffd4d4; }
-  .memmap .r.ppb  { background: #1a1a3a; border-color: #7ab8ff;       color: #cdd6f4; font-weight:700; }
+  .memmap .r.code { background: #384e57; border-color: var(--blue); color: #dbe5ef; }
+  .memmap .r.sram { background: #384d46; border-color: var(--green); color: #dbe5ef; }
+  .memmap .r.peri { background: #3f3f3a; border-color: var(--amber); color: #fef0c6; }
+  .memmap .r.eram { background: #1b3c62; border-color: var(--purple); color: #ece6fe; }
+  .memmap .r.edev { background: #442e36; border-color: var(--red);   color: #ffded9; }
+  .memmap .r.ppb  { background: #2c4061; border-color: #b7e4ff;       color: #dbe5ef; font-weight:700; }
   .memmap .r small { color: var(--muted); display: block; font-size: 0.75em; margin-top: 2px; }
 
   /* Bit-band visual */
@@ -88,7 +88,7 @@
 <div class="reveal">
 <div class="slides">
 
-<section class="title-slide" data-background-color="#0a0a0f">
+<section class="title-slide" data-background-color="#10294a">
   <div style="font-family:'JetBrains Mono',monospace;font-size:.5em;color:var(--muted);margin-bottom:.4em;letter-spacing:.1em;">ARM CORTEX-M · PRESENTATION 04</div>
   <h1>Memory System &amp; MPU</h1>
   <div class="subtitle">Memory Map · Bit-Banding · Barriers · MPU · Caches · TCM</div>
@@ -96,7 +96,7 @@
   <div class="meta">No MMU. No virtual memory. Just a carefully-partitioned 4 GiB of physical address space.</div>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">02</span><h2>Why a Fixed Memory Map?</h2></div>
   <div class="cols cols-2">
     <div>
@@ -120,7 +120,7 @@
   </div>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">03</span><h2>The Eight Regions</h2></div>
   <div class="memmap">
     <div class="addr">0xFFFF_FFFF</div><div class="r ppb">Vendor (reserved)</div>
@@ -135,7 +135,7 @@
   <p class="smaller dim">Each region is 512 MiB. The PPB is Strongly-Ordered — every access must complete in program order; no speculative fetch, no write-buffer.</p>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">04</span><h2>Code Region — 0x0000_0000</h2></div>
   <div class="cols cols-2">
     <div>
@@ -158,7 +158,7 @@
   </div>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">05</span><h2>SRAM Region — 0x2000_0000</h2></div>
   <div class="cols cols-2">
     <div>
@@ -188,7 +188,7 @@ SECTIONS {
   </div>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">06</span><h2>Peripheral Region — 0x4000_0000</h2></div>
   <div class="cols cols-2">
     <div>
@@ -211,7 +211,7 @@ SECTIONS {
   </div>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">07</span><h2>PPB — Private Peripheral Bus</h2></div>
   <div class="cols cols-6040">
     <div>
@@ -238,7 +238,7 @@ SECTIONS {
   </div>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">08</span><h2>Bit-Banding — Concept</h2></div>
   <div class="cols cols-2">
     <div>
@@ -268,7 +268,7 @@ SECTIONS {
   </div>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">09</span><h2>Bit-Banding — Atomic RMW for Free</h2></div>
   <div class="bitband">
     <div class="col">
@@ -295,7 +295,7 @@ str  r1, [r0]</code></pre>
   </div>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">10</span><h2>Memory Types</h2></div>
   <table>
     <tr><th>Type</th><th>Speculative fetch</th><th>Merging writes</th><th>Ordering</th><th>Typical use</th></tr>
@@ -337,7 +337,7 @@ str  r1, [r0]</code></pre>
   </div>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">11</span><h2>Memory Barriers</h2></div>
   <div class="bar-tbl">
     <div class="k">DMB</div><div class="v"><strong>Data Memory Barrier.</strong> All explicit memory accesses before DMB are observed before any after. Does <em>not</em> flush the pipeline or wait for completion — only ordering.</div>
@@ -361,7 +361,7 @@ __DSB();                      /* ensure reg write hit the peripheral */</code></
   </div>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">12</span><h2>Barriers — When &amp; Why</h2></div>
   <table style="font-size:0.62em;">
     <tr><th>Situation</th><th>Barrier</th><th>Why</th></tr>
@@ -376,7 +376,7 @@ __DSB();                      /* ensure reg write hit the peripheral */</code></
   </table>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">13</span><h2>MPU — v7-M PMSA</h2></div>
   <div class="cols cols-2">
     <div>
@@ -402,7 +402,7 @@ __DSB();                      /* ensure reg write hit the peripheral */</code></
   </div>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">14</span><h2>v7-M MPU — Typical Setup</h2></div>
 <pre><code class="mono">#include "core_cm4.h"
 
@@ -440,7 +440,7 @@ static void mpu_setup(void)
   <p class="smaller dim">After enabling, any unprivileged write to <code>0x2000_0000+</code> fires a MemManage fault — kernel stays in control.</p>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">15</span><h2>MPU — v8-M PMSAv8</h2></div>
   <div class="cols cols-2">
     <div>
@@ -470,34 +470,34 @@ MPU-&gt;CTRL = 1 | (1&lt;&lt;2);            /* ENABLE + PRIVDEFENA */</code></pr
   </div>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">16</span><h2>MPU in RTOS Context</h2></div>
   <svg class="diagram" viewBox="0 0 860 260" style="width:100%;">
     <g font-family="DM Sans" font-size="11">
       <!-- kernel region -->
-      <rect x="30" y="30" width="380" height="90" rx="6" fill="#0a2a1a" stroke="#4ecb8d"/>
-      <text x="220" y="52" text-anchor="middle" fill="#4ecb8d" font-weight="700">Kernel region (always present)</text>
-      <text x="220" y="72" text-anchor="middle" font-size="10" fill="#fff">Privileged RW · code + kernel data · MSP stack</text>
-      <text x="220" y="90" text-anchor="middle" font-size="10" fill="#fff">Background region covers remaining map</text>
-      <text x="220" y="108" text-anchor="middle" font-size="10" fill="#8888a8">unchanged across context switches</text>
+      <rect x="30" y="30" width="380" height="90" rx="6" fill="#384d46" stroke="#87d5bb"/>
+      <text x="220" y="52" text-anchor="middle" fill="#87d5bb" font-weight="700">Kernel region (always present)</text>
+      <text x="220" y="72" text-anchor="middle" font-size="10" fill="#ffffff">Privileged RW · code + kernel data · MSP stack</text>
+      <text x="220" y="90" text-anchor="middle" font-size="10" fill="#ffffff">Background region covers remaining map</text>
+      <text x="220" y="108" text-anchor="middle" font-size="10" fill="#8eaac7">unchanged across context switches</text>
 
       <!-- task regions -->
-      <rect x="440" y="30" width="390" height="90" rx="6" fill="#2a1a0a" stroke="#f5a623"/>
-      <text x="635" y="52" text-anchor="middle" fill="#f5a623" font-weight="700">Per-task regions (reprogrammed on switch)</text>
-      <text x="635" y="72" text-anchor="middle" font-size="10" fill="#fff">Task stack · task data · task-owned peripheral</text>
-      <text x="635" y="92" text-anchor="middle" font-size="10" fill="#fff">Context switch swaps RBAR/RASR for regions 4–7</text>
+      <rect x="440" y="30" width="390" height="90" rx="6" fill="#3f3f3a" stroke="#f4c44d"/>
+      <text x="635" y="52" text-anchor="middle" fill="#f4c44d" font-weight="700">Per-task regions (reprogrammed on switch)</text>
+      <text x="635" y="72" text-anchor="middle" font-size="10" fill="#ffffff">Task stack · task data · task-owned peripheral</text>
+      <text x="635" y="92" text-anchor="middle" font-size="10" fill="#ffffff">Context switch swaps RBAR/RASR for regions 4–7</text>
 
       <!-- violation -->
-      <rect x="30" y="160" width="800" height="80" rx="6" fill="#2a0a0a" stroke="#f87171"/>
-      <text x="430" y="182" text-anchor="middle" fill="#f87171" font-weight="700">Violation → MemManage</text>
-      <text x="430" y="204" text-anchor="middle" font-size="10" fill="#fff">MMFAR holds faulting address · MMFSR reports type (DACCVIOL, IACCVIOL, MLSPERR …)</text>
-      <text x="430" y="222" text-anchor="middle" font-size="10" fill="#ccc">Kernel kills the offending task, logs the fault, reclaims its resources</text>
+      <rect x="30" y="160" width="800" height="80" rx="6" fill="#492b26" stroke="#fd8c79"/>
+      <text x="430" y="182" text-anchor="middle" fill="#fd8c79" font-weight="700">Violation → MemManage</text>
+      <text x="430" y="204" text-anchor="middle" font-size="10" fill="#ffffff">MMFAR holds faulting address · MMFSR reports type (DACCVIOL, IACCVIOL, MLSPERR …)</text>
+      <text x="430" y="222" text-anchor="middle" font-size="10" fill="#d0ddea">Kernel kills the offending task, logs the fault, reclaims its resources</text>
     </g>
   </svg>
   <p class="smaller dim">FreeRTOS &amp; Zephyr have MPU-enforced "user-mode" tasks (<code>xTaskCreateRestricted</code>, Zephyr <code>user</code> threads) that use this split.</p>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">17</span><h2>Caches — M7 / M55 / M85</h2></div>
   <div class="cols cols-2">
     <div>
@@ -527,7 +527,7 @@ MPU-&gt;CTRL = 1 | (1&lt;&lt;2);            /* ENABLE + PRIVDEFENA */</code></pr
   </div>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">18</span><h2>DMA + Cache — The Coherence Recipe</h2></div>
   <div class="cols cols-2">
     <div>
@@ -557,7 +557,7 @@ SCB_InvalidateDCache_by_Addr((uint32_t*)rx_buf, n);
   </div>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">19</span><h2>Cache Maintenance — Granular vs Full</h2></div>
   <table style="font-size:0.62em;">
     <tr><th>Operation</th><th>Cost</th><th>When</th></tr>
@@ -573,7 +573,7 @@ SCB_InvalidateDCache_by_Addr((uint32_t*)rx_buf, n);
   </div>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">20</span><h2>Tightly-Coupled Memory (TCM)</h2></div>
   <div class="cols cols-2">
     <div>
@@ -600,53 +600,53 @@ SCB_InvalidateDCache_by_Addr((uint32_t*)rx_buf, n);
   </div>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">21</span><h2>Typical Memory Layout — Cortex-M7 SoC</h2></div>
   <svg class="diagram" viewBox="0 0 900 280" style="width:100%;">
     <g font-family="DM Sans" font-size="11">
       <!-- CPU -->
-      <rect x="30" y="40" width="120" height="200" rx="8" fill="#2a1a0a" stroke="#f5a623"/>
-      <text x="90" y="62" text-anchor="middle" fill="#f5a623" font-weight="700">Cortex-M7</text>
-      <text x="90" y="86" text-anchor="middle" font-size="10" fill="#fff">+ I$ 16 KiB</text>
-      <text x="90" y="100" text-anchor="middle" font-size="10" fill="#fff">+ D$ 16 KiB</text>
-      <text x="90" y="150" text-anchor="middle" font-size="10" fill="#4ecb8d">ITCM 64 KiB</text>
-      <text x="90" y="170" text-anchor="middle" font-size="10" fill="#4ecb8d">DTCM 128 KiB</text>
+      <rect x="30" y="40" width="120" height="200" rx="8" fill="#3f3f3a" stroke="#f4c44d"/>
+      <text x="90" y="62" text-anchor="middle" fill="#f4c44d" font-weight="700">Cortex-M7</text>
+      <text x="90" y="86" text-anchor="middle" font-size="10" fill="#ffffff">+ I$ 16 KiB</text>
+      <text x="90" y="100" text-anchor="middle" font-size="10" fill="#ffffff">+ D$ 16 KiB</text>
+      <text x="90" y="150" text-anchor="middle" font-size="10" fill="#87d5bb">ITCM 64 KiB</text>
+      <text x="90" y="170" text-anchor="middle" font-size="10" fill="#87d5bb">DTCM 128 KiB</text>
 
       <!-- matrix -->
-      <rect x="200" y="40" width="160" height="200" rx="8" fill="#10101a" stroke="#60a5fa"/>
-      <text x="280" y="62" text-anchor="middle" fill="#60a5fa" font-weight="700">AXI bus matrix</text>
-      <text x="280" y="82" text-anchor="middle" font-size="10" fill="#fff">I-bus / D-bus / S-bus</text>
+      <rect x="200" y="40" width="160" height="200" rx="8" fill="#143154" stroke="#a5dcfe"/>
+      <text x="280" y="62" text-anchor="middle" fill="#a5dcfe" font-weight="700">AXI bus matrix</text>
+      <text x="280" y="82" text-anchor="middle" font-size="10" fill="#ffffff">I-bus / D-bus / S-bus</text>
 
       <!-- flash -->
-      <rect x="420" y="40" width="140" height="50" rx="6" fill="#0a2a2a" stroke="#7ab8ff"/>
-      <text x="490" y="62" text-anchor="middle" fill="#7ab8ff" font-weight="700">Flash 2 MiB</text>
-      <text x="490" y="80" text-anchor="middle" font-size="10" fill="#fff">0x0800_0000</text>
+      <rect x="420" y="40" width="140" height="50" rx="6" fill="#384e57" stroke="#b7e4ff"/>
+      <text x="490" y="62" text-anchor="middle" fill="#b7e4ff" font-weight="700">Flash 2 MiB</text>
+      <text x="490" y="80" text-anchor="middle" font-size="10" fill="#ffffff">0x0800_0000</text>
 
       <!-- sram banks -->
-      <rect x="420" y="100" width="140" height="50" rx="6" fill="#0a2a1a" stroke="#4ecb8d"/>
-      <text x="490" y="122" text-anchor="middle" fill="#4ecb8d" font-weight="700">AXI-SRAM 512 KiB</text>
-      <text x="490" y="140" text-anchor="middle" font-size="10" fill="#fff">0x2400_0000 (cacheable)</text>
+      <rect x="420" y="100" width="140" height="50" rx="6" fill="#384d46" stroke="#87d5bb"/>
+      <text x="490" y="122" text-anchor="middle" fill="#87d5bb" font-weight="700">AXI-SRAM 512 KiB</text>
+      <text x="490" y="140" text-anchor="middle" font-size="10" fill="#ffffff">0x2400_0000 (cacheable)</text>
 
-      <rect x="420" y="160" width="140" height="50" rx="6" fill="#2a1a0a" stroke="#f5a623"/>
-      <text x="490" y="182" text-anchor="middle" fill="#f5a623" font-weight="700">SRAM1 128 KiB</text>
-      <text x="490" y="200" text-anchor="middle" font-size="10" fill="#fff">0x3000_0000 (DMA shared)</text>
+      <rect x="420" y="160" width="140" height="50" rx="6" fill="#3f3f3a" stroke="#f4c44d"/>
+      <text x="490" y="182" text-anchor="middle" fill="#f4c44d" font-weight="700">SRAM1 128 KiB</text>
+      <text x="490" y="200" text-anchor="middle" font-size="10" fill="#ffffff">0x3000_0000 (DMA shared)</text>
 
       <!-- peripherals -->
-      <rect x="600" y="40" width="140" height="50" rx="6" fill="#2a1a0a" stroke="#f5a623"/>
-      <text x="670" y="62" text-anchor="middle" fill="#f5a623" font-weight="700">APB peripherals</text>
-      <text x="670" y="80" text-anchor="middle" font-size="10" fill="#fff">0x4000_0000 (Device)</text>
+      <rect x="600" y="40" width="140" height="50" rx="6" fill="#3f3f3a" stroke="#f4c44d"/>
+      <text x="670" y="62" text-anchor="middle" fill="#f4c44d" font-weight="700">APB peripherals</text>
+      <text x="670" y="80" text-anchor="middle" font-size="10" fill="#ffffff">0x4000_0000 (Device)</text>
 
-      <rect x="600" y="100" width="140" height="50" rx="6" fill="#2a1a0a" stroke="#f5a623"/>
-      <text x="670" y="122" text-anchor="middle" fill="#f5a623" font-weight="700">AHB peripherals</text>
-      <text x="670" y="140" text-anchor="middle" font-size="10" fill="#fff">0x4002_0000 (Device)</text>
+      <rect x="600" y="100" width="140" height="50" rx="6" fill="#3f3f3a" stroke="#f4c44d"/>
+      <text x="670" y="122" text-anchor="middle" fill="#f4c44d" font-weight="700">AHB peripherals</text>
+      <text x="670" y="140" text-anchor="middle" font-size="10" fill="#ffffff">0x4002_0000 (Device)</text>
 
       <!-- external memory -->
-      <rect x="600" y="160" width="140" height="50" rx="6" fill="#1a1a2a" stroke="#a78bfa"/>
-      <text x="670" y="182" text-anchor="middle" fill="#a78bfa" font-weight="700">QSPI XIP 16 MiB</text>
-      <text x="670" y="200" text-anchor="middle" font-size="10" fill="#fff">0x9000_0000 (Normal)</text>
+      <rect x="600" y="160" width="140" height="50" rx="6" fill="#1b3c62" stroke="#c7b9fe"/>
+      <text x="670" y="182" text-anchor="middle" fill="#c7b9fe" font-weight="700">QSPI XIP 16 MiB</text>
+      <text x="670" y="200" text-anchor="middle" font-size="10" fill="#ffffff">0x9000_0000 (Normal)</text>
 
       <!-- lines -->
-      <g stroke="#8888a8" stroke-width="1">
+      <g stroke="#8eaac7" stroke-width="1">
         <line x1="150" y1="80" x2="200" y2="80"/>
         <line x1="150" y1="180" x2="200" y2="180"/>
         <line x1="360" y1="60"  x2="420" y2="60"/>
@@ -660,7 +660,7 @@ SCB_InvalidateDCache_by_Addr((uint32_t*)rx_buf, n);
   </svg>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">22</span><h2>Endianness Revisited</h2></div>
   <div class="cols cols-2">
     <div>
@@ -686,7 +686,7 @@ uint32_t net = __builtin_bswap32(host);</code></pre>
   </div>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">23</span><h2>Stack-Limit Registers (v8-M)</h2></div>
   <div class="cols cols-2">
     <div>
@@ -717,7 +717,7 @@ void UsageFault_Handler(void)
   </div>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">24</span><h2>Memory Design Patterns</h2></div>
   <div class="cols cols-3">
     <div class="card amber">
@@ -749,7 +749,7 @@ void UsageFault_Handler(void)
   </div>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">25</span><h2>References</h2></div>
   <div style="max-width:90%;margin:0 auto;font-size:0.58em;line-height:1.8;">
     <p>

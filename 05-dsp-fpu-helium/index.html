@@ -11,8 +11,8 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/black.min.css">
 <style>
   :root {
-    --amber:#f5a623;--green:#4ecb8d;--purple:#a78bfa;--blue:#60a5fa;--red:#f87171;
-    --bg:#0a0a0f;--bg2:#10101a;--bg3:#181824;--border:#2a2a3a;--text:#e8e8f0;--muted:#8888a8;
+    --amber:#f4c44d;--green:#87d5bb;--purple:#c7b9fe;--blue:#a5dcfe;--red:#fd8c79;
+    --bg:#10294a;--bg2:#143154;--bg3:#18375d;--border:#305782;--text:#ecf1f7;--muted:#8eaac7;
   }
   .reveal-viewport { background: var(--bg); } .reveal .slides section { background: transparent; } .reveal section { text-align: left; }
   .reveal .slides > section { padding: 0.5em; overflow-y: auto !important; align-items: flex-start !important; justify-content: flex-start !important; }
@@ -20,26 +20,26 @@
   .reveal section::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, var(--amber), var(--green)); }
   .reveal { font-family: 'DM Sans', sans-serif; color: var(--text); font-size: 22px; }
   .reveal .slide-number { font-family: 'JetBrains Mono', monospace; font-size: 0.7em; color: var(--muted); }
-  .reveal h1, .reveal h2, .reveal h3 { font-family: 'Playfair Display', serif; color: #fff; text-transform: none; letter-spacing: -0.01em; }
+  .reveal h1, .reveal h2, .reveal h3 { font-family: 'Playfair Display', serif; color: #ffffff; text-transform: none; letter-spacing: -0.01em; }
   .reveal h1 { font-size: 2.4em; font-weight: 900; color: var(--amber); line-height: 1.1; }
   .reveal h2 { font-size: 1.7em; font-weight: 700; color: var(--amber); margin-bottom: 0.6em; }
   .reveal h3 { font-size: 1.2em; font-weight: 700; color: var(--green); margin-bottom: 0.3em; }
   .reveal p { font-size: 0.75em; line-height: 1.5; color: var(--text); } .reveal li { font-size: 0.7em; line-height: 1.5; margin-bottom: 0.25em; }
   .reveal code { font-family: 'JetBrains Mono', monospace; font-size: .72em; }
   .reveal pre { background: var(--bg3); border: 1px solid var(--border); border-radius: 8px; padding: 0.5em 1em; margin: 0.4em 0; width: 100%; box-shadow: none; }
-  .reveal pre code { font-size: 0.58em; line-height: 1.5; background: transparent; color: #cdd6f4; }
+  .reveal pre code { font-size: 0.58em; line-height: 1.5; background: transparent; color: #dbe5ef; }
   .slide-hdr { display: flex; align-items: center; gap: .4em; border-bottom: 1px solid var(--border); padding-bottom: .2em; margin-bottom: .3em; }
   .slide-hdr .tag { font-family: 'JetBrains Mono', monospace; font-size: 0.55em; font-weight: 600; color: var(--bg); background: var(--amber); padding: .1em .4em; border-radius: 3px; letter-spacing: .04em; }
   .slide-hdr h2 { margin: 0; font-size: 1.4em; }
   .cols{display:grid;gap:1em;} .cols-2{grid-template-columns:1fr 1fr;} .cols-3{grid-template-columns:1fr 1fr 1fr;} .cols-6040{grid-template-columns:6fr 4fr;} .cols-4060{grid-template-columns:4fr 6fr;}
-  .card { background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; padding: 1em 1.2em; box-shadow: 0 4px 20px rgba(0,0,0,0.3); margin: 0.4em 0; }
+  .card { background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; padding: 1em 1.2em; box-shadow: 0 4px 20px rgba(10,31,58,0.3); margin: 0.4em 0; }
   .card.amber { border-left: 3px solid var(--amber); } .card.green { border-left: 3px solid var(--green); } .card.purple { border-left: 3px solid var(--purple); } .card.blue { border-left: 3px solid var(--blue); } .card.red { border-left: 3px solid var(--red); }
   .card h3 { font-size: 1em; margin: 0 0 0.4em; }
-  .card p, .card ul { font-size: 0.8em; margin: 0; color: #b8b8d0; } .card ul { padding-left: 1.2em; } .card li { font-size: 0.85em; margin-bottom: 0.25em; }
+  .card p, .card ul { font-size: 0.8em; margin: 0; color: #bfd1e2; } .card ul { padding-left: 1.2em; } .card li { font-size: 0.85em; margin-bottom: 0.25em; }
   .reveal table { width: 100%; border-collapse: collapse; font-size: 0.65em; margin: 0.5em 0; }
   .reveal table th { background: var(--bg3); color: var(--amber); padding: 0.5em 0.7em; border: 1px solid var(--border); text-align: left; font-weight: 700; }
-  .reveal table td { padding: 0.5em 0.7em; border: 1px solid var(--border); color: #ccc; vertical-align: top; }
-  .reveal table tr:nth-child(even) td { background: #0e0e18; }
+  .reveal table td { padding: 0.5em 0.7em; border: 1px solid var(--border); color: #d0ddea; vertical-align: top; }
+  .reveal table tr:nth-child(even) td { background: #132f51; }
   .a{color:var(--amber);font-weight:600;} .g{color:var(--green);font-weight:600;} .p{color:var(--purple);font-weight:600;} .b{color:var(--blue);font-weight:600;} .r{color:var(--red);font-weight:600;} .mono{font-family:'JetBrains Mono',monospace;}
   svg.diagram { display: block; margin: 0 auto; overflow: visible; }
   .pill { display: inline-block; font-family: 'JetBrains Mono', monospace; font-size: 0.6em; padding: 0.15em 0.6em; border-radius: 999px; border: 1px solid; margin: 0 .08em; }
@@ -51,25 +51,25 @@
   /* Lane visual for SIMD */
   .lanes { display: flex; gap: 4px; margin: 0.3em 0; font-family: 'JetBrains Mono', monospace; font-size: 0.62em; }
   .lanes .ln { flex: 1; padding: 0.4em 0.2em; text-align: center; border: 1px solid var(--border); border-radius: 4px; background: var(--bg2); }
-  .lanes .ln.a { background: #2a1a0a; border-color: var(--amber); color: var(--amber); }
-  .lanes .ln.b { background: #0a2a1a; border-color: var(--green); color: var(--green); }
-  .lanes .ln.c { background: #1a0a2a; border-color: var(--purple); color: var(--purple); }
+  .lanes .ln.a { background: #3f3f3a; border-color: var(--amber); color: var(--amber); }
+  .lanes .ln.b { background: #384d46; border-color: var(--green); color: var(--green); }
+  .lanes .ln.c { background: #352e45; border-color: var(--purple); color: var(--purple); }
   .lanes .lbl { flex: 0 0 80px; padding: 0.4em 0.3em; text-align: right; color: var(--muted); border: none; background: transparent; }
 
   /* Helium beat visualisation */
   .beats { display: grid; grid-template-columns: 90px repeat(4, 1fr); gap: 4px; font-family: 'JetBrains Mono', monospace; font-size: 0.62em; margin: 0.3em 0; }
   .beats .lbl { color: var(--amber); text-align: right; padding: 0.3em 0.4em; font-weight: 700; }
   .beats .cell { padding: 0.3em 0.3em; border: 1px solid var(--border); border-radius: 3px; text-align: center; background: var(--bg2); }
-  .beats .cell.t1 { background: #2a1a0a; border-color: var(--amber); color: #fde6ba; }
-  .beats .cell.t2 { background: #0a2a1a; border-color: var(--green); color: #b8f0d0; }
-  .beats .cell.t3 { background: #1a0a2a; border-color: var(--purple); color: #d8c8f8; }
+  .beats .cell.t1 { background: #3f3f3a; border-color: var(--amber); color: #fef0c6; }
+  .beats .cell.t2 { background: #384d46; border-color: var(--green); color: #cdf3e6; }
+  .beats .cell.t3 { background: #352e45; border-color: var(--purple); color: #e7dfff; }
 </style>
 </head>
 <body>
 <div class="reveal">
 <div class="slides">
 
-<section class="title-slide" data-background-color="#0a0a0f">
+<section class="title-slide" data-background-color="#10294a">
   <div style="font-family:'JetBrains Mono',monospace;font-size:.5em;color:var(--muted);margin-bottom:.4em;letter-spacing:.1em;">ARM CORTEX-M · PRESENTATION 05</div>
   <h1>DSP, FPU &amp; Helium (MVE)</h1>
   <div class="subtitle">Saturating Arithmetic · FPv4 / FPv5 · 128-bit Vector · CMSIS-DSP · CMSIS-NN</div>
@@ -77,7 +77,7 @@
   <div class="meta">From M4 SIMD to M85 TinyML</div>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">02</span><h2>Why Cortex-M Cares About Signal Processing</h2></div>
   <div class="cols cols-2">
     <div>
@@ -101,7 +101,7 @@
   </div>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">03</span><h2>The DSP Extension — Packed-Operand SIMD</h2></div>
   <div class="cols cols-2">
     <div>
@@ -130,7 +130,7 @@
   </div>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">04</span><h2>SIMD Instructions — Reference</h2></div>
   <table style="font-size:0.6em;">
     <tr><th>Instruction</th><th>Operation</th><th>Lanes</th><th>Typical use</th></tr>
@@ -147,7 +147,7 @@
   </table>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">05</span><h2>DSP Example — Q15 FIR Kernel</h2></div>
   <div class="cols cols-4060">
     <div>
@@ -175,7 +175,7 @@ acc = __SSAT(acc &gt;&gt; 15, 16);</code></pre>
   </div>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">06</span><h2>Saturating Arithmetic &amp; the Q Flag</h2></div>
   <div class="cols cols-2">
     <div>
@@ -201,7 +201,7 @@ if (__get_APSR() &amp; (1U &lt;&lt; 27))    /* Q flag */
   </div>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">07</span><h2>The FPU — FPv4 / FPv5</h2></div>
   <table>
     <tr><th>Variant</th><th>Cores</th><th>Precision</th><th>Registers</th><th>IEEE compliance</th></tr>
@@ -230,7 +230,7 @@ if (__get_APSR() &amp; (1U &lt;&lt; 27))    /* Q flag */
   </div>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">08</span><h2>FPU Context &amp; Lazy Stacking</h2></div>
   <div class="cols cols-2">
     <div>
@@ -262,7 +262,7 @@ __DSB(); __ISB();</code></pre>
   </div>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">09</span><h2>Fixed-Point vs Floating-Point</h2></div>
   <table>
     <tr><th></th><th>Q15 / Q31 (DSP)</th><th>float32 (FPv4/5)</th></tr>
@@ -278,7 +278,7 @@ __DSB(); __ISB();</code></pre>
   </div>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">10</span><h2>Helium (M-Profile Vector Extension)</h2></div>
   <div class="cols cols-2">
     <div>
@@ -304,7 +304,7 @@ __DSB(); __ISB();</code></pre>
   </div>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">11</span><h2>Helium — Beat-Wise Execution</h2></div>
   <div class="beats">
     <div class="lbl">register</div>
@@ -330,7 +330,7 @@ __DSB(); __ISB();</code></pre>
   </div>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">12</span><h2>Helium — Hello World</h2></div>
 <pre><code class="mono">#include &lt;arm_mve.h&gt;        /* intrinsics */
 
@@ -352,7 +352,7 @@ void vadd_i16(const int16_t *a, const int16_t *b,
   </div>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">13</span><h2>Low-Overhead Loop Branch</h2></div>
   <div class="cols cols-4060">
     <div>
@@ -378,7 +378,7 @@ void vadd_i16(const int16_t *a, const int16_t *b,
   </div>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">14</span><h2>Helium for TinyML</h2></div>
   <div class="cols cols-2">
     <div>
@@ -405,7 +405,7 @@ void vadd_i16(const int16_t *a, const int16_t *b,
   </div>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">15</span><h2>Helium Instruction Classes</h2></div>
   <table style="font-size:0.62em;">
     <tr><th>Class</th><th>Examples</th><th>Purpose</th></tr>
@@ -421,7 +421,7 @@ void vadd_i16(const int16_t *a, const int16_t *b,
   </table>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">16</span><h2>CMSIS-DSP</h2></div>
   <div class="cols cols-2">
     <div>
@@ -460,7 +460,7 @@ for (;;) {
   </div>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">17</span><h2>CMSIS-NN</h2></div>
   <div class="cols cols-2">
     <div>
@@ -486,7 +486,7 @@ for (;;) {
   </div>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">18</span><h2>Autovectorisation vs Intrinsics</h2></div>
   <div class="cols cols-3">
     <div class="card amber">
@@ -507,7 +507,7 @@ for (;;) {
   </div>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">19</span><h2>FPU Common Pitfalls</h2></div>
   <div class="cols cols-2">
     <div>
@@ -541,7 +541,7 @@ for (;;) {
   </div>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">20</span><h2>Helium Common Pitfalls</h2></div>
   <div class="cols cols-2">
     <div>
@@ -575,7 +575,7 @@ for (;;) {
   </div>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">21</span><h2>Comparative: M4 vs M7 vs M55 vs M85</h2></div>
   <table style="font-size:0.62em;">
     <tr><th>Feature</th><th>M4</th><th>M7</th><th>M55</th><th>M85</th></tr>
@@ -591,7 +591,7 @@ for (;;) {
   <p class="smaller dim">Rough headline numbers; actual performance depends on memory system, cache config, and whether the code is auto-vectorised or hand-tuned.</p>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">22</span><h2>When to Choose What</h2></div>
   <div class="cols cols-3">
     <div class="card amber">
@@ -623,7 +623,7 @@ for (;;) {
   </div>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">23</span><h2>Ecosystem &amp; Tools</h2></div>
   <div class="cols cols-2">
     <div>
@@ -651,7 +651,7 @@ for (;;) {
   </div>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">24</span><h2>References</h2></div>
   <div style="max-width:90%;margin:0 auto;font-size:0.58em;line-height:1.8;">
     <p>

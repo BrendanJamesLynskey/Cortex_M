@@ -10,33 +10,33 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/black.min.css">
 <style>
-  :root{--amber:#f5a623;--green:#4ecb8d;--purple:#a78bfa;--blue:#60a5fa;--red:#f87171;--bg:#0a0a0f;--bg2:#10101a;--bg3:#181824;--border:#2a2a3a;--text:#e8e8f0;--muted:#8888a8;}
+  :root{--amber:#f4c44d;--green:#87d5bb;--purple:#c7b9fe;--blue:#a5dcfe;--red:#fd8c79;--bg:#10294a;--bg2:#143154;--bg3:#18375d;--border:#305782;--text:#ecf1f7;--muted:#8eaac7;}
   .reveal-viewport{background:var(--bg);} .reveal .slides section{background:transparent;} .reveal section{text-align:left;}
   .reveal .slides > section{padding:0.5em;overflow-y:auto!important;align-items:flex-start!important;justify-content:flex-start!important;}
   .reveal .progress{color:var(--amber);height:3px;} .reveal .controls{color:var(--amber);}
   .reveal section::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--amber),var(--green));}
   .reveal{font-family:'DM Sans',sans-serif;color:var(--text);font-size:22px;}
   .reveal .slide-number{font-family:'JetBrains Mono',monospace;font-size:0.7em;color:var(--muted);}
-  .reveal h1,.reveal h2,.reveal h3{font-family:'Playfair Display',serif;color:#fff;text-transform:none;letter-spacing:-0.01em;}
+  .reveal h1,.reveal h2,.reveal h3{font-family:'Playfair Display',serif;color:#ffffff;text-transform:none;letter-spacing:-0.01em;}
   .reveal h1{font-size:2.4em;font-weight:900;color:var(--amber);line-height:1.1;}
   .reveal h2{font-size:1.7em;font-weight:700;color:var(--amber);margin-bottom:0.6em;}
   .reveal h3{font-size:1.2em;font-weight:700;color:var(--green);margin-bottom:0.3em;}
   .reveal p{font-size:0.75em;line-height:1.5;color:var(--text);} .reveal li{font-size:0.7em;line-height:1.5;margin-bottom:0.25em;}
   .reveal code{font-family:'JetBrains Mono',monospace;font-size:.72em;}
   .reveal pre{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:0.5em 1em;margin:0.4em 0;width:100%;box-shadow:none;}
-  .reveal pre code{font-size:0.58em;line-height:1.5;background:transparent;color:#cdd6f4;}
+  .reveal pre code{font-size:0.58em;line-height:1.5;background:transparent;color:#dbe5ef;}
   .slide-hdr{display:flex;align-items:center;gap:.4em;border-bottom:1px solid var(--border);padding-bottom:.2em;margin-bottom:.3em;}
   .slide-hdr .tag{font-family:'JetBrains Mono',monospace;font-size:0.55em;font-weight:600;color:var(--bg);background:var(--amber);padding:.1em .4em;border-radius:3px;letter-spacing:.04em;}
   .slide-hdr h2{margin:0;font-size:1.4em;}
   .cols{display:grid;gap:1em;} .cols-2{grid-template-columns:1fr 1fr;} .cols-3{grid-template-columns:1fr 1fr 1fr;} .cols-6040{grid-template-columns:6fr 4fr;} .cols-4060{grid-template-columns:4fr 6fr;}
-  .card{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:1em 1.2em;box-shadow:0 4px 20px rgba(0,0,0,0.3);margin:0.4em 0;}
+  .card{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:1em 1.2em;box-shadow:0 4px 20px rgba(10,31,58,0.3);margin:0.4em 0;}
   .card.amber{border-left:3px solid var(--amber);} .card.green{border-left:3px solid var(--green);} .card.purple{border-left:3px solid var(--purple);} .card.blue{border-left:3px solid var(--blue);} .card.red{border-left:3px solid var(--red);}
   .card h3{font-size:1em;margin:0 0 0.4em;}
-  .card p,.card ul{font-size:0.8em;margin:0;color:#b8b8d0;} .card ul{padding-left:1.2em;} .card li{font-size:0.85em;margin-bottom:0.25em;}
+  .card p,.card ul{font-size:0.8em;margin:0;color:#bfd1e2;} .card ul{padding-left:1.2em;} .card li{font-size:0.85em;margin-bottom:0.25em;}
   .reveal table{width:100%;border-collapse:collapse;font-size:0.65em;margin:0.5em 0;}
   .reveal table th{background:var(--bg3);color:var(--amber);padding:0.5em 0.7em;border:1px solid var(--border);text-align:left;font-weight:700;}
-  .reveal table td{padding:0.5em 0.7em;border:1px solid var(--border);color:#ccc;vertical-align:top;}
-  .reveal table tr:nth-child(even) td{background:#0e0e18;}
+  .reveal table td{padding:0.5em 0.7em;border:1px solid var(--border);color:#d0ddea;vertical-align:top;}
+  .reveal table tr:nth-child(even) td{background:#132f51;}
   .a{color:var(--amber);font-weight:600;} .g{color:var(--green);font-weight:600;} .p{color:var(--purple);font-weight:600;} .b{color:var(--blue);font-weight:600;} .r{color:var(--red);font-weight:600;} .mono{font-family:'JetBrains Mono',monospace;}
   svg.diagram{display:block;margin:0 auto;overflow:visible;}
   .pill{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:0.6em;padding:0.15em 0.6em;border-radius:999px;border:1px solid;margin:0 .08em;}
@@ -49,24 +49,24 @@
   .mx { display: grid; grid-template-columns: 120px 1fr 1fr; gap: 6px; font-size: 0.72em; margin: 0.5em 0; }
   .mx .h { background: var(--bg3); color: var(--amber); font-family: 'JetBrains Mono', monospace; font-weight: 700; padding: 0.5em 0.7em; border-radius: 4px; text-align: center; }
   .mx .c { padding: 0.5em 0.8em; border-radius: 4px; border: 1px solid var(--border); }
-  .mx .c.s { background: #1a0a2a; border-left: 3px solid var(--purple); }
-  .mx .c.ns { background: #0a1a2a; border-left: 3px solid var(--blue); }
+  .mx .c.s { background: #352e45; border-left: 3px solid var(--purple); }
+  .mx .c.ns { background: #17375d; border-left: 3px solid var(--blue); }
   .mx .c b { color: var(--amber); }
 
   /* Memory attribution strip */
   .attr { font-family: 'JetBrains Mono', monospace; font-size: 0.62em; display: flex; border: 1px solid var(--border); border-radius: 6px; overflow: hidden; margin: 0.5em 0; }
-  .attr .seg { flex: 1; padding: 0.7em 0.3em; text-align: center; color: #fff; font-weight: 700; border-right: 1px solid var(--border); }
+  .attr .seg { flex: 1; padding: 0.7em 0.3em; text-align: center; color: #ffffff; font-weight: 700; border-right: 1px solid var(--border); }
   .attr .seg:last-child { border-right: none; }
-  .attr .seg.s   { background: #2a0a3a; }
-  .attr .seg.ns  { background: #0a2a3a; }
-  .attr .seg.nsc { background: #2a2a0a; color: var(--amber); }
+  .attr .seg.s   { background: #423455; }
+  .attr .seg.ns  { background: #43555c; }
+  .attr .seg.nsc { background: #555336; color: var(--amber); }
 </style>
 </head>
 <body>
 <div class="reveal">
 <div class="slides">
 
-<section class="title-slide" data-background-color="#0a0a0f">
+<section class="title-slide" data-background-color="#10294a">
   <div style="font-family:'JetBrains Mono',monospace;font-size:.5em;color:var(--muted);margin-bottom:.4em;letter-spacing:.1em;">ARM CORTEX-M · PRESENTATION 08</div>
   <h1>TrustZone for Armv8-M</h1>
   <div class="subtitle">Secure / Non-Secure State · SAU · IDAU · SG / BXNS · Veneer Tables · PSA · TF-M</div>
@@ -74,7 +74,7 @@
   <div class="meta">A second execution state, orthogonal to Privileged/Unprivileged</div>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">02</span><h2>Why TrustZone on MCUs</h2></div>
   <div class="cols cols-2">
     <div>
@@ -100,7 +100,7 @@
   </div>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">03</span><h2>TrustZone-A vs TrustZone-M</h2></div>
   <table>
     <tr><th></th><th>TrustZone-A (2004)</th><th>TrustZone-M (2016)</th></tr>
@@ -115,46 +115,46 @@
   </div>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">04</span><h2>Two Worlds</h2></div>
   <svg class="diagram" viewBox="0 0 900 260" style="width:100%;">
     <g font-family="DM Sans" font-size="12">
       <!-- NS -->
-      <rect x="20" y="30" width="360" height="200" rx="10" fill="#0a1a2a" stroke="#60a5fa" stroke-width="2"/>
-      <text x="200" y="58" text-anchor="middle" fill="#60a5fa" font-family="Playfair Display" font-weight="900" font-size="18">Non-Secure World</text>
-      <g font-size="11" fill="#cdd6f4">
+      <rect x="20" y="30" width="360" height="200" rx="10" fill="#17375d" stroke="#a5dcfe" stroke-width="2"/>
+      <text x="200" y="58" text-anchor="middle" fill="#a5dcfe" font-family="Playfair Display" font-weight="900" font-size="18">Non-Secure World</text>
+      <g font-size="11" fill="#dbe5ef">
         <text x="40" y="90">• Application firmware, RTOS, user tasks</text>
         <text x="40" y="110">• Can be field-updated freely</text>
         <text x="40" y="130">• Cannot read Secure code or data</text>
         <text x="40" y="150">• Cannot configure SAU / NVIC_S / MPU_S</text>
         <text x="40" y="172">• Calls into Secure world only via</text>
         <text x="60" y="190">declared NSC entry points</text>
-        <text x="40" y="218" fill="#f5a623">MSP_NS · PSP_NS · MSPLIM_NS · PSPLIM_NS</text>
+        <text x="40" y="218" fill="#f4c44d">MSP_NS · PSP_NS · MSPLIM_NS · PSPLIM_NS</text>
       </g>
 
       <!-- S -->
-      <rect x="520" y="30" width="360" height="200" rx="10" fill="#1a0a2a" stroke="#a78bfa" stroke-width="2"/>
-      <text x="700" y="58" text-anchor="middle" fill="#a78bfa" font-family="Playfair Display" font-weight="900" font-size="18">Secure World</text>
-      <g font-size="11" fill="#cdd6f4">
+      <rect x="520" y="30" width="360" height="200" rx="10" fill="#352e45" stroke="#c7b9fe" stroke-width="2"/>
+      <text x="700" y="58" text-anchor="middle" fill="#c7b9fe" font-family="Playfair Display" font-weight="900" font-size="18">Secure World</text>
+      <g font-size="11" fill="#dbe5ef">
         <text x="540" y="90">• TF-M / secure bootloader / crypto</text>
         <text x="540" y="110">• Device identity &amp; attestation keys</text>
         <text x="540" y="130">• Root-of-trust, secure RNG, HUK</text>
         <text x="540" y="150">• Signs firmware updates</text>
         <text x="540" y="172">• Provides hardened APIs to NS</text>
         <text x="540" y="190">  (sign, verify, decrypt, attest)</text>
-        <text x="540" y="218" fill="#f5a623">MSP_S · PSP_S · MSPLIM_S · PSPLIM_S</text>
+        <text x="540" y="218" fill="#f4c44d">MSP_S · PSP_S · MSPLIM_S · PSPLIM_S</text>
       </g>
 
       <!-- gate -->
-      <rect x="390" y="110" width="120" height="60" rx="6" fill="#2a2a0a" stroke="#f5a623"/>
-      <text x="450" y="132" text-anchor="middle" fill="#f5a623" font-weight="700">NSC Gateway</text>
-      <text x="450" y="150" text-anchor="middle" fill="#fff" font-size="10">SG instruction</text>
-      <text x="450" y="166" text-anchor="middle" fill="#fff" font-size="10">BXNS / BLXNS</text>
+      <rect x="390" y="110" width="120" height="60" rx="6" fill="#555336" stroke="#f4c44d"/>
+      <text x="450" y="132" text-anchor="middle" fill="#f4c44d" font-weight="700">NSC Gateway</text>
+      <text x="450" y="150" text-anchor="middle" fill="#ffffff" font-size="10">SG instruction</text>
+      <text x="450" y="166" text-anchor="middle" fill="#ffffff" font-size="10">BXNS / BLXNS</text>
     </g>
   </svg>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">05</span><h2>The 2 × 2 Execution Matrix</h2></div>
   <div class="mx">
     <div class="h"></div>
@@ -174,7 +174,7 @@
   </div>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">06</span><h2>Attribution — Who Decides S vs NS?</h2></div>
   <div class="cols cols-2">
     <div>
@@ -202,7 +202,7 @@
   </div>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">07</span><h2>SAU — Security Attribution Unit</h2></div>
   <div class="cols cols-2">
     <div>
@@ -242,7 +242,7 @@ __DSB(); __ISB();</code></pre>
   </div>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">08</span><h2>IDAU — The Vendor's Fixed Partitioning</h2></div>
   <div class="cols cols-2">
     <div>
@@ -272,7 +272,7 @@ __DSB(); __ISB();</code></pre>
   </div>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">09</span><h2>NSC — Non-Secure Callable Regions</h2></div>
   <div class="cols cols-2">
     <div>
@@ -297,7 +297,7 @@ __acle_se_crypto_decrypt:
   </div>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">10</span><h2>The SG Instruction</h2></div>
   <div class="cols cols-4060">
     <div>
@@ -328,7 +328,7 @@ __acle_se_crypto_decrypt:
   </div>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">11</span><h2>BXNS &amp; BLXNS — Leaving Secure</h2></div>
   <table>
     <tr><th>Instruction</th><th>Meaning</th><th>Use case</th></tr>
@@ -351,34 +351,34 @@ __acle_se_crypto_decrypt:
   </div>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">12</span><h2>The Veneer Table Pattern</h2></div>
   <svg class="diagram" viewBox="0 0 960 260" style="width:100%;">
     <g font-family="DM Sans" font-size="11">
-      <rect x="20"  y="30" width="260" height="190" rx="8" fill="#0a1a2a" stroke="#60a5fa"/>
-      <text x="150" y="54" text-anchor="middle" fill="#60a5fa" font-weight="700">Non-Secure app</text>
-      <g fill="#cdd6f4" font-size="10" font-family="JetBrains Mono">
+      <rect x="20"  y="30" width="260" height="190" rx="8" fill="#17375d" stroke="#a5dcfe"/>
+      <text x="150" y="54" text-anchor="middle" fill="#a5dcfe" font-weight="700">Non-Secure app</text>
+      <g fill="#dbe5ef" font-size="10" font-family="JetBrains Mono">
         <text x="36" y="82">int sign_payload(uint8_t *p, size_t n)</text>
         <text x="36" y="100">{</text>
         <text x="36" y="118">    uint8_t buf[32];</text>
         <text x="36" y="136">    return psa_mac_sign(...);</text>
         <text x="36" y="154">}</text>
-        <text x="36" y="190" fill="#f5a623">       ↓ BL psa_mac_sign</text>
+        <text x="36" y="190" fill="#f4c44d">       ↓ BL psa_mac_sign</text>
       </g>
 
-      <rect x="340" y="30" width="260" height="190" rx="8" fill="#2a2a0a" stroke="#f5a623"/>
-      <text x="470" y="54" text-anchor="middle" fill="#f5a623" font-weight="700">NSC Veneer</text>
-      <g fill="#cdd6f4" font-size="10" font-family="JetBrains Mono">
+      <rect x="340" y="30" width="260" height="190" rx="8" fill="#555336" stroke="#f4c44d"/>
+      <text x="470" y="54" text-anchor="middle" fill="#f4c44d" font-weight="700">NSC Veneer</text>
+      <g fill="#dbe5ef" font-size="10" font-family="JetBrains Mono">
         <text x="356" y="82">psa_mac_sign:</text>
         <text x="356" y="100">    SG</text>
         <text x="356" y="118">    B   __acle_se_psa_mac_sign</text>
-        <text x="356" y="150" fill="#8888a8">; linker auto-generated</text>
-        <text x="356" y="168" fill="#8888a8">; 8 bytes total (SG + B)</text>
+        <text x="356" y="150" fill="#8eaac7">; linker auto-generated</text>
+        <text x="356" y="168" fill="#8eaac7">; 8 bytes total (SG + B)</text>
       </g>
 
-      <rect x="660" y="30" width="280" height="190" rx="8" fill="#1a0a2a" stroke="#a78bfa"/>
-      <text x="800" y="54" text-anchor="middle" fill="#a78bfa" font-weight="700">Secure implementation</text>
-      <g fill="#cdd6f4" font-size="10" font-family="JetBrains Mono">
+      <rect x="660" y="30" width="280" height="190" rx="8" fill="#352e45" stroke="#c7b9fe"/>
+      <text x="800" y="54" text-anchor="middle" fill="#c7b9fe" font-weight="700">Secure implementation</text>
+      <g fill="#dbe5ef" font-size="10" font-family="JetBrains Mono">
         <text x="676" y="82">__acle_se_psa_mac_sign:</text>
         <text x="676" y="100">    PUSH  {r4, lr}</text>
         <text x="676" y="118">    BL    sanitize_ns_ptrs</text>
@@ -387,14 +387,14 @@ __acle_se_crypto_decrypt:
         <text x="676" y="172">    BXNS  lr   ; back to NS</text>
       </g>
 
-      <line x1="280" y1="130" x2="340" y2="130" stroke="#8888a8" marker-end="url(#arrE)"/>
-      <line x1="600" y1="130" x2="660" y2="130" stroke="#8888a8" marker-end="url(#arrE)"/>
-      <defs><marker id="arrE" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#8888a8"/></marker></defs>
+      <line x1="280" y1="130" x2="340" y2="130" stroke="#8eaac7" marker-end="url(#arrE)"/>
+      <line x1="600" y1="130" x2="660" y2="130" stroke="#8eaac7" marker-end="url(#arrE)"/>
+      <defs><marker id="arrE" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#8eaac7"/></marker></defs>
     </g>
   </svg>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">13</span><h2>ACLE Annotations</h2></div>
   <div class="cols cols-4060">
     <div>
@@ -422,7 +422,7 @@ typedef void (*ns_log_t)(const char *)
   </div>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">14</span><h2>Banked System Registers</h2></div>
   <table style="font-size:0.62em;">
     <tr><th>Register</th><th>Banked?</th><th>Notes</th></tr>
@@ -438,7 +438,7 @@ typedef void (*ns_log_t)(const char *)
   <p class="smaller dim">The silicon area cost is mostly flops for these banked registers — still &lt; 5 % overall, which is why Arm could price TrustZone-capable cores competitively.</p>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">15</span><h2>NVIC &amp; IRQ Targeting</h2></div>
   <div class="cols cols-2">
     <div>
@@ -465,7 +465,7 @@ typedef void (*ns_log_t)(const char *)
   </div>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">16</span><h2>Exception Across Domains</h2></div>
   <div class="cols cols-2">
     <div>
@@ -492,7 +492,7 @@ typedef void (*ns_log_t)(const char *)
   </div>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">17</span><h2>The Integrity Signature</h2></div>
   <div class="cols cols-2">
     <div>
@@ -518,7 +518,7 @@ typedef void (*ns_log_t)(const char *)
   </div>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">18</span><h2>PSA &amp; Trusted Firmware-M</h2></div>
   <div class="cols cols-2">
     <div>
@@ -549,39 +549,39 @@ typedef void (*ns_log_t)(const char *)
   </div>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">19</span><h2>Typical Boot Flow</h2></div>
   <svg class="diagram" viewBox="0 0 940 280" style="width:100%;">
     <g font-family="DM Sans" font-size="11">
-      <rect x="20"  y="30" width="160" height="60" rx="6" fill="#2a0a0a" stroke="#f87171"/>
-      <text x="100" y="52" text-anchor="middle" fill="#f87171" font-weight="700">ROM Boot</text>
-      <text x="100" y="70" text-anchor="middle" font-size="10" fill="#fff">immutable, masked in silicon</text>
+      <rect x="20"  y="30" width="160" height="60" rx="6" fill="#492b26" stroke="#fd8c79"/>
+      <text x="100" y="52" text-anchor="middle" fill="#fd8c79" font-weight="700">ROM Boot</text>
+      <text x="100" y="70" text-anchor="middle" font-size="10" fill="#ffffff">immutable, masked in silicon</text>
 
-      <rect x="210" y="30" width="160" height="60" rx="6" fill="#1a0a2a" stroke="#a78bfa"/>
-      <text x="290" y="52" text-anchor="middle" fill="#a78bfa" font-weight="700">Secure Bootloader</text>
-      <text x="290" y="70" text-anchor="middle" font-size="10" fill="#fff">MCUboot (Secure image)</text>
+      <rect x="210" y="30" width="160" height="60" rx="6" fill="#352e45" stroke="#c7b9fe"/>
+      <text x="290" y="52" text-anchor="middle" fill="#c7b9fe" font-weight="700">Secure Bootloader</text>
+      <text x="290" y="70" text-anchor="middle" font-size="10" fill="#ffffff">MCUboot (Secure image)</text>
 
-      <rect x="400" y="30" width="160" height="60" rx="6" fill="#1a0a2a" stroke="#a78bfa"/>
-      <text x="480" y="52" text-anchor="middle" fill="#a78bfa" font-weight="700">TF-M Secure runtime</text>
-      <text x="480" y="70" text-anchor="middle" font-size="10" fill="#fff">PSA APIs; starts in S</text>
+      <rect x="400" y="30" width="160" height="60" rx="6" fill="#352e45" stroke="#c7b9fe"/>
+      <text x="480" y="52" text-anchor="middle" fill="#c7b9fe" font-weight="700">TF-M Secure runtime</text>
+      <text x="480" y="70" text-anchor="middle" font-size="10" fill="#ffffff">PSA APIs; starts in S</text>
 
-      <rect x="590" y="30" width="160" height="60" rx="6" fill="#0a1a2a" stroke="#60a5fa"/>
-      <text x="670" y="52" text-anchor="middle" fill="#60a5fa" font-weight="700">NS Bootloader</text>
-      <text x="670" y="70" text-anchor="middle" font-size="10" fill="#fff">optional; verifies NS image</text>
+      <rect x="590" y="30" width="160" height="60" rx="6" fill="#17375d" stroke="#a5dcfe"/>
+      <text x="670" y="52" text-anchor="middle" fill="#a5dcfe" font-weight="700">NS Bootloader</text>
+      <text x="670" y="70" text-anchor="middle" font-size="10" fill="#ffffff">optional; verifies NS image</text>
 
-      <rect x="780" y="30" width="160" height="60" rx="6" fill="#0a1a2a" stroke="#60a5fa"/>
-      <text x="860" y="52" text-anchor="middle" fill="#60a5fa" font-weight="700">NS App + RTOS</text>
-      <text x="860" y="70" text-anchor="middle" font-size="10" fill="#fff">production firmware</text>
+      <rect x="780" y="30" width="160" height="60" rx="6" fill="#17375d" stroke="#a5dcfe"/>
+      <text x="860" y="52" text-anchor="middle" fill="#a5dcfe" font-weight="700">NS App + RTOS</text>
+      <text x="860" y="70" text-anchor="middle" font-size="10" fill="#ffffff">production firmware</text>
 
-      <g stroke="#f5a623" fill="none" stroke-width="2" marker-end="url(#arrF)">
+      <g stroke="#f4c44d" fill="none" stroke-width="2" marker-end="url(#arrF)">
         <line x1="180" y1="60" x2="210" y2="60"/>
         <line x1="370" y1="60" x2="400" y2="60"/>
         <line x1="560" y1="60" x2="590" y2="60"/>
         <line x1="750" y1="60" x2="780" y2="60"/>
       </g>
-      <defs><marker id="arrF" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#f5a623"/></marker></defs>
+      <defs><marker id="arrF" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#f4c44d"/></marker></defs>
 
-      <g font-size="10" fill="#8888a8">
+      <g font-size="10" fill="#8eaac7">
         <text x="100" y="120" text-anchor="middle">Verify SB</text>
         <text x="100" y="134" text-anchor="middle">signature</text>
         <text x="290" y="120" text-anchor="middle">Verify TF-M</text>
@@ -592,14 +592,14 @@ typedef void (*ns_log_t)(const char *)
         <text x="670" y="134" text-anchor="middle">from flash</text>
       </g>
 
-      <rect x="20" y="190" width="900" height="60" rx="6" fill="#10101a" stroke="#f5a623"/>
-      <text x="470" y="212" text-anchor="middle" fill="#f5a623" font-weight="700">Root of Trust</text>
-      <text x="470" y="232" text-anchor="middle" font-size="10" fill="#ccc">Each stage verifies signature of the next, chained from ROM → keys sealed in the HUK (Hardware Unique Key).</text>
+      <rect x="20" y="190" width="900" height="60" rx="6" fill="#143154" stroke="#f4c44d"/>
+      <text x="470" y="212" text-anchor="middle" fill="#f4c44d" font-weight="700">Root of Trust</text>
+      <text x="470" y="232" text-anchor="middle" font-size="10" fill="#d0ddea">Each stage verifies signature of the next, chained from ROM → keys sealed in the HUK (Hardware Unique Key).</text>
     </g>
   </svg>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">20</span><h2>Secure Debug — ADAC</h2></div>
   <div class="cols cols-2">
     <div>
@@ -632,7 +632,7 @@ typedef void (*ns_log_t)(const char *)
   </div>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">21</span><h2>TrustZone vs MPU vs Privilege</h2></div>
   <table style="font-size:0.62em;">
     <tr><th>Mechanism</th><th>Protects against</th><th>Does <em>not</em> protect against</th></tr>
@@ -645,7 +645,7 @@ typedef void (*ns_log_t)(const char *)
   </div>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">22</span><h2>Hardware Memory Partitioning</h2></div>
   <div class="cols cols-2">
     <div>
@@ -671,7 +671,7 @@ typedef void (*ns_log_t)(const char *)
   </div>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">23</span><h2>Common TrustZone Bugs</h2></div>
   <div class="cols cols-2">
     <div>
@@ -705,7 +705,7 @@ typedef void (*ns_log_t)(const char *)
   </div>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">24</span><h2>Interview Checklist</h2></div>
   <div class="cols cols-2">
     <div>
@@ -731,7 +731,7 @@ typedef void (*ns_log_t)(const char *)
   </div>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">25</span><h2>References</h2></div>
   <div style="max-width:90%;margin:0 auto;font-size:0.58em;line-height:1.8;">
     <p>

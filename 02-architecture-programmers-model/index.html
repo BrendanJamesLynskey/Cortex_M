@@ -11,17 +11,17 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/black.min.css">
 <style>
   :root {
-    --amber:  #f5a623;
-    --green:  #4ecb8d;
-    --purple: #a78bfa;
-    --blue:   #60a5fa;
-    --red:    #f87171;
-    --bg:     #0a0a0f;
-    --bg2:    #10101a;
-    --bg3:    #181824;
-    --border: #2a2a3a;
-    --text:   #e8e8f0;
-    --muted:  #8888a8;
+    --amber:  #f4c44d;
+    --green:  #87d5bb;
+    --purple: #c7b9fe;
+    --blue:   #a5dcfe;
+    --red:    #fd8c79;
+    --bg:     #10294a;
+    --bg2:    #143154;
+    --bg3:    #18375d;
+    --border: #305782;
+    --text:   #ecf1f7;
+    --muted:  #8eaac7;
   }
 
   .reveal-viewport { background: var(--bg); }
@@ -40,7 +40,7 @@
 
   .reveal { font-family: 'DM Sans', sans-serif; color: var(--text); font-size: 22px; }
   .reveal .slide-number { font-family: 'JetBrains Mono', monospace; font-size: 0.7em; color: var(--muted); }
-  .reveal h1, .reveal h2, .reveal h3 { font-family: 'Playfair Display', serif; color: #fff; text-transform: none; letter-spacing: -0.01em; }
+  .reveal h1, .reveal h2, .reveal h3 { font-family: 'Playfair Display', serif; color: #ffffff; text-transform: none; letter-spacing: -0.01em; }
   .reveal h1 { font-size: 2.4em; font-weight: 900; color: var(--amber); line-height: 1.1; }
   .reveal h2 { font-size: 1.7em; font-weight: 700; color: var(--amber); margin-bottom: 0.6em; }
   .reveal h3 { font-size: 1.2em; font-weight: 700; color: var(--green); margin-bottom: 0.3em; }
@@ -49,7 +49,7 @@
   .reveal code { font-family: 'JetBrains Mono', monospace; font-size: .72em; }
   .reveal pre  { box-shadow: none; background: var(--bg3); border: 1px solid var(--border);
                  border-radius: 8px; padding: 0.5em 1em; margin: 0.4em 0; width: 100%; }
-  .reveal pre code { font-size: 0.58em; line-height: 1.5; background: transparent; color: #cdd6f4; }
+  .reveal pre code { font-size: 0.58em; line-height: 1.5; background: transparent; color: #dbe5ef; }
 
   .slide-hdr {
     display: flex; align-items: center; gap: .4em;
@@ -74,7 +74,7 @@
   .card {
     background: var(--bg2); border: 1px solid var(--border);
     border-radius: 8px; padding: 1em 1.2em;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.3); margin: 0.4em 0;
+    box-shadow: 0 4px 20px rgba(10,31,58,0.3); margin: 0.4em 0;
   }
   .card.amber { border-left: 3px solid var(--amber); }
   .card.green { border-left: 3px solid var(--green); }
@@ -82,15 +82,15 @@
   .card.blue  { border-left: 3px solid var(--blue); }
   .card.red   { border-left: 3px solid var(--red); }
   .card h3 { font-size: 1em; margin: 0 0 0.4em; }
-  .card p, .card ul  { font-size: 0.8em; margin: 0; color: #b8b8d0; }
+  .card p, .card ul  { font-size: 0.8em; margin: 0; color: #bfd1e2; }
   .card ul { margin: 0; padding-left: 1.2em; }
-  .card li { font-size: 0.85em; color: #b8b8d0; margin-bottom: 0.25em; }
+  .card li { font-size: 0.85em; color: #bfd1e2; margin-bottom: 0.25em; }
 
   .reveal table { width: 100%; border-collapse: collapse; font-size: 0.65em; margin: 0.5em 0; }
   .reveal table th { background: var(--bg3); color: var(--amber); font-weight: 600;
                      padding: 0.5em 0.7em; border: 1px solid var(--border); text-align: left; font-weight: 700; }
-  .reveal table td { padding: 0.5em 0.7em; border: 1px solid var(--border); color: #ccc; vertical-align: top; }
-  .reveal table tr:nth-child(even) td { background: #0e0e18; }
+  .reveal table td { padding: 0.5em 0.7em; border: 1px solid var(--border); color: #d0ddea; vertical-align: top; }
+  .reveal table tr:nth-child(even) td { background: #132f51; }
 
   .a  { color: var(--amber); font-weight: 600; }
   .g  { color: var(--green); font-weight: 600; }
@@ -170,7 +170,7 @@
 <div class="reveal">
 <div class="slides">
 
-<section class="title-slide" data-background-color="#0a0a0f">
+<section class="title-slide" data-background-color="#10294a">
   <div style="font-family:'JetBrains Mono',monospace; font-size:.5em; color:var(--muted); margin-bottom:.4em; letter-spacing:.1em;">ARM CORTEX-M · PRESENTATION 02</div>
   <h1>Architecture &amp; Programmer's Model</h1>
   <div class="subtitle">The Cortex-M Family · Armv6-M / v7-M / v8-M · Thumb-2 · Registers &amp; Modes</div>
@@ -181,7 +181,7 @@
   <div class="meta" style="margin-top:1em;">Navigate: <span class="mono">→ ←</span> &nbsp;|&nbsp; Overview: <span class="mono">Esc</span> &nbsp;|&nbsp; Fullscreen: <span class="mono">F</span></div>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">02</span><h2>Why Cortex-M Matters</h2></div>
   <div class="cols cols-2" style="margin-top:0.5em;">
     <div>
@@ -205,7 +205,7 @@
   </div>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">03</span><h2>Arm Profiles: A, R, M</h2></div>
   <table>
     <tr><th>Profile</th><th>Target</th><th>Memory</th><th>OS</th><th>Examples</th></tr>
@@ -253,12 +253,12 @@
   </div>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">04</span><h2>The Cortex-M Family Timeline</h2></div>
   <svg class="diagram" viewBox="0 0 1000 340" style="width:100%; max-width:960px;">
     <!-- Timeline axis -->
-    <line x1="40" y1="300" x2="960" y2="300" stroke="#8888a8" stroke-width="2"/>
-    <g font-family="JetBrains Mono" font-size="10" fill="#8888a8">
+    <line x1="40" y1="300" x2="960" y2="300" stroke="#8eaac7" stroke-width="2"/>
+    <g font-family="JetBrains Mono" font-size="10" fill="#8eaac7">
       <text x="70"  y="320" text-anchor="middle">2005</text>
       <text x="200" y="320" text-anchor="middle">2009</text>
       <text x="330" y="320" text-anchor="middle">2010</text>
@@ -269,36 +269,36 @@
       <text x="940" y="320" text-anchor="middle">2024</text>
     </g>
     <!-- Armv6-M lane -->
-    <text x="5" y="90" font-family="JetBrains Mono" font-size="11" fill="#f5a623" font-weight="700">v6-M</text>
-    <g font-family="DM Sans" font-size="13" fill="#fff">
-      <rect x="150" y="70" width="70" height="34" rx="6" fill="#2a1a0a" stroke="#f5a623"/><text x="185" y="92" text-anchor="middle">M0</text>
-      <rect x="280" y="70" width="70" height="34" rx="6" fill="#2a1a0a" stroke="#f5a623"/><text x="315" y="92" text-anchor="middle">M0+</text>
-      <rect x="280" y="110" width="70" height="34" rx="6" fill="#2a1a0a" stroke="#f5a623"/><text x="315" y="132" text-anchor="middle">M1</text>
+    <text x="5" y="90" font-family="JetBrains Mono" font-size="11" fill="#f4c44d" font-weight="700">v6-M</text>
+    <g font-family="DM Sans" font-size="13" fill="#ffffff">
+      <rect x="150" y="70" width="70" height="34" rx="6" fill="#3f3f3a" stroke="#f4c44d"/><text x="185" y="92" text-anchor="middle">M0</text>
+      <rect x="280" y="70" width="70" height="34" rx="6" fill="#3f3f3a" stroke="#f4c44d"/><text x="315" y="92" text-anchor="middle">M0+</text>
+      <rect x="280" y="110" width="70" height="34" rx="6" fill="#3f3f3a" stroke="#f4c44d"/><text x="315" y="132" text-anchor="middle">M1</text>
     </g>
     <!-- Armv7-M lane -->
-    <text x="5" y="190" font-family="JetBrains Mono" font-size="11" fill="#4ecb8d" font-weight="700">v7-M</text>
-    <g font-family="DM Sans" font-size="13" fill="#fff">
-      <rect x="50" y="170" width="70" height="34" rx="6" fill="#0a2a1a" stroke="#4ecb8d"/><text x="85" y="192" text-anchor="middle">M3</text>
-      <rect x="200" y="170" width="70" height="34" rx="6" fill="#0a2a1a" stroke="#4ecb8d"/><text x="235" y="192" text-anchor="middle">M4</text>
-      <rect x="410" y="170" width="70" height="34" rx="6" fill="#0a2a1a" stroke="#4ecb8d"/><text x="445" y="192" text-anchor="middle">M7</text>
+    <text x="5" y="190" font-family="JetBrains Mono" font-size="11" fill="#87d5bb" font-weight="700">v7-M</text>
+    <g font-family="DM Sans" font-size="13" fill="#ffffff">
+      <rect x="50" y="170" width="70" height="34" rx="6" fill="#384d46" stroke="#87d5bb"/><text x="85" y="192" text-anchor="middle">M3</text>
+      <rect x="200" y="170" width="70" height="34" rx="6" fill="#384d46" stroke="#87d5bb"/><text x="235" y="192" text-anchor="middle">M4</text>
+      <rect x="410" y="170" width="70" height="34" rx="6" fill="#384d46" stroke="#87d5bb"/><text x="445" y="192" text-anchor="middle">M7</text>
     </g>
     <!-- Armv8-M lane -->
-    <text x="5" y="250" font-family="JetBrains Mono" font-size="11" fill="#a78bfa" font-weight="700">v8-M</text>
-    <g font-family="DM Sans" font-size="13" fill="#fff">
-      <rect x="540" y="230" width="70" height="34" rx="6" fill="#1a0a2a" stroke="#a78bfa"/><text x="575" y="252" text-anchor="middle">M23</text>
-      <rect x="610" y="230" width="70" height="34" rx="6" fill="#1a0a2a" stroke="#a78bfa"/><text x="645" y="252" text-anchor="middle">M33</text>
-      <rect x="700" y="230" width="70" height="34" rx="6" fill="#1a0a2a" stroke="#a78bfa"/><text x="735" y="252" text-anchor="middle">M35P</text>
-      <rect x="780" y="230" width="70" height="34" rx="6" fill="#2a0a2a" stroke="#a78bfa"/><text x="815" y="252" text-anchor="middle">M55</text>
-      <rect x="870" y="230" width="70" height="34" rx="6" fill="#2a0a2a" stroke="#a78bfa"/><text x="905" y="252" text-anchor="middle">M85</text>
+    <text x="5" y="250" font-family="JetBrains Mono" font-size="11" fill="#c7b9fe" font-weight="700">v8-M</text>
+    <g font-family="DM Sans" font-size="13" fill="#ffffff">
+      <rect x="540" y="230" width="70" height="34" rx="6" fill="#352e45" stroke="#c7b9fe"/><text x="575" y="252" text-anchor="middle">M23</text>
+      <rect x="610" y="230" width="70" height="34" rx="6" fill="#352e45" stroke="#c7b9fe"/><text x="645" y="252" text-anchor="middle">M33</text>
+      <rect x="700" y="230" width="70" height="34" rx="6" fill="#352e45" stroke="#c7b9fe"/><text x="735" y="252" text-anchor="middle">M35P</text>
+      <rect x="780" y="230" width="70" height="34" rx="6" fill="#3f3049" stroke="#c7b9fe"/><text x="815" y="252" text-anchor="middle">M55</text>
+      <rect x="870" y="230" width="70" height="34" rx="6" fill="#3f3049" stroke="#c7b9fe"/><text x="905" y="252" text-anchor="middle">M85</text>
     </g>
     <!-- v8.1-M callout -->
-    <text x="860" y="215" font-family="JetBrains Mono" font-size="10" fill="#a78bfa" font-weight="700">+Helium (v8.1-M)</text>
-    <line x1="800" y1="220" x2="800" y2="230" stroke="#a78bfa" stroke-dasharray="2,2"/>
+    <text x="860" y="215" font-family="JetBrains Mono" font-size="10" fill="#c7b9fe" font-weight="700">+Helium (v8.1-M)</text>
+    <line x1="800" y1="220" x2="800" y2="230" stroke="#c7b9fe" stroke-dasharray="2,2"/>
   </svg>
   <p style="color:var(--muted); font-size:0.62em; text-align:center">Dates indicate initial announcement. v8.1-M (Helium/MVE) layered on top of v8-M Mainline adds the vector extension used by M52 · M55 · M85.</p>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">05</span><h2>Choose a Core — Interactive</h2></div>
   <p class="dim small">Click a core to see its headline features. Same silicon IP block, vastly different trade-offs.</p>
   <div class="picker" id="picker">
@@ -353,7 +353,7 @@
   </script>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">06</span><h2>Cortex-M Lineup at a Glance</h2></div>
   <table style="font-size:0.55em;">
     <tr><th>Core</th><th>Arch</th><th>Pipeline</th><th>DMIPS/MHz</th><th>DSP</th><th>FPU</th><th>Helium</th><th>TrustZone</th><th>Cache</th></tr>
@@ -374,7 +374,7 @@
   </div>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">07</span><h2>Armv6-M — The Minimal M-Profile</h2></div>
   <div class="cols cols-2" style="margin-top:0.4em;">
     <div>
@@ -403,7 +403,7 @@
   </div>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">08</span><h2>Armv7-M / v7E-M — Full Thumb-2</h2></div>
   <div class="cols cols-2" style="margin-top:0.3em;">
     <div>
@@ -431,7 +431,7 @@
   </div>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">09</span><h2>Armv8-M — TrustZone Arrives</h2></div>
   <div class="cols cols-2" style="margin-top:0.3em;">
     <div>
@@ -457,7 +457,7 @@
   </div>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">10</span><h2>Thumb-2 — Mixed 16/32-bit Encoding</h2></div>
   <div class="cols cols-2" style="margin-top:0.3em;">
     <div>
@@ -489,7 +489,7 @@
   </div>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">11</span><h2>The IT (If-Then) Block</h2></div>
   <div class="cols cols-2" style="margin-top:0.3em;">
     <div>
@@ -515,7 +515,7 @@
   </div>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">12</span><h2>Core Registers — R0 to R15</h2></div>
   <div class="cols cols-2">
     <div>
@@ -541,12 +541,12 @@
   </div>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">13</span><h2>xPSR — The Program Status Register</h2></div>
   <svg class="diagram" viewBox="0 0 900 170" style="width:100%; max-width:900px;">
     <g font-family="JetBrains Mono" font-size="11">
       <!-- header row -->
-      <g fill="#8888a8">
+      <g fill="#8eaac7">
         <text x="30" y="20">31</text><text x="80" y="20">30</text><text x="130" y="20">29</text>
         <text x="180" y="20">28</text><text x="230" y="20">27</text>
         <text x="290" y="20">26..25</text>
@@ -559,29 +559,29 @@
       </g>
       <!-- bit boxes -->
       <g font-size="14">
-        <rect x="20" y="30" width="40" height="40" fill="#2a1a0a" stroke="#f5a623"/>  <text x="40" y="56" text-anchor="middle" fill="#f5a623">N</text>
-        <rect x="70" y="30" width="40" height="40" fill="#2a1a0a" stroke="#f5a623"/>  <text x="90" y="56" text-anchor="middle" fill="#f5a623">Z</text>
-        <rect x="120" y="30" width="40" height="40" fill="#2a1a0a" stroke="#f5a623"/> <text x="140" y="56" text-anchor="middle" fill="#f5a623">C</text>
-        <rect x="170" y="30" width="40" height="40" fill="#2a1a0a" stroke="#f5a623"/> <text x="190" y="56" text-anchor="middle" fill="#f5a623">V</text>
-        <rect x="220" y="30" width="40" height="40" fill="#2a1a0a" stroke="#f5a623"/> <text x="240" y="56" text-anchor="middle" fill="#f5a623">Q</text>
-        <rect x="270" y="30" width="80" height="40" fill="#0a2a1a" stroke="#4ecb8d"/><text x="310" y="56" text-anchor="middle" fill="#4ecb8d">IT[1:0]</text>
-        <rect x="380" y="30" width="40" height="40" fill="#0a2a1a" stroke="#4ecb8d"/><text x="400" y="56" text-anchor="middle" fill="#4ecb8d">T</text>
-        <rect x="440" y="30" width="100" height="40" fill="#1a0a2a" stroke="#a78bfa"/><text x="490" y="56" text-anchor="middle" fill="#a78bfa">GE[3:0]</text>
-        <rect x="560" y="30" width="60" height="40" fill="#1a0a2a" stroke="#a78bfa"/><text x="590" y="56" text-anchor="middle" fill="#a78bfa">—</text>
-        <rect x="630" y="30" width="90" height="40" fill="#0a2a1a" stroke="#4ecb8d"/><text x="675" y="56" text-anchor="middle" fill="#4ecb8d">IT[7:2]</text>
-        <rect x="730" y="30" width="70" height="40" fill="#10101a" stroke="#8888a8"/><text x="765" y="56" text-anchor="middle" fill="#ccc">rsvd</text>
-        <rect x="810" y="30" width="80" height="40" fill="#2a0a0a" stroke="#f87171"/><text x="850" y="56" text-anchor="middle" fill="#f87171">ISR #</text>
+        <rect x="20" y="30" width="40" height="40" fill="#3f3f3a" stroke="#f4c44d"/>  <text x="40" y="56" text-anchor="middle" fill="#f4c44d">N</text>
+        <rect x="70" y="30" width="40" height="40" fill="#3f3f3a" stroke="#f4c44d"/>  <text x="90" y="56" text-anchor="middle" fill="#f4c44d">Z</text>
+        <rect x="120" y="30" width="40" height="40" fill="#3f3f3a" stroke="#f4c44d"/> <text x="140" y="56" text-anchor="middle" fill="#f4c44d">C</text>
+        <rect x="170" y="30" width="40" height="40" fill="#3f3f3a" stroke="#f4c44d"/> <text x="190" y="56" text-anchor="middle" fill="#f4c44d">V</text>
+        <rect x="220" y="30" width="40" height="40" fill="#3f3f3a" stroke="#f4c44d"/> <text x="240" y="56" text-anchor="middle" fill="#f4c44d">Q</text>
+        <rect x="270" y="30" width="80" height="40" fill="#384d46" stroke="#87d5bb"/><text x="310" y="56" text-anchor="middle" fill="#87d5bb">IT[1:0]</text>
+        <rect x="380" y="30" width="40" height="40" fill="#384d46" stroke="#87d5bb"/><text x="400" y="56" text-anchor="middle" fill="#87d5bb">T</text>
+        <rect x="440" y="30" width="100" height="40" fill="#352e45" stroke="#c7b9fe"/><text x="490" y="56" text-anchor="middle" fill="#c7b9fe">GE[3:0]</text>
+        <rect x="560" y="30" width="60" height="40" fill="#352e45" stroke="#c7b9fe"/><text x="590" y="56" text-anchor="middle" fill="#c7b9fe">—</text>
+        <rect x="630" y="30" width="90" height="40" fill="#384d46" stroke="#87d5bb"/><text x="675" y="56" text-anchor="middle" fill="#87d5bb">IT[7:2]</text>
+        <rect x="730" y="30" width="70" height="40" fill="#143154" stroke="#8eaac7"/><text x="765" y="56" text-anchor="middle" fill="#d0ddea">rsvd</text>
+        <rect x="810" y="30" width="80" height="40" fill="#492b26" stroke="#fd8c79"/><text x="850" y="56" text-anchor="middle" fill="#fd8c79">ISR #</text>
       </g>
     </g>
     <!-- labels -->
-    <g font-family="DM Sans" font-size="11" fill="#fff">
-      <text x="130" y="110" text-anchor="middle" fill="#f5a623">APSR</text>
-      <text x="130" y="125" font-size="9" text-anchor="middle" fill="#8888a8">Negative / Zero / Carry / oVerflow / Q-sticky (saturation)</text>
-      <text x="450" y="110" text-anchor="middle" fill="#4ecb8d">EPSR</text>
-      <text x="450" y="125" font-size="9" text-anchor="middle" fill="#8888a8">IT[7:0] = next-up to 4 cond-codes · T = Thumb state (always 1)</text>
-      <text x="485" y="145" text-anchor="middle" fill="#a78bfa">APSR.GE (DSP SIMD flags)</text>
-      <text x="850" y="110" text-anchor="middle" fill="#f87171">IPSR</text>
-      <text x="850" y="125" font-size="9" text-anchor="middle" fill="#8888a8">Active ISR number (0 in Thread mode)</text>
+    <g font-family="DM Sans" font-size="11" fill="#ffffff">
+      <text x="130" y="110" text-anchor="middle" fill="#f4c44d">APSR</text>
+      <text x="130" y="125" font-size="9" text-anchor="middle" fill="#8eaac7">Negative / Zero / Carry / oVerflow / Q-sticky (saturation)</text>
+      <text x="450" y="110" text-anchor="middle" fill="#87d5bb">EPSR</text>
+      <text x="450" y="125" font-size="9" text-anchor="middle" fill="#8eaac7">IT[7:0] = next-up to 4 cond-codes · T = Thumb state (always 1)</text>
+      <text x="485" y="145" text-anchor="middle" fill="#c7b9fe">APSR.GE (DSP SIMD flags)</text>
+      <text x="850" y="110" text-anchor="middle" fill="#fd8c79">IPSR</text>
+      <text x="850" y="125" font-size="9" text-anchor="middle" fill="#8eaac7">Active ISR number (0 in Thread mode)</text>
     </g>
   </svg>
   <div class="card amber" style="font-size:0.7em;">
@@ -589,7 +589,7 @@
   </div>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">14</span><h2>Special Registers</h2></div>
   <table style="font-size:0.6em;">
     <tr><th>Reg</th><th>Width</th><th>Purpose</th><th>Access</th></tr>
@@ -628,7 +628,7 @@
   </div>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">15</span><h2>Operating State Matrix</h2></div>
   <div class="state-grid">
     <div class="h">&nbsp;</div>
@@ -669,31 +669,31 @@
   </div>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">16</span><h2>Dual Stacks — MSP &amp; PSP</h2></div>
   <div class="cols cols-2" style="margin-top:0.3em;">
     <div>
       <svg viewBox="0 0 400 260" style="width:100%; max-width:360px;">
-        <g font-family="DM Sans" font-size="13" fill="#fff">
-          <rect x="20"  y="20" width="160" height="220" fill="#0a1a2a" stroke="#60a5fa" rx="6"/>
-          <text x="100" y="42" text-anchor="middle" fill="#60a5fa" font-family="Playfair Display" font-weight="700">MSP</text>
-          <text x="100" y="60" font-size="10" text-anchor="middle" fill="#8888a8">Main Stack Pointer</text>
+        <g font-family="DM Sans" font-size="13" fill="#ffffff">
+          <rect x="20"  y="20" width="160" height="220" fill="#17375d" stroke="#a5dcfe" rx="6"/>
+          <text x="100" y="42" text-anchor="middle" fill="#a5dcfe" font-family="Playfair Display" font-weight="700">MSP</text>
+          <text x="100" y="60" font-size="10" text-anchor="middle" fill="#8eaac7">Main Stack Pointer</text>
           <text x="100" y="100" text-anchor="middle" font-size="11">Used by</text>
           <text x="100" y="120" text-anchor="middle" font-size="11">• all handlers</text>
           <text x="100" y="138" text-anchor="middle" font-size="11">• RTOS kernel</text>
           <text x="100" y="156" text-anchor="middle" font-size="11">• boot &amp; idle</text>
-          <text x="100" y="200" text-anchor="middle" font-size="10" fill="#8888a8">SP at reset loads</text>
-          <text x="100" y="215" text-anchor="middle" font-size="10" fill="#8888a8">from vector[0]</text>
+          <text x="100" y="200" text-anchor="middle" font-size="10" fill="#8eaac7">SP at reset loads</text>
+          <text x="100" y="215" text-anchor="middle" font-size="10" fill="#8eaac7">from vector[0]</text>
 
-          <rect x="220" y="20" width="160" height="220" fill="#1a0a2a" stroke="#a78bfa" rx="6"/>
-          <text x="300" y="42" text-anchor="middle" fill="#a78bfa" font-family="Playfair Display" font-weight="700">PSP</text>
-          <text x="300" y="60" font-size="10" text-anchor="middle" fill="#8888a8">Process Stack Pointer</text>
+          <rect x="220" y="20" width="160" height="220" fill="#352e45" stroke="#c7b9fe" rx="6"/>
+          <text x="300" y="42" text-anchor="middle" fill="#c7b9fe" font-family="Playfair Display" font-weight="700">PSP</text>
+          <text x="300" y="60" font-size="10" text-anchor="middle" fill="#8eaac7">Process Stack Pointer</text>
           <text x="300" y="100" text-anchor="middle" font-size="11">Used by</text>
           <text x="300" y="120" text-anchor="middle" font-size="11">• each task</text>
           <text x="300" y="138" text-anchor="middle" font-size="11">• in Thread mode</text>
           <text x="300" y="156" text-anchor="middle" font-size="11">when CONTROL.SPSEL=1</text>
-          <text x="300" y="200" text-anchor="middle" font-size="10" fill="#8888a8">set up by the RTOS</text>
-          <text x="300" y="215" text-anchor="middle" font-size="10" fill="#8888a8">per-task</text>
+          <text x="300" y="200" text-anchor="middle" font-size="10" fill="#8eaac7">set up by the RTOS</text>
+          <text x="300" y="215" text-anchor="middle" font-size="10" fill="#8eaac7">per-task</text>
         </g>
       </svg>
     </div>
@@ -715,49 +715,49 @@
   </div>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">17</span><h2>Exception Stack Frame</h2></div>
   <div class="cols cols-6040" style="margin-top:0.3em;">
     <div>
       <svg viewBox="0 0 520 320" style="width:100%; max-width:520px;">
         <g font-family="JetBrains Mono" font-size="12">
           <!-- basic frame -->
-          <rect x="20"  y="20"  width="160" height="280" fill="#10101a" stroke="#f5a623" rx="6"/>
-          <text x="100" y="38"  text-anchor="middle" fill="#f5a623" font-family="Playfair Display" font-weight="700">Basic frame (8 words)</text>
-          <g fill="#ccc">
-            <line x1="20"  y1="60"  x2="180" y2="60"  stroke="#2a2a3a"/>
-            <text x="30" y="78">  xPSR   </text><text x="170" y="78" text-anchor="end" fill="#8888a8">+0x1C</text>
-            <line x1="20"  y1="85"  x2="180" y2="85"  stroke="#2a2a3a"/>
-            <text x="30" y="100"> PC (ret)</text><text x="170" y="100" text-anchor="end" fill="#8888a8">+0x18</text>
-            <line x1="20"  y1="110" x2="180" y2="110" stroke="#2a2a3a"/>
-            <text x="30" y="125"> LR      </text><text x="170" y="125" text-anchor="end" fill="#8888a8">+0x14</text>
-            <line x1="20"  y1="135" x2="180" y2="135" stroke="#2a2a3a"/>
-            <text x="30" y="150"> R12     </text><text x="170" y="150" text-anchor="end" fill="#8888a8">+0x10</text>
-            <line x1="20"  y1="160" x2="180" y2="160" stroke="#2a2a3a"/>
-            <text x="30" y="175"> R3      </text><text x="170" y="175" text-anchor="end" fill="#8888a8">+0x0C</text>
-            <line x1="20"  y1="185" x2="180" y2="185" stroke="#2a2a3a"/>
-            <text x="30" y="200"> R2      </text><text x="170" y="200" text-anchor="end" fill="#8888a8">+0x08</text>
-            <line x1="20"  y1="210" x2="180" y2="210" stroke="#2a2a3a"/>
-            <text x="30" y="225"> R1      </text><text x="170" y="225" text-anchor="end" fill="#8888a8">+0x04</text>
-            <line x1="20"  y1="235" x2="180" y2="235" stroke="#2a2a3a"/>
-            <text x="30" y="250"> R0      </text><text x="170" y="250" text-anchor="end" fill="#8888a8">+0x00  &lt;- SP</text>
+          <rect x="20"  y="20"  width="160" height="280" fill="#143154" stroke="#f4c44d" rx="6"/>
+          <text x="100" y="38"  text-anchor="middle" fill="#f4c44d" font-family="Playfair Display" font-weight="700">Basic frame (8 words)</text>
+          <g fill="#d0ddea">
+            <line x1="20"  y1="60"  x2="180" y2="60"  stroke="#305782"/>
+            <text x="30" y="78">  xPSR   </text><text x="170" y="78" text-anchor="end" fill="#8eaac7">+0x1C</text>
+            <line x1="20"  y1="85"  x2="180" y2="85"  stroke="#305782"/>
+            <text x="30" y="100"> PC (ret)</text><text x="170" y="100" text-anchor="end" fill="#8eaac7">+0x18</text>
+            <line x1="20"  y1="110" x2="180" y2="110" stroke="#305782"/>
+            <text x="30" y="125"> LR      </text><text x="170" y="125" text-anchor="end" fill="#8eaac7">+0x14</text>
+            <line x1="20"  y1="135" x2="180" y2="135" stroke="#305782"/>
+            <text x="30" y="150"> R12     </text><text x="170" y="150" text-anchor="end" fill="#8eaac7">+0x10</text>
+            <line x1="20"  y1="160" x2="180" y2="160" stroke="#305782"/>
+            <text x="30" y="175"> R3      </text><text x="170" y="175" text-anchor="end" fill="#8eaac7">+0x0C</text>
+            <line x1="20"  y1="185" x2="180" y2="185" stroke="#305782"/>
+            <text x="30" y="200"> R2      </text><text x="170" y="200" text-anchor="end" fill="#8eaac7">+0x08</text>
+            <line x1="20"  y1="210" x2="180" y2="210" stroke="#305782"/>
+            <text x="30" y="225"> R1      </text><text x="170" y="225" text-anchor="end" fill="#8eaac7">+0x04</text>
+            <line x1="20"  y1="235" x2="180" y2="235" stroke="#305782"/>
+            <text x="30" y="250"> R0      </text><text x="170" y="250" text-anchor="end" fill="#8eaac7">+0x00  &lt;- SP</text>
           </g>
 
           <!-- Extended frame -->
-          <rect x="280" y="20" width="220" height="280" fill="#10101a" stroke="#a78bfa" rx="6"/>
-          <text x="390" y="38" text-anchor="middle" fill="#a78bfa" font-family="Playfair Display" font-weight="700">Extended (FP active)</text>
-          <g fill="#ccc">
+          <rect x="280" y="20" width="220" height="280" fill="#143154" stroke="#c7b9fe" rx="6"/>
+          <text x="390" y="38" text-anchor="middle" fill="#c7b9fe" font-family="Playfair Display" font-weight="700">Extended (FP active)</text>
+          <g fill="#d0ddea">
             <text x="290" y="78">  FPSCR  </text>
             <text x="290" y="96">  S15    </text>
             <text x="290" y="114"> ...    </text>
             <text x="290" y="132"> S0     </text>
-            <text x="290" y="160" fill="#f5a623">  xPSR  (as left)</text>
-            <text x="290" y="178" fill="#f5a623">  PC / LR / R12</text>
-            <text x="290" y="196" fill="#f5a623">  R3 / R2 / R1 / R0</text>
-            <text x="290" y="226" fill="#8888a8" font-size="10">26 words total</text>
-            <text x="290" y="244" fill="#8888a8" font-size="10">(18 FP + 8 basic)</text>
-            <text x="290" y="270" fill="#4ecb8d" font-size="10">Lazy: space reserved,</text>
-            <text x="290" y="285" fill="#4ecb8d" font-size="10">regs saved on first FP op.</text>
+            <text x="290" y="160" fill="#f4c44d">  xPSR  (as left)</text>
+            <text x="290" y="178" fill="#f4c44d">  PC / LR / R12</text>
+            <text x="290" y="196" fill="#f4c44d">  R3 / R2 / R1 / R0</text>
+            <text x="290" y="226" fill="#8eaac7" font-size="10">26 words total</text>
+            <text x="290" y="244" fill="#8eaac7" font-size="10">(18 FP + 8 basic)</text>
+            <text x="290" y="270" fill="#87d5bb" font-size="10">Lazy: space reserved,</text>
+            <text x="290" y="285" fill="#87d5bb" font-size="10">regs saved on first FP op.</text>
           </g>
         </g>
       </svg>
@@ -773,7 +773,7 @@
   </div>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">18</span><h2>EXC_RETURN — The Magic LR</h2></div>
   <div class="cols cols-2" style="margin-top:0.3em;">
     <div>
@@ -803,7 +803,7 @@
   </div>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">19</span><h2>Pipeline Comparison</h2></div>
   <table style="font-size:0.62em;">
     <tr><th>Core</th><th>Stages</th><th>Pipeline</th><th>Branch prediction</th><th>Issue width</th></tr>
@@ -819,7 +819,7 @@
   </div>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">20</span><h2>Endianness &amp; Alignment</h2></div>
   <div class="cols cols-2" style="margin-top:0.3em;">
     <div>
@@ -843,7 +843,7 @@
   </div>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">21</span><h2>Semaphore Primitives — LDREX / STREX</h2></div>
   <div class="cols cols-4060" style="margin-top:0.3em;">
     <div>
@@ -868,7 +868,7 @@ try:
   </div>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">22</span><h2>Bus Interfaces</h2></div>
   <table>
     <tr><th>Core</th><th>Bus</th><th>Notes</th></tr>
@@ -883,7 +883,7 @@ try:
   </div>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">23</span><h2>Reset Behaviour</h2></div>
   <div class="cols cols-2" style="margin-top:0.3em;">
     <div>
@@ -922,7 +922,7 @@ zero: CMP r0, r1
   </div>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">24</span><h2>Vendor Variation You Will See</h2></div>
   <div class="cols cols-3">
     <div class="card amber">
@@ -958,7 +958,7 @@ zero: CMP r0, r1
   </div>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">25</span><h2>CMSIS — The Portable Layer</h2></div>
   <div class="cols cols-2" style="margin-top:0.3em;">
     <div>
@@ -993,7 +993,7 @@ uint32_t atomic_load(uint32_t *p)
   </div>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">26</span><h2>Performance Snapshot</h2></div>
   <table style="font-size:0.65em;">
     <tr><th>Core</th><th>Typical f<sub>max</sub></th><th>CoreMark/MHz</th><th>DMIPS/MHz</th><th>Typical silicon (65/40/22 nm)</th></tr>
@@ -1009,71 +1009,71 @@ uint32_t atomic_load(uint32_t *p)
   <p class="smaller dim">Numbers from Arm's published figures (2024/2025). Actual silicon depends heavily on library, process, and whether the vendor flushed timing to meet f<sub>max</sub> or area.</p>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">27</span><h2>Choosing a Cortex-M — Decision Flow</h2></div>
   <svg class="diagram" viewBox="0 0 960 380" style="width:100%; max-width:960px;">
     <defs>
       <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto">
-        <path d="M0 0 L10 5 L0 10 z" fill="#f5a623"/>
+        <path d="M0 0 L10 5 L0 10 z" fill="#f4c44d"/>
       </marker>
     </defs>
     <g font-family="DM Sans" font-size="12">
       <!-- start -->
-      <rect x="400" y="10" width="180" height="40" rx="8" fill="#2a1a0a" stroke="#f5a623"/>
-      <text x="490" y="35" text-anchor="middle" fill="#fff">Start: pick a Cortex-M</text>
+      <rect x="400" y="10" width="180" height="40" rx="8" fill="#3f3f3a" stroke="#f4c44d"/>
+      <text x="490" y="35" text-anchor="middle" fill="#ffffff">Start: pick a Cortex-M</text>
 
       <!-- first branch: security? -->
-      <rect x="400" y="80" width="180" height="40" rx="8" fill="#10101a" stroke="#8888a8"/>
-      <text x="490" y="105" text-anchor="middle" fill="#fff">Security isolation needed?</text>
-      <line x1="490" y1="50" x2="490" y2="80" stroke="#f5a623" marker-end="url(#arr)"/>
+      <rect x="400" y="80" width="180" height="40" rx="8" fill="#143154" stroke="#8eaac7"/>
+      <text x="490" y="105" text-anchor="middle" fill="#ffffff">Security isolation needed?</text>
+      <line x1="490" y1="50" x2="490" y2="80" stroke="#f4c44d" marker-end="url(#arr)"/>
 
       <!-- yes: TrustZone -->
-      <rect x="640" y="80" width="270" height="40" rx="8" fill="#1a0a2a" stroke="#a78bfa"/>
-      <text x="775" y="105" text-anchor="middle" fill="#fff">v8-M: M23 / M33 / M35P / M52 / M55 / M85</text>
-      <line x1="580" y1="100" x2="640" y2="100" stroke="#a78bfa" marker-end="url(#arr)"/>
-      <text x="610" y="95" font-size="10" fill="#a78bfa">yes</text>
+      <rect x="640" y="80" width="270" height="40" rx="8" fill="#352e45" stroke="#c7b9fe"/>
+      <text x="775" y="105" text-anchor="middle" fill="#ffffff">v8-M: M23 / M33 / M35P / M52 / M55 / M85</text>
+      <line x1="580" y1="100" x2="640" y2="100" stroke="#c7b9fe" marker-end="url(#arr)"/>
+      <text x="610" y="95" font-size="10" fill="#c7b9fe">yes</text>
 
       <!-- no: perf -->
-      <rect x="400" y="150" width="180" height="40" rx="8" fill="#10101a" stroke="#8888a8"/>
-      <text x="490" y="175" text-anchor="middle" fill="#fff">Peak perf needed?</text>
-      <line x1="490" y1="120" x2="490" y2="150" stroke="#f5a623" marker-end="url(#arr)"/>
-      <text x="500" y="140" font-size="10" fill="#f5a623">no</text>
+      <rect x="400" y="150" width="180" height="40" rx="8" fill="#143154" stroke="#8eaac7"/>
+      <text x="490" y="175" text-anchor="middle" fill="#ffffff">Peak perf needed?</text>
+      <line x1="490" y1="120" x2="490" y2="150" stroke="#f4c44d" marker-end="url(#arr)"/>
+      <text x="500" y="140" font-size="10" fill="#f4c44d">no</text>
 
       <!-- high perf -->
-      <rect x="640" y="150" width="270" height="40" rx="8" fill="#0a2a1a" stroke="#4ecb8d"/>
-      <text x="775" y="175" text-anchor="middle" fill="#fff">M7 (600 MHz) or M85 (700 MHz + MVE)</text>
-      <line x1="580" y1="170" x2="640" y2="170" stroke="#4ecb8d" marker-end="url(#arr)"/>
-      <text x="610" y="165" font-size="10" fill="#4ecb8d">yes</text>
+      <rect x="640" y="150" width="270" height="40" rx="8" fill="#384d46" stroke="#87d5bb"/>
+      <text x="775" y="175" text-anchor="middle" fill="#ffffff">M7 (600 MHz) or M85 (700 MHz + MVE)</text>
+      <line x1="580" y1="170" x2="640" y2="170" stroke="#87d5bb" marker-end="url(#arr)"/>
+      <text x="610" y="165" font-size="10" fill="#87d5bb">yes</text>
 
       <!-- dsp? -->
-      <rect x="400" y="220" width="180" height="40" rx="8" fill="#10101a" stroke="#8888a8"/>
-      <text x="490" y="245" text-anchor="middle" fill="#fff">DSP / ML workload?</text>
-      <line x1="490" y1="190" x2="490" y2="220" stroke="#f5a623" marker-end="url(#arr)"/>
+      <rect x="400" y="220" width="180" height="40" rx="8" fill="#143154" stroke="#8eaac7"/>
+      <text x="490" y="245" text-anchor="middle" fill="#ffffff">DSP / ML workload?</text>
+      <line x1="490" y1="190" x2="490" y2="220" stroke="#f4c44d" marker-end="url(#arr)"/>
 
-      <rect x="640" y="220" width="270" height="40" rx="8" fill="#2a1a0a" stroke="#f5a623"/>
-      <text x="775" y="245" text-anchor="middle" fill="#fff">M4 (DSP) · M7 · M55 / M85 (MVE)</text>
-      <line x1="580" y1="240" x2="640" y2="240" stroke="#f5a623" marker-end="url(#arr)"/>
-      <text x="610" y="235" font-size="10" fill="#f5a623">yes</text>
+      <rect x="640" y="220" width="270" height="40" rx="8" fill="#3f3f3a" stroke="#f4c44d"/>
+      <text x="775" y="245" text-anchor="middle" fill="#ffffff">M4 (DSP) · M7 · M55 / M85 (MVE)</text>
+      <line x1="580" y1="240" x2="640" y2="240" stroke="#f4c44d" marker-end="url(#arr)"/>
+      <text x="610" y="235" font-size="10" fill="#f4c44d">yes</text>
 
       <!-- smallest? -->
-      <rect x="400" y="290" width="180" height="40" rx="8" fill="#10101a" stroke="#8888a8"/>
-      <text x="490" y="315" text-anchor="middle" fill="#fff">Area / power critical</text>
-      <line x1="490" y1="260" x2="490" y2="290" stroke="#f5a623" marker-end="url(#arr)"/>
-      <text x="500" y="280" font-size="10" fill="#f5a623">no</text>
+      <rect x="400" y="290" width="180" height="40" rx="8" fill="#143154" stroke="#8eaac7"/>
+      <text x="490" y="315" text-anchor="middle" fill="#ffffff">Area / power critical</text>
+      <line x1="490" y1="260" x2="490" y2="290" stroke="#f4c44d" marker-end="url(#arr)"/>
+      <text x="500" y="280" font-size="10" fill="#f4c44d">no</text>
 
-      <rect x="640" y="290" width="270" height="40" rx="8" fill="#2a1a0a" stroke="#f5a623"/>
-      <text x="775" y="315" text-anchor="middle" fill="#fff">M0+ (no sec) · M23 (w/ TrustZone)</text>
-      <line x1="580" y1="310" x2="640" y2="310" stroke="#f5a623" marker-end="url(#arr)"/>
+      <rect x="640" y="290" width="270" height="40" rx="8" fill="#3f3f3a" stroke="#f4c44d"/>
+      <text x="775" y="315" text-anchor="middle" fill="#ffffff">M0+ (no sec) · M23 (w/ TrustZone)</text>
+      <line x1="580" y1="310" x2="640" y2="310" stroke="#f4c44d" marker-end="url(#arr)"/>
 
       <!-- default -->
-      <rect x="100" y="290" width="260" height="40" rx="8" fill="#0a2a1a" stroke="#4ecb8d"/>
-      <text x="230" y="315" text-anchor="middle" fill="#fff">Default: M4 or M33 (mid-range sweet spot)</text>
-      <line x1="400" y1="310" x2="360" y2="310" stroke="#4ecb8d" marker-end="url(#arr)"/>
+      <rect x="100" y="290" width="260" height="40" rx="8" fill="#384d46" stroke="#87d5bb"/>
+      <text x="230" y="315" text-anchor="middle" fill="#ffffff">Default: M4 or M33 (mid-range sweet spot)</text>
+      <line x1="400" y1="310" x2="360" y2="310" stroke="#87d5bb" marker-end="url(#arr)"/>
     </g>
   </svg>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">28</span><h2>References &amp; Further Reading</h2></div>
   <div style="max-width:90%; margin:0 auto; font-size:0.55em; line-height:1.8;">
     <p>

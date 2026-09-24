@@ -10,33 +10,33 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/black.min.css">
 <style>
-  :root{--amber:#f5a623;--green:#4ecb8d;--purple:#a78bfa;--blue:#60a5fa;--red:#f87171;--bg:#0a0a0f;--bg2:#10101a;--bg3:#181824;--border:#2a2a3a;--text:#e8e8f0;--muted:#8888a8;}
+  :root{--amber:#f4c44d;--green:#87d5bb;--purple:#c7b9fe;--blue:#a5dcfe;--red:#fd8c79;--bg:#10294a;--bg2:#143154;--bg3:#18375d;--border:#305782;--text:#ecf1f7;--muted:#8eaac7;}
   .reveal-viewport{background:var(--bg);} .reveal .slides section{background:transparent;} .reveal section{text-align:left;}
   .reveal .slides > section{padding:0.5em;overflow-y:auto!important;align-items:flex-start!important;justify-content:flex-start!important;}
   .reveal .progress{color:var(--amber);height:3px;} .reveal .controls{color:var(--amber);}
   .reveal section::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--amber),var(--green));}
   .reveal{font-family:'DM Sans',sans-serif;color:var(--text);font-size:22px;}
   .reveal .slide-number{font-family:'JetBrains Mono',monospace;font-size:0.7em;color:var(--muted);}
-  .reveal h1,.reveal h2,.reveal h3{font-family:'Playfair Display',serif;color:#fff;text-transform:none;letter-spacing:-0.01em;}
+  .reveal h1,.reveal h2,.reveal h3{font-family:'Playfair Display',serif;color:#ffffff;text-transform:none;letter-spacing:-0.01em;}
   .reveal h1{font-size:2.4em;font-weight:900;color:var(--amber);line-height:1.1;}
   .reveal h2{font-size:1.7em;font-weight:700;color:var(--amber);margin-bottom:0.6em;}
   .reveal h3{font-size:1.2em;font-weight:700;color:var(--green);margin-bottom:0.3em;}
   .reveal p{font-size:0.75em;line-height:1.5;color:var(--text);} .reveal li{font-size:0.7em;line-height:1.5;margin-bottom:0.25em;}
   .reveal code{font-family:'JetBrains Mono',monospace;font-size:.72em;}
   .reveal pre{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:0.5em 1em;margin:0.4em 0;width:100%;box-shadow:none;}
-  .reveal pre code{font-size:0.58em;line-height:1.5;background:transparent;color:#cdd6f4;}
+  .reveal pre code{font-size:0.58em;line-height:1.5;background:transparent;color:#dbe5ef;}
   .slide-hdr{display:flex;align-items:center;gap:.4em;border-bottom:1px solid var(--border);padding-bottom:.2em;margin-bottom:.3em;}
   .slide-hdr .tag{font-family:'JetBrains Mono',monospace;font-size:0.55em;font-weight:600;color:var(--bg);background:var(--amber);padding:.1em .4em;border-radius:3px;letter-spacing:.04em;}
   .slide-hdr h2{margin:0;font-size:1.4em;}
   .cols{display:grid;gap:1em;} .cols-2{grid-template-columns:1fr 1fr;} .cols-3{grid-template-columns:1fr 1fr 1fr;} .cols-6040{grid-template-columns:6fr 4fr;} .cols-4060{grid-template-columns:4fr 6fr;}
-  .card{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:1em 1.2em;box-shadow:0 4px 20px rgba(0,0,0,0.3);margin:0.4em 0;}
+  .card{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:1em 1.2em;box-shadow:0 4px 20px rgba(10,31,58,0.3);margin:0.4em 0;}
   .card.amber{border-left:3px solid var(--amber);} .card.green{border-left:3px solid var(--green);} .card.purple{border-left:3px solid var(--purple);} .card.blue{border-left:3px solid var(--blue);} .card.red{border-left:3px solid var(--red);}
   .card h3{font-size:1em;margin:0 0 0.4em;}
-  .card p,.card ul{font-size:0.8em;margin:0;color:#b8b8d0;} .card ul{padding-left:1.2em;} .card li{font-size:0.85em;margin-bottom:0.25em;}
+  .card p,.card ul{font-size:0.8em;margin:0;color:#bfd1e2;} .card ul{padding-left:1.2em;} .card li{font-size:0.85em;margin-bottom:0.25em;}
   .reveal table{width:100%;border-collapse:collapse;font-size:0.65em;margin:0.5em 0;}
   .reveal table th{background:var(--bg3);color:var(--amber);padding:0.5em 0.7em;border:1px solid var(--border);text-align:left;font-weight:700;}
-  .reveal table td{padding:0.5em 0.7em;border:1px solid var(--border);color:#ccc;vertical-align:top;}
-  .reveal table tr:nth-child(even) td{background:#0e0e18;}
+  .reveal table td{padding:0.5em 0.7em;border:1px solid var(--border);color:#d0ddea;vertical-align:top;}
+  .reveal table tr:nth-child(even) td{background:#132f51;}
   .a{color:var(--amber);font-weight:600;} .g{color:var(--green);font-weight:600;} .p{color:var(--purple);font-weight:600;} .b{color:var(--blue);font-weight:600;} .r{color:var(--red);font-weight:600;} .mono{font-family:'JetBrains Mono',monospace;}
   svg.diagram{display:block;margin:0 auto;overflow:visible;}
   .pill{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:0.6em;padding:0.15em 0.6em;border-radius:999px;border:1px solid;margin:0 .08em;}
@@ -50,7 +50,7 @@
   .pbar .n { color: var(--amber); text-align: right; }
   .pbar .b { height: 20px; background: var(--bg2); border-radius: 4px; position: relative; overflow: hidden; border: 1px solid var(--border); }
   .pbar .b > div { height: 100%; }
-  .pbar .v { color: #cdd6f4; text-align: right; }
+  .pbar .v { color: #dbe5ef; text-align: right; }
   .pbar .b .fill1 { background: var(--red); }
   .pbar .b .fill2 { background: var(--amber); }
   .pbar .b .fill3 { background: var(--green); }
@@ -62,7 +62,7 @@
 <div class="reveal">
 <div class="slides">
 
-<section class="title-slide" data-background-color="#0a0a0f">
+<section class="title-slide" data-background-color="#10294a">
   <div style="font-family:'JetBrains Mono',monospace;font-size:.5em;color:var(--muted);margin-bottom:.4em;letter-spacing:.1em;">ARM CORTEX-M · PRESENTATION 07</div>
   <h1>Low-Power Design</h1>
   <div class="subtitle">Sleep modes · WFI / WFE · WIC · Tickless RTOS · ULPMark</div>
@@ -70,7 +70,7 @@
   <div class="meta">How a coin-cell lasts ten years</div>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">02</span><h2>Why Low Power</h2></div>
   <div class="cols cols-2">
     <div>
@@ -99,7 +99,7 @@
   </div>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">03</span><h2>Where the Energy Goes</h2></div>
   <div class="pbar"><div class="n">CPU dynamic</div><div class="b"><div class="fill1" style="width:55%"></div></div><div class="v">55%</div></div>
   <div class="pbar"><div class="n">Flash access</div><div class="b"><div class="fill2" style="width:20%"></div></div><div class="v">20%</div></div>
@@ -119,7 +119,7 @@
   </div>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">04</span><h2>The Core's Sleep Primitives</h2></div>
   <table>
     <tr><th>Instruction</th><th>Effect</th><th>Wakeup condition</th></tr>
@@ -143,7 +143,7 @@
   </div>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">05</span><h2>Sleep vs Deep Sleep</h2></div>
   <div class="cols cols-2">
     <div>
@@ -178,30 +178,30 @@
   </div>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">06</span><h2>The Wake-up Interrupt Controller</h2></div>
   <div class="cols cols-4060">
     <div>
       <svg viewBox="0 0 400 260" style="width:100%;">
         <g font-family="DM Sans" font-size="11">
-          <rect x="30" y="30" width="150" height="70" rx="6" fill="#2a1a0a" stroke="#f5a623"/>
-          <text x="105" y="52" text-anchor="middle" fill="#f5a623" font-weight="700">Core + NVIC</text>
-          <text x="105" y="72" text-anchor="middle" font-size="10" fill="#fff">gated in deep sleep</text>
-          <text x="105" y="88" text-anchor="middle" font-size="10" fill="#8888a8">0 mA</text>
+          <rect x="30" y="30" width="150" height="70" rx="6" fill="#3f3f3a" stroke="#f4c44d"/>
+          <text x="105" y="52" text-anchor="middle" fill="#f4c44d" font-weight="700">Core + NVIC</text>
+          <text x="105" y="72" text-anchor="middle" font-size="10" fill="#ffffff">gated in deep sleep</text>
+          <text x="105" y="88" text-anchor="middle" font-size="10" fill="#8eaac7">0 mA</text>
 
-          <rect x="30" y="150" width="150" height="70" rx="6" fill="#0a2a1a" stroke="#4ecb8d"/>
-          <text x="105" y="172" text-anchor="middle" fill="#4ecb8d" font-weight="700">WIC</text>
-          <text x="105" y="190" text-anchor="middle" font-size="10" fill="#fff">clocked at 32 kHz</text>
-          <text x="105" y="206" text-anchor="middle" font-size="10" fill="#8888a8">~100 nA</text>
+          <rect x="30" y="150" width="150" height="70" rx="6" fill="#384d46" stroke="#87d5bb"/>
+          <text x="105" y="172" text-anchor="middle" fill="#87d5bb" font-weight="700">WIC</text>
+          <text x="105" y="190" text-anchor="middle" font-size="10" fill="#ffffff">clocked at 32 kHz</text>
+          <text x="105" y="206" text-anchor="middle" font-size="10" fill="#8eaac7">~100 nA</text>
 
-          <rect x="230" y="90" width="140" height="70" rx="6" fill="#1a0a2a" stroke="#a78bfa"/>
-          <text x="300" y="112" text-anchor="middle" fill="#a78bfa" font-weight="700">Always-on IRQs</text>
-          <text x="300" y="130" text-anchor="middle" font-size="10" fill="#fff">RTC · GPIO EXTI · LPUART</text>
-          <text x="300" y="146" text-anchor="middle" font-size="10" fill="#fff">Low-power comparator</text>
+          <rect x="230" y="90" width="140" height="70" rx="6" fill="#352e45" stroke="#c7b9fe"/>
+          <text x="300" y="112" text-anchor="middle" fill="#c7b9fe" font-weight="700">Always-on IRQs</text>
+          <text x="300" y="130" text-anchor="middle" font-size="10" fill="#ffffff">RTC · GPIO EXTI · LPUART</text>
+          <text x="300" y="146" text-anchor="middle" font-size="10" fill="#ffffff">Low-power comparator</text>
 
-          <line x1="230" y1="125" x2="180" y2="180" stroke="#4ecb8d" stroke-width="2"/>
-          <line x1="105" y1="150" x2="105" y2="100" stroke="#f5a623" stroke-width="2"/>
-          <text x="60" y="135" font-size="10" fill="#f5a623">wakeup req</text>
+          <line x1="230" y1="125" x2="180" y2="180" stroke="#87d5bb" stroke-width="2"/>
+          <line x1="105" y1="150" x2="105" y2="100" stroke="#f4c44d" stroke-width="2"/>
+          <text x="60" y="135" font-size="10" fill="#f4c44d">wakeup req</text>
         </g>
       </svg>
     </div>
@@ -217,7 +217,7 @@
   </div>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">07</span><h2>Retention</h2></div>
   <div class="cols cols-2">
     <div>
@@ -243,7 +243,7 @@
   </div>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">08</span><h2>Tickless RTOS</h2></div>
   <div class="cols cols-2">
     <div>
@@ -283,7 +283,7 @@ void vPortSuppressTicksAndSleep(TickType_t xExpected)
   </div>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">09</span><h2>DVFS on Cortex-M</h2></div>
   <div class="cols cols-2">
     <div>
@@ -312,7 +312,7 @@ void vPortSuppressTicksAndSleep(TickType_t xExpected)
   </div>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">10</span><h2>Clock Gating by Peripheral</h2></div>
   <div class="cols cols-2">
     <div>
@@ -342,7 +342,7 @@ NRF_UARTE0-&gt;ENABLE = UARTE_ENABLE_ENABLE_Disabled;</code></pre>
   </div>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">11</span><h2>Vendor Sleep Modes — STM32 Family</h2></div>
   <table style="font-size:0.6em;">
     <tr><th>Mode</th><th>CPU clock</th><th>Flash</th><th>PLL</th><th>SRAM</th><th>Wake sources</th><th>Current (typ L5)</th></tr>
@@ -358,7 +358,7 @@ NRF_UARTE0-&gt;ENABLE = UARTE_ENABLE_ENABLE_Disabled;</code></pre>
   <p class="smaller dim">Each mode is entered via a specific sequence of <code>PWR</code> register writes, then <code>SCB-&gt;SCR.SLEEPDEEP</code> + WFI. Recovery paths differ — STANDBY returns at reset, STOP returns to the WFI instruction.</p>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">12</span><h2>Nordic nRF52 / nRF54 Model</h2></div>
   <div class="cols cols-2">
     <div>
@@ -381,7 +381,7 @@ NRF_UARTE0-&gt;ENABLE = UARTE_ENABLE_ENABLE_Disabled;</code></pre>
   </div>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">13</span><h2>Ambiq — Subthreshold Cortex-M</h2></div>
   <div class="cols cols-2">
     <div>
@@ -405,7 +405,7 @@ NRF_UARTE0-&gt;ENABLE = UARTE_ENABLE_ENABLE_Disabled;</code></pre>
   </div>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">14</span><h2>EEMBC ULPMark &amp; Benchmark Culture</h2></div>
   <div class="cols cols-2">
     <div>
@@ -433,7 +433,7 @@ NRF_UARTE0-&gt;ENABLE = UARTE_ENABLE_ENABLE_Disabled;</code></pre>
   </div>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">15</span><h2>CoreMark / mA — Active Efficiency</h2></div>
   <div class="cols cols-2">
     <div>
@@ -455,7 +455,7 @@ NRF_UARTE0-&gt;ENABLE = UARTE_ENABLE_ENABLE_Disabled;</code></pre>
   </div>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">16</span><h2>Tickless Gotchas</h2></div>
   <div class="cols cols-2">
     <div>
@@ -489,7 +489,7 @@ NRF_UARTE0-&gt;ENABLE = UARTE_ENABLE_ENABLE_Disabled;</code></pre>
   </div>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">17</span><h2>Debug While Sleeping</h2></div>
   <div class="cols cols-2">
     <div>
@@ -519,39 +519,39 @@ NRF_UARTE0-&gt;ENABLE = UARTE_ENABLE_ENABLE_Disabled;</code></pre>
   </div>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">18</span><h2>Event-Driven Architecture</h2></div>
   <svg class="diagram" viewBox="0 0 900 250" style="width:100%;">
     <g font-family="DM Sans" font-size="11">
-      <rect x="20" y="40" width="180" height="50" rx="6" fill="#0a2a1a" stroke="#4ecb8d"/>
-      <text x="110" y="62" text-anchor="middle" fill="#4ecb8d" font-weight="700">RTC tick / BLE evt / sensor</text>
-      <text x="110" y="78" text-anchor="middle" font-size="10" fill="#fff">hardware event source</text>
+      <rect x="20" y="40" width="180" height="50" rx="6" fill="#384d46" stroke="#87d5bb"/>
+      <text x="110" y="62" text-anchor="middle" fill="#87d5bb" font-weight="700">RTC tick / BLE evt / sensor</text>
+      <text x="110" y="78" text-anchor="middle" font-size="10" fill="#ffffff">hardware event source</text>
 
-      <rect x="240" y="40" width="180" height="50" rx="6" fill="#2a1a0a" stroke="#f5a623"/>
-      <text x="330" y="62" text-anchor="middle" fill="#f5a623" font-weight="700">Wake CPU</text>
-      <text x="330" y="78" text-anchor="middle" font-size="10" fill="#fff">WIC asserts wake</text>
+      <rect x="240" y="40" width="180" height="50" rx="6" fill="#3f3f3a" stroke="#f4c44d"/>
+      <text x="330" y="62" text-anchor="middle" fill="#f4c44d" font-weight="700">Wake CPU</text>
+      <text x="330" y="78" text-anchor="middle" font-size="10" fill="#ffffff">WIC asserts wake</text>
 
-      <rect x="460" y="40" width="180" height="50" rx="6" fill="#1a0a2a" stroke="#a78bfa"/>
-      <text x="550" y="62" text-anchor="middle" fill="#a78bfa" font-weight="700">ISR</text>
-      <text x="550" y="78" text-anchor="middle" font-size="10" fill="#fff">quickly handle + post</text>
+      <rect x="460" y="40" width="180" height="50" rx="6" fill="#352e45" stroke="#c7b9fe"/>
+      <text x="550" y="62" text-anchor="middle" fill="#c7b9fe" font-weight="700">ISR</text>
+      <text x="550" y="78" text-anchor="middle" font-size="10" fill="#ffffff">quickly handle + post</text>
 
-      <rect x="680" y="40" width="180" height="50" rx="6" fill="#0a1a2a" stroke="#60a5fa"/>
-      <text x="770" y="62" text-anchor="middle" fill="#60a5fa" font-weight="700">Post + WFI</text>
-      <text x="770" y="78" text-anchor="middle" font-size="10" fill="#fff">SLEEPONEXIT auto-sleep</text>
+      <rect x="680" y="40" width="180" height="50" rx="6" fill="#17375d" stroke="#a5dcfe"/>
+      <text x="770" y="62" text-anchor="middle" fill="#a5dcfe" font-weight="700">Post + WFI</text>
+      <text x="770" y="78" text-anchor="middle" font-size="10" fill="#ffffff">SLEEPONEXIT auto-sleep</text>
 
-      <line x1="200" y1="65" x2="240" y2="65" stroke="#8888a8" marker-end="url(#arrD)"/>
-      <line x1="420" y1="65" x2="460" y2="65" stroke="#8888a8" marker-end="url(#arrD)"/>
-      <line x1="640" y1="65" x2="680" y2="65" stroke="#8888a8" marker-end="url(#arrD)"/>
-      <defs><marker id="arrD" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#8888a8"/></marker></defs>
+      <line x1="200" y1="65" x2="240" y2="65" stroke="#8eaac7" marker-end="url(#arrD)"/>
+      <line x1="420" y1="65" x2="460" y2="65" stroke="#8eaac7" marker-end="url(#arrD)"/>
+      <line x1="640" y1="65" x2="680" y2="65" stroke="#8eaac7" marker-end="url(#arrD)"/>
+      <defs><marker id="arrD" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#8eaac7"/></marker></defs>
 
-      <rect x="20" y="150" width="840" height="60" rx="6" fill="#10101a" stroke="#f5a623"/>
-      <text x="440" y="172" text-anchor="middle" fill="#f5a623" font-weight="700">No polling. No busy-wait. main() is a single WFI.</text>
-      <text x="440" y="194" text-anchor="middle" font-size="10" fill="#ccc">SLEEPONEXIT=1 → on ISR return hardware executes WFI automatically.</text>
+      <rect x="20" y="150" width="840" height="60" rx="6" fill="#143154" stroke="#f4c44d"/>
+      <text x="440" y="172" text-anchor="middle" fill="#f4c44d" font-weight="700">No polling. No busy-wait. main() is a single WFI.</text>
+      <text x="440" y="194" text-anchor="middle" font-size="10" fill="#d0ddea">SLEEPONEXIT=1 → on ISR return hardware executes WFI automatically.</text>
     </g>
   </svg>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">19</span><h2>Common Bad Patterns</h2></div>
   <div class="cols cols-2">
     <div>
@@ -585,7 +585,7 @@ NRF_UARTE0-&gt;ENABLE = UARTE_ENABLE_ENABLE_Disabled;</code></pre>
   </div>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">20</span><h2>Measuring — The Tooling You Need</h2></div>
   <div class="cols cols-2">
     <div>
@@ -613,7 +613,7 @@ NRF_UARTE0-&gt;ENABLE = UARTE_ENABLE_ENABLE_Disabled;</code></pre>
   </div>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">21</span><h2>Battery-Life Math — Worked Example</h2></div>
   <div class="cols cols-2">
     <div>
@@ -645,7 +645,7 @@ life = 225 / 0.018 = 12500 h ≈ 1.4 years</code></pre>
   </div>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">22</span><h2>Interview Checklist</h2></div>
   <div class="cols cols-2">
     <div>
@@ -669,7 +669,7 @@ life = 225 / 0.018 = 12500 h ≈ 1.4 years</code></pre>
   </div>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">23</span><h2>References</h2></div>
   <div style="max-width:90%;margin:0 auto;font-size:0.58em;line-height:1.8;">
     <p>

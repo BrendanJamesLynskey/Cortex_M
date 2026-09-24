@@ -11,8 +11,8 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/black.min.css">
 <style>
   :root {
-    --amber:#f5a623;--green:#4ecb8d;--purple:#a78bfa;--blue:#60a5fa;--red:#f87171;
-    --bg:#0a0a0f;--bg2:#10101a;--bg3:#181824;--border:#2a2a3a;--text:#e8e8f0;--muted:#8888a8;
+    --amber:#f4c44d;--green:#87d5bb;--purple:#c7b9fe;--blue:#a5dcfe;--red:#fd8c79;
+    --bg:#10294a;--bg2:#143154;--bg3:#18375d;--border:#305782;--text:#ecf1f7;--muted:#8eaac7;
   }
   .reveal-viewport { background: var(--bg); }
   .reveal .slides section { background: transparent; }
@@ -23,7 +23,7 @@
   .reveal section::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, var(--amber), var(--green)); }
   .reveal { font-family: 'DM Sans', sans-serif; color: var(--text); font-size: 22px; }
   .reveal .slide-number { font-family: 'JetBrains Mono', monospace; font-size: 0.7em; color: var(--muted); }
-  .reveal h1, .reveal h2, .reveal h3 { font-family: 'Playfair Display', serif; color: #fff; text-transform: none; letter-spacing: -0.01em; }
+  .reveal h1, .reveal h2, .reveal h3 { font-family: 'Playfair Display', serif; color: #ffffff; text-transform: none; letter-spacing: -0.01em; }
   .reveal h1 { font-size: 2.4em; font-weight: 900; color: var(--amber); line-height: 1.1; }
   .reveal h2 { font-size: 1.7em; font-weight: 700; color: var(--amber); margin-bottom: 0.6em; }
   .reveal h3 { font-size: 1.2em; font-weight: 700; color: var(--green); margin-bottom: 0.3em; }
@@ -31,19 +31,19 @@
   .reveal li { font-size: 0.7em; line-height: 1.5; margin-bottom: 0.25em; }
   .reveal code { font-family: 'JetBrains Mono', monospace; font-size: .72em; }
   .reveal pre  { background: var(--bg3); border: 1px solid var(--border); border-radius: 8px; padding: 0.5em 1em; margin: 0.4em 0; width: 100%; box-shadow: none; }
-  .reveal pre code { font-size: 0.58em; line-height: 1.5; background: transparent; color: #cdd6f4; }
+  .reveal pre code { font-size: 0.58em; line-height: 1.5; background: transparent; color: #dbe5ef; }
   .slide-hdr { display: flex; align-items: center; gap: .4em; border-bottom: 1px solid var(--border); padding-bottom: .2em; margin-bottom: .3em; }
   .slide-hdr .tag { font-family: 'JetBrains Mono', monospace; font-size: 0.55em; font-weight: 600; color: var(--bg); background: var(--amber); padding: .1em .4em; border-radius: 3px; letter-spacing: .04em; }
   .slide-hdr h2 { margin: 0; font-size: 1.4em; }
   .cols{display:grid;gap:1em;} .cols-2{grid-template-columns:1fr 1fr;} .cols-3{grid-template-columns:1fr 1fr 1fr;} .cols-6040{grid-template-columns:6fr 4fr;} .cols-4060{grid-template-columns:4fr 6fr;}
-  .card { background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; padding: 1em 1.2em; box-shadow: 0 4px 20px rgba(0,0,0,0.3); margin: 0.4em 0; }
+  .card { background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; padding: 1em 1.2em; box-shadow: 0 4px 20px rgba(10,31,58,0.3); margin: 0.4em 0; }
   .card.amber { border-left: 3px solid var(--amber); } .card.green { border-left: 3px solid var(--green); } .card.purple{ border-left: 3px solid var(--purple); } .card.blue  { border-left: 3px solid var(--blue); } .card.red   { border-left: 3px solid var(--red); }
   .card h3 { font-size: 1em; margin: 0 0 0.4em; }
-  .card p, .card ul  { font-size: 0.8em; margin: 0; color: #b8b8d0; } .card ul { padding-left: 1.2em; } .card li { font-size: 0.85em; margin-bottom: 0.25em; }
+  .card p, .card ul  { font-size: 0.8em; margin: 0; color: #bfd1e2; } .card ul { padding-left: 1.2em; } .card li { font-size: 0.85em; margin-bottom: 0.25em; }
   .reveal table { width: 100%; border-collapse: collapse; font-size: 0.65em; margin: 0.5em 0; }
   .reveal table th { background: var(--bg3); color: var(--amber); padding: 0.5em 0.7em; border: 1px solid var(--border); text-align: left; font-weight: 700; }
-  .reveal table td { padding: 0.5em 0.7em; border: 1px solid var(--border); color: #ccc; vertical-align: top; }
-  .reveal table tr:nth-child(even) td { background: #0e0e18; }
+  .reveal table td { padding: 0.5em 0.7em; border: 1px solid var(--border); color: #d0ddea; vertical-align: top; }
+  .reveal table tr:nth-child(even) td { background: #132f51; }
   .a{color:var(--amber);font-weight:600;} .g{color:var(--green);font-weight:600;} .p{color:var(--purple);font-weight:600;} .b{color:var(--blue);font-weight:600;} .r{color:var(--red);font-weight:600;} .mono{font-family:'JetBrains Mono',monospace;}
   svg.diagram { display: block; margin: 0 auto; overflow: visible; }
   .pill { display: inline-block; font-family: 'JetBrains Mono', monospace; font-size: 0.6em; padding: 0.15em 0.6em; border-radius: 999px; border: 1px solid; margin: 0 .08em; }
@@ -56,9 +56,9 @@
   .tl { font-family: 'JetBrains Mono', monospace; font-size: 0.68em; display: grid; grid-template-columns: 90px 20px 1fr; gap: 0.2em 0.5em; margin: 0.3em 0; }
   .tl .yr { color: var(--amber); font-weight: 700; text-align: right; padding-top: 0.35em; }
   .tl .dot { color: var(--green); text-align: center; padding-top: 0.35em; font-size: 0.9em; }
-  .tl .ev { background: var(--bg2); border-left: 3px solid var(--border); border-radius: 4px; padding: 0.4em 0.7em; color: #cdd6f4; }
+  .tl .ev { background: var(--bg2); border-left: 3px solid var(--border); border-radius: 4px; padding: 0.4em 0.7em; color: #dbe5ef; }
   .tl .ev strong { color: var(--amber); }
-  .tl .ev.hi { border-left-color: var(--amber); background: #1a0f05; }
+  .tl .ev.hi { border-left-color: var(--amber); background: #263240; }
 
   /* Interactive ISA toggle */
   .isa-picker { display: flex; gap: 6px; margin: 0.4em 0; font-family: 'JetBrains Mono', monospace; font-size: 0.65em; flex-wrap: wrap; }
@@ -70,7 +70,7 @@
   .isa-info .s { color: var(--green); font-family: 'JetBrains Mono', monospace; font-size: 0.8em; margin-bottom: 0.3em; }
   .isa-info ul { margin: 0.2em 0 0 1em; font-size: 0.9em; }
 
-  .quote { font-style: italic; color: #ccc; padding: 0.5em 1em; border-left: 3px solid var(--blue); background: var(--bg2); border-radius: 4px; font-size: 0.8em; }
+  .quote { font-style: italic; color: #d0ddea; padding: 0.5em 1em; border-left: 3px solid var(--blue); background: var(--bg2); border-radius: 4px; font-size: 0.8em; }
   .quote cite { display: block; font-size: 0.72em; color: var(--muted); font-style: normal; margin-top: 0.4em; }
 </style>
 </head>
@@ -78,7 +78,7 @@
 <div class="reveal">
 <div class="slides">
 
-<section class="title-slide" data-background-color="#0a0a0f">
+<section class="title-slide" data-background-color="#10294a">
   <div style="font-family:'JetBrains Mono',monospace;font-size:.5em;color:var(--muted);margin-bottom:.4em;letter-spacing:.1em;">ARM CORTEX-M · PRESENTATION 01</div>
   <h1>History of Arm &amp; the Architecture</h1>
   <div class="subtitle">From the BBC Micro to Armv9 · Four decades of one RISC design</div>
@@ -87,7 +87,7 @@
   <div class="meta" style="margin-top:1em;">Navigate: <span class="mono">→ ←</span> &nbsp;|&nbsp; Overview: <span class="mono">Esc</span> &nbsp;|&nbsp; Fullscreen: <span class="mono">F</span></div>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">02</span><h2>Why the History Matters</h2></div>
   <div class="cols cols-2">
     <div>
@@ -110,7 +110,7 @@
   </div>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">03</span><h2>Prehistory — Acorn Computers</h2></div>
   <div class="cols cols-2">
     <div>
@@ -134,7 +134,7 @@
   </div>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">04</span><h2>ARM1 — First Silicon, April 1985</h2></div>
   <div class="cols cols-2">
     <div>
@@ -148,9 +148,9 @@
     </div>
     <div>
       <svg viewBox="0 0 320 220" style="width:100%;">
-        <rect x="10" y="10" width="300" height="200" rx="10" fill="#10101a" stroke="#f5a623"/>
-        <text x="160" y="38" text-anchor="middle" fill="#f5a623" font-family="Playfair Display" font-weight="700" font-size="16">ARM1 (1985)</text>
-        <g font-family="JetBrains Mono" font-size="11" fill="#cdd6f4">
+        <rect x="10" y="10" width="300" height="200" rx="10" fill="#143154" stroke="#f4c44d"/>
+        <text x="160" y="38" text-anchor="middle" fill="#f4c44d" font-family="Playfair Display" font-weight="700" font-size="16">ARM1 (1985)</text>
+        <g font-family="JetBrains Mono" font-size="11" fill="#dbe5ef">
           <text x="30" y="62">Process ........... VLSI 3 µm CMOS</text>
           <text x="30" y="82">Transistors ....... ~25,000</text>
           <text x="30" y="102">Die area .......... ~50 mm²</text>
@@ -166,7 +166,7 @@
   </div>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">05</span><h2>ARM2 / ARM3 — Commercial Products</h2></div>
   <div class="cols cols-2">
     <div>
@@ -195,7 +195,7 @@
   </div>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">06</span><h2>1990 — The Apple / VLSI Spin-Out</h2></div>
   <div class="cols cols-2">
     <div>
@@ -220,7 +220,7 @@
   </div>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">07</span><h2>ARM6 → ARM7TDMI — The Mobile Break</h2></div>
   <div class="cols cols-2">
     <div>
@@ -250,7 +250,7 @@
   </div>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">08</span><h2>Architecture Versions — Interactive</h2></div>
   <p class="dim small">Click a version to see what it added and what shipped under it.</p>
   <div class="isa-picker" id="isaPicker">
@@ -342,7 +342,7 @@
   </script>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">09</span><h2>Profile Split — The 2004 Decision</h2></div>
   <div class="cols cols-2">
     <div>
@@ -372,7 +372,7 @@
   </div>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">10</span><h2>Birth of Cortex-M</h2></div>
   <div class="tl">
     <div class="yr">2004</div><div class="dot">●</div>
@@ -413,7 +413,7 @@
   </div>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">11</span><h2>Why Thumb-Only in M-Profile?</h2></div>
   <div class="cols cols-2">
     <div>
@@ -451,29 +451,29 @@
   </div>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">12</span><h2>Shipments — the Cortex-M Curve</h2></div>
   <svg class="diagram" viewBox="0 0 900 300" style="width:100%;">
     <g font-family="JetBrains Mono" font-size="11">
       <!-- axes -->
-      <line x1="60"  y1="260" x2="880" y2="260" stroke="#8888a8"/>
-      <line x1="60"  y1="260" x2="60"  y2="30"  stroke="#8888a8"/>
+      <line x1="60"  y1="260" x2="880" y2="260" stroke="#8eaac7"/>
+      <line x1="60"  y1="260" x2="60"  y2="30"  stroke="#8eaac7"/>
 
-      <text x="60"  y="278" fill="#8888a8">2005</text>
-      <text x="190" y="278" fill="#8888a8">2010</text>
-      <text x="320" y="278" fill="#8888a8">2013</text>
-      <text x="450" y="278" fill="#8888a8">2016</text>
-      <text x="580" y="278" fill="#8888a8">2019</text>
-      <text x="710" y="278" fill="#8888a8">2022</text>
-      <text x="840" y="278" fill="#8888a8">2024</text>
+      <text x="60"  y="278" fill="#8eaac7">2005</text>
+      <text x="190" y="278" fill="#8eaac7">2010</text>
+      <text x="320" y="278" fill="#8eaac7">2013</text>
+      <text x="450" y="278" fill="#8eaac7">2016</text>
+      <text x="580" y="278" fill="#8eaac7">2019</text>
+      <text x="710" y="278" fill="#8eaac7">2022</text>
+      <text x="840" y="278" fill="#8eaac7">2024</text>
 
-      <text x="20" y="258" fill="#8888a8">0</text>
-      <text x="10" y="205" fill="#8888a8">10 B</text>
-      <text x="10" y="155" fill="#8888a8">20 B</text>
-      <text x="10" y="105" fill="#8888a8">30 B</text>
-      <text x="10" y="55"  fill="#8888a8">40 B</text>
+      <text x="20" y="258" fill="#8eaac7">0</text>
+      <text x="10" y="205" fill="#8eaac7">10 B</text>
+      <text x="10" y="155" fill="#8eaac7">20 B</text>
+      <text x="10" y="105" fill="#8eaac7">30 B</text>
+      <text x="10" y="55"  fill="#8eaac7">40 B</text>
 
-      <text x="50" y="22" fill="#f5a623">Cumulative Arm-based chips shipped (approx.)</text>
+      <text x="50" y="22" fill="#f4c44d">Cumulative Arm-based chips shipped (approx.)</text>
 
       <!-- a smooth curve (piecewise) -->
       <path d="M 60 258
@@ -483,29 +483,29 @@
                L 580 145
                L 710 80
                L 840 35"
-            fill="none" stroke="#f5a623" stroke-width="3"/>
+            fill="none" stroke="#f4c44d" stroke-width="3"/>
 
       <!-- milestone markers -->
-      <circle cx="320" cy="235" r="5" fill="#4ecb8d"/>
-      <text x="325" y="225" fill="#4ecb8d" font-size="10">10B cumul. (2013)</text>
+      <circle cx="320" cy="235" r="5" fill="#87d5bb"/>
+      <text x="325" y="225" fill="#87d5bb" font-size="10">10B cumul. (2013)</text>
 
-      <circle cx="450" cy="200" r="5" fill="#4ecb8d"/>
-      <text x="455" y="190" fill="#4ecb8d" font-size="10">~18B (2017, M-profile ≈ 2/3)</text>
+      <circle cx="450" cy="200" r="5" fill="#87d5bb"/>
+      <text x="455" y="190" fill="#87d5bb" font-size="10">~18B (2017, M-profile ≈ 2/3)</text>
 
-      <circle cx="580" cy="145" r="5" fill="#4ecb8d"/>
-      <text x="585" y="135" fill="#4ecb8d" font-size="10">~28B (2020)</text>
+      <circle cx="580" cy="145" r="5" fill="#87d5bb"/>
+      <text x="585" y="135" fill="#87d5bb" font-size="10">~28B (2020)</text>
 
-      <circle cx="710" cy="80" r="5" fill="#4ecb8d"/>
-      <text x="715" y="70" fill="#4ecb8d" font-size="10">~40B (2022)</text>
+      <circle cx="710" cy="80" r="5" fill="#87d5bb"/>
+      <text x="715" y="70" fill="#87d5bb" font-size="10">~40B (2022)</text>
 
-      <circle cx="840" cy="35" r="5" fill="#4ecb8d"/>
-      <text x="700" y="30" fill="#4ecb8d" font-size="10">&gt; 50B (2024)</text>
+      <circle cx="840" cy="35" r="5" fill="#87d5bb"/>
+      <text x="700" y="30" fill="#87d5bb" font-size="10">&gt; 50B (2024)</text>
     </g>
   </svg>
   <p class="smaller dim">Figures from Arm's investor presentations and the 2023 IPO prospectus. Cortex-M represents the largest shipment slice (by unit count); Cortex-A represents the largest revenue slice.</p>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">13</span><h2>Inflection Points in M-Profile</h2></div>
   <div class="cols cols-3">
     <div class="card amber">
@@ -537,7 +537,7 @@
   </div>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">14</span><h2>The Licensing Model</h2></div>
   <div class="cols cols-2">
     <div>
@@ -567,7 +567,7 @@
   </div>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">15</span><h2>Corporate History — SoftBank, Nvidia, IPO</h2></div>
   <div class="tl">
     <div class="yr">1990</div><div class="dot">●</div><div class="ev">Arm Holdings founded (Apple / Acorn / VLSI joint venture), Cambridge.</div>
@@ -581,7 +581,7 @@
   </div>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">16</span><h2>What Cortex-M Inherits</h2></div>
   <div class="cols cols-2">
     <div>
@@ -622,7 +622,7 @@
   </div>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">17</span><h2>Competitive Landscape Today</h2></div>
   <table>
     <tr><th>Competitor</th><th>Position vs Cortex-M</th><th>Status (2024/5)</th></tr>
@@ -637,16 +637,16 @@
   </div>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">18</span><h2>Timeline — One Slide</h2></div>
   <svg class="diagram" viewBox="0 0 980 420" style="width:100%;">
     <defs>
-      <marker id="arrB" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#f5a623"/></marker>
+      <marker id="arrB" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#f4c44d"/></marker>
     </defs>
     <g font-family="DM Sans" font-size="11">
       <!-- ruler -->
-      <line x1="40" y1="380" x2="960" y2="380" stroke="#8888a8"/>
-      <g fill="#8888a8">
+      <line x1="40" y1="380" x2="960" y2="380" stroke="#8eaac7"/>
+      <g fill="#8eaac7">
         <text x="60"  y="400" text-anchor="middle">1985</text>
         <text x="180" y="400" text-anchor="middle">1990</text>
         <text x="310" y="400" text-anchor="middle">1994</text>
@@ -658,46 +658,46 @@
       </g>
 
       <!-- rows -->
-      <text x="5" y="60"  fill="#f5a623" font-weight="700" font-size="11">Corporate</text>
-      <text x="5" y="160" fill="#4ecb8d" font-weight="700" font-size="11">A / R profiles</text>
-      <text x="5" y="260" fill="#60a5fa" font-weight="700" font-size="11">M profile</text>
+      <text x="5" y="60"  fill="#f4c44d" font-weight="700" font-size="11">Corporate</text>
+      <text x="5" y="160" fill="#87d5bb" font-weight="700" font-size="11">A / R profiles</text>
+      <text x="5" y="260" fill="#a5dcfe" font-weight="700" font-size="11">M profile</text>
 
       <!-- corporate -->
-      <g fill="#fff">
-        <rect x="50"  y="40" width="120" height="34" rx="5" fill="#2a1a0a" stroke="#f5a623"/><text x="110" y="62" text-anchor="middle">Acorn / ARM1</text>
-        <rect x="170" y="40" width="140" height="34" rx="5" fill="#2a1a0a" stroke="#f5a623"/><text x="240" y="62" text-anchor="middle">Apple JV (1990)</text>
-        <rect x="370" y="40" width="120" height="34" rx="5" fill="#2a1a0a" stroke="#f5a623"/><text x="430" y="62" text-anchor="middle">LSE IPO (1998)</text>
-        <rect x="620" y="40" width="120" height="34" rx="5" fill="#2a1a0a" stroke="#f5a623"/><text x="680" y="62" text-anchor="middle">SoftBank (2016)</text>
-        <rect x="840" y="40" width="120" height="34" rx="5" fill="#2a1a0a" stroke="#f5a623"/><text x="900" y="62" text-anchor="middle">Arm IPO (2023)</text>
+      <g fill="#ffffff">
+        <rect x="50"  y="40" width="120" height="34" rx="5" fill="#3f3f3a" stroke="#f4c44d"/><text x="110" y="62" text-anchor="middle">Acorn / ARM1</text>
+        <rect x="170" y="40" width="140" height="34" rx="5" fill="#3f3f3a" stroke="#f4c44d"/><text x="240" y="62" text-anchor="middle">Apple JV (1990)</text>
+        <rect x="370" y="40" width="120" height="34" rx="5" fill="#3f3f3a" stroke="#f4c44d"/><text x="430" y="62" text-anchor="middle">LSE IPO (1998)</text>
+        <rect x="620" y="40" width="120" height="34" rx="5" fill="#3f3f3a" stroke="#f4c44d"/><text x="680" y="62" text-anchor="middle">SoftBank (2016)</text>
+        <rect x="840" y="40" width="120" height="34" rx="5" fill="#3f3f3a" stroke="#f4c44d"/><text x="900" y="62" text-anchor="middle">Arm IPO (2023)</text>
       </g>
 
       <!-- A/R -->
-      <g fill="#fff">
-        <rect x="250" y="140" width="110" height="34" rx="5" fill="#0a2a1a" stroke="#4ecb8d"/><text x="305" y="162" text-anchor="middle">ARM7TDMI</text>
-        <rect x="400" y="140" width="110" height="34" rx="5" fill="#0a2a1a" stroke="#4ecb8d"/><text x="455" y="162" text-anchor="middle">Cortex-A8</text>
-        <rect x="540" y="140" width="110" height="34" rx="5" fill="#0a2a1a" stroke="#4ecb8d"/><text x="595" y="162" text-anchor="middle">Armv8 A64</text>
-        <rect x="760" y="140" width="120" height="34" rx="5" fill="#0a2a1a" stroke="#4ecb8d"/><text x="820" y="162" text-anchor="middle">Armv9 / SVE2</text>
+      <g fill="#ffffff">
+        <rect x="250" y="140" width="110" height="34" rx="5" fill="#384d46" stroke="#87d5bb"/><text x="305" y="162" text-anchor="middle">ARM7TDMI</text>
+        <rect x="400" y="140" width="110" height="34" rx="5" fill="#384d46" stroke="#87d5bb"/><text x="455" y="162" text-anchor="middle">Cortex-A8</text>
+        <rect x="540" y="140" width="110" height="34" rx="5" fill="#384d46" stroke="#87d5bb"/><text x="595" y="162" text-anchor="middle">Armv8 A64</text>
+        <rect x="760" y="140" width="120" height="34" rx="5" fill="#384d46" stroke="#87d5bb"/><text x="820" y="162" text-anchor="middle">Armv9 / SVE2</text>
       </g>
 
       <!-- M -->
-      <g fill="#fff">
-        <rect x="410" y="240" width="100" height="34" rx="5" fill="#0a1a2a" stroke="#60a5fa"/><text x="460" y="262" text-anchor="middle">Cortex-M3</text>
-        <rect x="530" y="240" width="100" height="34" rx="5" fill="#0a1a2a" stroke="#60a5fa"/><text x="580" y="262" text-anchor="middle">M0 / M4</text>
-        <rect x="640" y="240" width="100" height="34" rx="5" fill="#0a1a2a" stroke="#60a5fa"/><text x="690" y="262" text-anchor="middle">M7 / M33</text>
-        <rect x="750" y="240" width="100" height="34" rx="5" fill="#0a1a2a" stroke="#60a5fa"/><text x="800" y="262" text-anchor="middle">M55 (MVE)</text>
-        <rect x="860" y="240" width="100" height="34" rx="5" fill="#0a1a2a" stroke="#60a5fa"/><text x="910" y="262" text-anchor="middle">M85 / M52</text>
+      <g fill="#ffffff">
+        <rect x="410" y="240" width="100" height="34" rx="5" fill="#17375d" stroke="#a5dcfe"/><text x="460" y="262" text-anchor="middle">Cortex-M3</text>
+        <rect x="530" y="240" width="100" height="34" rx="5" fill="#17375d" stroke="#a5dcfe"/><text x="580" y="262" text-anchor="middle">M0 / M4</text>
+        <rect x="640" y="240" width="100" height="34" rx="5" fill="#17375d" stroke="#a5dcfe"/><text x="690" y="262" text-anchor="middle">M7 / M33</text>
+        <rect x="750" y="240" width="100" height="34" rx="5" fill="#17375d" stroke="#a5dcfe"/><text x="800" y="262" text-anchor="middle">M55 (MVE)</text>
+        <rect x="860" y="240" width="100" height="34" rx="5" fill="#17375d" stroke="#a5dcfe"/><text x="910" y="262" text-anchor="middle">M85 / M52</text>
       </g>
 
       <!-- vertical links -->
-      <line x1="430" y1="180" x2="430" y2="240" stroke="#8888a8" stroke-dasharray="2 2"/>
-      <text x="435" y="230" font-size="10" fill="#8888a8">profile split</text>
-      <line x1="600" y1="180" x2="600" y2="240" stroke="#8888a8" stroke-dasharray="2 2"/>
-      <text x="605" y="230" font-size="10" fill="#8888a8">v8 split</text>
+      <line x1="430" y1="180" x2="430" y2="240" stroke="#8eaac7" stroke-dasharray="2 2"/>
+      <text x="435" y="230" font-size="10" fill="#8eaac7">profile split</text>
+      <line x1="600" y1="180" x2="600" y2="240" stroke="#8eaac7" stroke-dasharray="2 2"/>
+      <text x="605" y="230" font-size="10" fill="#8eaac7">v8 split</text>
     </g>
   </svg>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">19</span><h2>Lessons for the Interview</h2></div>
   <div class="cols cols-2">
     <div>
@@ -718,7 +718,7 @@
   </div>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">20</span><h2>References</h2></div>
   <div style="max-width:90%;margin:0 auto;font-size:0.58em;line-height:1.8;">
     <p>

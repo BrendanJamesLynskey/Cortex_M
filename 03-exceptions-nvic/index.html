@@ -11,10 +11,10 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/black.min.css">
 <style>
   :root {
-    --amber:  #f5a623; --green:  #4ecb8d; --purple: #a78bfa;
-    --blue:   #60a5fa; --red:    #f87171;
-    --bg:     #0a0a0f; --bg2:    #10101a; --bg3:    #181824;
-    --border: #2a2a3a; --text:   #e8e8f0; --muted:  #8888a8;
+    --amber:  #f4c44d; --green:  #87d5bb; --purple: #c7b9fe;
+    --blue:   #a5dcfe; --red:    #fd8c79;
+    --bg:     #10294a; --bg2:    #143154; --bg3:    #18375d;
+    --border: #305782; --text:   #ecf1f7; --muted:  #8eaac7;
   }
   .reveal-viewport { background: var(--bg); }
   .reveal .slides section { background: transparent; }
@@ -25,7 +25,7 @@
   .reveal section::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, var(--amber), var(--green)); }
   .reveal { font-family: 'DM Sans', sans-serif; color: var(--text); font-size: 22px; }
   .reveal .slide-number { font-family: 'JetBrains Mono', monospace; font-size: 0.7em; color: var(--muted); }
-  .reveal h1, .reveal h2, .reveal h3 { font-family: 'Playfair Display', serif; color: #fff; text-transform: none; letter-spacing: -0.01em; }
+  .reveal h1, .reveal h2, .reveal h3 { font-family: 'Playfair Display', serif; color: #ffffff; text-transform: none; letter-spacing: -0.01em; }
   .reveal h1 { font-size: 2.4em; font-weight: 900; color: var(--amber); line-height: 1.1; }
   .reveal h2 { font-size: 1.7em; font-weight: 700; color: var(--amber); margin-bottom: 0.6em; }
   .reveal h3 { font-size: 1.2em; font-weight: 700; color: var(--green); margin-bottom: 0.3em; }
@@ -33,7 +33,7 @@
   .reveal li { font-size: 0.7em; line-height: 1.5; margin-bottom: 0.25em; }
   .reveal code { font-family: 'JetBrains Mono', monospace; font-size: .72em; }
   .reveal pre  { box-shadow: none; background: var(--bg3); border: 1px solid var(--border); border-radius: 8px; padding: 0.5em 1em; margin: 0.4em 0; width: 100%; }
-  .reveal pre code { font-size: 0.58em; line-height: 1.5; background: transparent; color: #cdd6f4; }
+  .reveal pre code { font-size: 0.58em; line-height: 1.5; background: transparent; color: #dbe5ef; }
   .slide-hdr { display: flex; align-items: center; gap: .4em; border-bottom: 1px solid var(--border); padding-bottom: .2em; margin-bottom: .3em; }
   .slide-hdr .tag { font-family: 'JetBrains Mono', monospace; font-size: 0.55em; font-weight: 600; color: var(--bg); background: var(--amber); padding: .1em .4em; border-radius: 3px; letter-spacing: .04em; }
   .slide-hdr h2 { margin: 0; font-size: 1.4em; }
@@ -42,20 +42,20 @@
   .cols-3 { grid-template-columns: 1fr 1fr 1fr; }
   .cols-6040 { grid-template-columns: 6fr 4fr; }
   .cols-4060 { grid-template-columns: 4fr 6fr; }
-  .card { background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; padding: 1em 1.2em; box-shadow: 0 4px 20px rgba(0,0,0,0.3); margin: 0.4em 0; }
+  .card { background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; padding: 1em 1.2em; box-shadow: 0 4px 20px rgba(10,31,58,0.3); margin: 0.4em 0; }
   .card.amber { border-left: 3px solid var(--amber); }
   .card.green { border-left: 3px solid var(--green); }
   .card.purple{ border-left: 3px solid var(--purple); }
   .card.blue  { border-left: 3px solid var(--blue); }
   .card.red   { border-left: 3px solid var(--red); }
   .card h3 { font-size: 1em; margin: 0 0 0.4em; }
-  .card p, .card ul  { font-size: 0.8em; margin: 0; color: #b8b8d0; }
+  .card p, .card ul  { font-size: 0.8em; margin: 0; color: #bfd1e2; }
   .card ul { margin: 0; padding-left: 1.2em; }
-  .card li { font-size: 0.85em; color: #b8b8d0; margin-bottom: 0.25em; }
+  .card li { font-size: 0.85em; color: #bfd1e2; margin-bottom: 0.25em; }
   .reveal table { width: 100%; border-collapse: collapse; font-size: 0.65em; margin: 0.5em 0; }
   .reveal table th { background: var(--bg3); color: var(--amber); padding: 0.5em 0.7em; border: 1px solid var(--border); text-align: left; font-weight: 700; }
-  .reveal table td { padding: 0.5em 0.7em; border: 1px solid var(--border); color: #ccc; vertical-align: top; }
-  .reveal table tr:nth-child(even) td { background: #0e0e18; }
+  .reveal table td { padding: 0.5em 0.7em; border: 1px solid var(--border); color: #d0ddea; vertical-align: top; }
+  .reveal table tr:nth-child(even) td { background: #132f51; }
   .a  { color: var(--amber); font-weight: 600; }
   .g  { color: var(--green); font-weight: 600; }
   .p  { color: var(--purple); font-weight: 600; }
@@ -84,7 +84,7 @@
   .prio-demo .v { display: flex; gap: 4px; }
   .prio-demo .bit { width: 28px; height: 28px; border: 1px solid var(--border); background: var(--bg2); border-radius: 3px; text-align: center; line-height: 26px; color: var(--muted); }
   .prio-demo .bit.set { background: var(--amber); color: var(--bg); border-color: var(--amber); font-weight: 700; }
-  .prio-demo .bit.sub { background: #1a0a2a; color: var(--purple); border-color: var(--purple); }
+  .prio-demo .bit.sub { background: #352e45; color: var(--purple); border-color: var(--purple); }
   .prio-demo .bit.imp { background: var(--bg3); color: var(--muted); text-decoration: line-through; }
 
   /* Sequence diagram lanes */
@@ -92,18 +92,18 @@
   .seq .lbl { color: var(--amber); text-align: right; padding: 0.25em 0.4em; }
   .seq .lane { display: flex; gap: 2px; }
   .seq .tick { flex: 1; padding: 0.25em 0.3em; background: var(--bg2); border: 1px solid var(--border); border-radius: 3px; text-align: center; color: var(--text); }
-  .seq .tick.idle { background: #10101a; color: var(--muted); }
-  .seq .tick.hi   { background: #2a1a0a; color: var(--amber); border-color: var(--amber); font-weight: 700; }
-  .seq .tick.lo   { background: #0a2a1a; color: var(--green); border-color: var(--green); font-weight: 700; }
-  .seq .tick.stk  { background: #1a0a2a; color: var(--purple); border-color: var(--purple); }
-  .seq .tick.fault{ background: #2a0a0a; color: var(--red); border-color: var(--red); font-weight: 700; }
+  .seq .tick.idle { background: #143154; color: var(--muted); }
+  .seq .tick.hi   { background: #3f3f3a; color: var(--amber); border-color: var(--amber); font-weight: 700; }
+  .seq .tick.lo   { background: #384d46; color: var(--green); border-color: var(--green); font-weight: 700; }
+  .seq .tick.stk  { background: #352e45; color: var(--purple); border-color: var(--purple); }
+  .seq .tick.fault{ background: #492b26; color: var(--red); border-color: var(--red); font-weight: 700; }
 </style>
 </head>
 <body>
 <div class="reveal">
 <div class="slides">
 
-<section class="title-slide" data-background-color="#0a0a0f">
+<section class="title-slide" data-background-color="#10294a">
   <div style="font-family:'JetBrains Mono',monospace; font-size:.5em; color:var(--muted); margin-bottom:.4em; letter-spacing:.1em;">ARM CORTEX-M · PRESENTATION 03</div>
   <h1>Exceptions, Interrupts &amp; NVIC</h1>
   <div class="subtitle">Vector Table · Priorities · Tail-Chaining · Late Arrival · Faults</div>
@@ -111,7 +111,7 @@
   <div class="meta">The hardware scheduler inside every Cortex-M</div>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">02</span><h2>What Makes NVIC Special</h2></div>
   <div class="cols cols-2">
     <div>
@@ -136,17 +136,17 @@
   </div>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">03</span><h2>Exception Model Overview</h2></div>
   <svg class="diagram" viewBox="0 0 960 280" style="width:100%; max-width:960px;">
     <g font-family="DM Sans" font-size="12">
       <!-- system exceptions -->
-      <rect x="20" y="30" width="320" height="220" rx="8" fill="#2a1a0a" stroke="#f5a623"/>
-      <text x="180" y="55" text-anchor="middle" fill="#f5a623" font-family="Playfair Display" font-weight="700" font-size="16">System Exceptions (1–15)</text>
-      <g fill="#ccc" font-size="11">
-        <text x="40" y="85">   1  Reset           <tspan fill="#f87171">(fixed -3)</tspan></text>
-        <text x="40" y="102">  2  NMI             <tspan fill="#f87171">(fixed -2)</tspan></text>
-        <text x="40" y="119">  3  HardFault       <tspan fill="#f87171">(fixed -1)</tspan></text>
+      <rect x="20" y="30" width="320" height="220" rx="8" fill="#3f3f3a" stroke="#f4c44d"/>
+      <text x="180" y="55" text-anchor="middle" fill="#f4c44d" font-family="Playfair Display" font-weight="700" font-size="16">System Exceptions (1–15)</text>
+      <g fill="#d0ddea" font-size="11">
+        <text x="40" y="85">   1  Reset           <tspan fill="#fd8c79">(fixed -3)</tspan></text>
+        <text x="40" y="102">  2  NMI             <tspan fill="#fd8c79">(fixed -2)</tspan></text>
+        <text x="40" y="119">  3  HardFault       <tspan fill="#fd8c79">(fixed -1)</tspan></text>
         <text x="40" y="136">  4  MemManage       (prog)</text>
         <text x="40" y="153">  5  BusFault        (prog)</text>
         <text x="40" y="170">  6  UsageFault      (prog)</text>
@@ -155,12 +155,12 @@
         <text x="40" y="221"> 12  DebugMonitor    (prog)</text>
         <text x="40" y="238"> 14  PendSV          (prog)</text>
       </g>
-      <text x="180" y="263" text-anchor="middle" font-size="10" fill="#8888a8">15  SysTick</text>
+      <text x="180" y="263" text-anchor="middle" font-size="10" fill="#8eaac7">15  SysTick</text>
 
       <!-- external -->
-      <rect x="380" y="30" width="560" height="220" rx="8" fill="#0a2a1a" stroke="#4ecb8d"/>
-      <text x="660" y="55" text-anchor="middle" fill="#4ecb8d" font-family="Playfair Display" font-weight="700" font-size="16">External IRQs (16 …)</text>
-      <g font-size="11" fill="#ccc">
+      <rect x="380" y="30" width="560" height="220" rx="8" fill="#384d46" stroke="#87d5bb"/>
+      <text x="660" y="55" text-anchor="middle" fill="#87d5bb" font-family="Playfair Display" font-weight="700" font-size="16">External IRQs (16 …)</text>
+      <g font-size="11" fill="#d0ddea">
         <text x="400" y="85">Vendor-defined peripheral interrupts:</text>
         <text x="400" y="105">  • Timers (TIM, SysTick, RTC)</text>
         <text x="400" y="122">  • Comms (UART, SPI, I²C, CAN, USB, Ethernet)</text>
@@ -168,14 +168,14 @@
         <text x="400" y="156">  • DMA channel done / error</text>
         <text x="400" y="173">  • GPIO (EXTI) lines</text>
         <text x="400" y="190">  • Radio / crypto engine</text>
-        <text x="400" y="212" fill="#f5a623">Max IRQs:  v6-M = 32 · v7-M = 240 · v8-M = 480</text>
-        <text x="400" y="232" fill="#8888a8" font-size="10">Each IRQ occupies vector slot (16 + IRQn).</text>
+        <text x="400" y="212" fill="#f4c44d">Max IRQs:  v6-M = 32 · v7-M = 240 · v8-M = 480</text>
+        <text x="400" y="232" fill="#8eaac7" font-size="10">Each IRQ occupies vector slot (16 + IRQn).</text>
       </g>
     </g>
   </svg>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">04</span><h2>System Exceptions — The Full List</h2></div>
   <table style="font-size:0.58em;">
     <tr><th>#</th><th>Name</th><th>Priority</th><th>Purpose</th><th>Available on</th></tr>
@@ -193,7 +193,7 @@
   </table>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">05</span><h2>Vector Table Layout</h2></div>
   <div class="cols cols-2" style="margin-top:0.3em;">
     <div>
@@ -233,7 +233,7 @@
   </div>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">06</span><h2>Vector Table in C</h2></div>
 <pre><code class="mono">/* Classic CMSIS-style vector table for STM32F4 */
 extern uint32_t _estack;            /* provided by linker */
@@ -262,7 +262,7 @@ const void (* const g_vector_table[])(void) = {
   </div>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">07</span><h2>Priority Model</h2></div>
   <div class="cols cols-2" style="margin-top:0.3em;">
     <div>
@@ -287,7 +287,7 @@ const void (* const g_vector_table[])(void) = {
   </div>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">08</span><h2>Why Priority Bits Live in the <em>Upper</em> Half</h2></div>
   <div class="prio-demo">
     <div class="k">Full 8-bit field</div>
@@ -315,7 +315,7 @@ const void (* const g_vector_table[])(void) = {
   </ul>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">09</span><h2>Priority Grouping — Preempt vs Sub-Priority</h2></div>
   <div class="cols cols-4060" style="margin-top:0.3em;">
     <div>
@@ -353,7 +353,7 @@ const void (* const g_vector_table[])(void) = {
   </div>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">10</span><h2>Exception Entry Sequence (M3/M4)</h2></div>
   <div class="seq">
     <div class="lbl">cycle</div>
@@ -388,7 +388,7 @@ const void (* const g_vector_table[])(void) = {
   </div>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">11</span><h2>Tail-Chaining</h2></div>
   <div class="cols cols-2" style="margin-top:0.3em;">
     <div>
@@ -413,7 +413,7 @@ const void (* const g_vector_table[])(void) = {
   </div>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">12</span><h2>Late-Arrival Preemption</h2></div>
   <div class="cols cols-2" style="margin-top:0.3em;">
     <div>
@@ -441,7 +441,7 @@ const void (* const g_vector_table[])(void) = {
   </div>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">13</span><h2>Pop-Preemption</h2></div>
   <div class="cols cols-4060" style="margin-top:0.3em;">
     <div>
@@ -466,7 +466,7 @@ const void (* const g_vector_table[])(void) = {
   </div>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">14</span><h2>Lazy Floating-Point Stacking</h2></div>
   <div class="cols cols-2" style="margin-top:0.3em;">
     <div>
@@ -501,32 +501,32 @@ FPCCR |= FPCCR_ASPEN | FPCCR_LSPEN;</code></pre>
   </div>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">15</span><h2>Wake-up Interrupt Controller (WIC)</h2></div>
   <div class="cols cols-4060" style="margin-top:0.3em;">
     <div>
       <svg viewBox="0 0 400 240" style="width:100%;">
         <g font-family="DM Sans" font-size="11">
-          <rect x="40" y="40" width="140" height="60" rx="6" fill="#2a1a0a" stroke="#f5a623"/>
-          <text x="110" y="60" text-anchor="middle" fill="#f5a623" font-weight="700">Core + NVIC</text>
-          <text x="110" y="78" text-anchor="middle" fill="#fff" font-size="10">clock gated in</text>
-          <text x="110" y="92" text-anchor="middle" fill="#fff" font-size="10">deep sleep</text>
+          <rect x="40" y="40" width="140" height="60" rx="6" fill="#3f3f3a" stroke="#f4c44d"/>
+          <text x="110" y="60" text-anchor="middle" fill="#f4c44d" font-weight="700">Core + NVIC</text>
+          <text x="110" y="78" text-anchor="middle" fill="#ffffff" font-size="10">clock gated in</text>
+          <text x="110" y="92" text-anchor="middle" fill="#ffffff" font-size="10">deep sleep</text>
 
-          <rect x="40" y="150" width="140" height="60" rx="6" fill="#0a2a1a" stroke="#4ecb8d"/>
-          <text x="110" y="170" text-anchor="middle" fill="#4ecb8d" font-weight="700">WIC</text>
-          <text x="110" y="188" text-anchor="middle" fill="#fff" font-size="10">always clocked by</text>
-          <text x="110" y="202" text-anchor="middle" fill="#fff" font-size="10">32 kHz / LF clock</text>
+          <rect x="40" y="150" width="140" height="60" rx="6" fill="#384d46" stroke="#87d5bb"/>
+          <text x="110" y="170" text-anchor="middle" fill="#87d5bb" font-weight="700">WIC</text>
+          <text x="110" y="188" text-anchor="middle" fill="#ffffff" font-size="10">always clocked by</text>
+          <text x="110" y="202" text-anchor="middle" fill="#ffffff" font-size="10">32 kHz / LF clock</text>
 
-          <rect x="240" y="90" width="140" height="60" rx="6" fill="#1a0a2a" stroke="#a78bfa"/>
-          <text x="310" y="110" text-anchor="middle" fill="#a78bfa" font-weight="700">IRQ sources</text>
-          <text x="310" y="128" text-anchor="middle" fill="#fff" font-size="10">(UART RX, GPIO,</text>
-          <text x="310" y="142" text-anchor="middle" fill="#fff" font-size="10">RTC tick…)</text>
+          <rect x="240" y="90" width="140" height="60" rx="6" fill="#352e45" stroke="#c7b9fe"/>
+          <text x="310" y="110" text-anchor="middle" fill="#c7b9fe" font-weight="700">IRQ sources</text>
+          <text x="310" y="128" text-anchor="middle" fill="#ffffff" font-size="10">(UART RX, GPIO,</text>
+          <text x="310" y="142" text-anchor="middle" fill="#ffffff" font-size="10">RTC tick…)</text>
 
-          <line x1="240" y1="105" x2="180" y2="75" stroke="#8888a8" stroke-dasharray="2 2"/>
-          <line x1="240" y1="135" x2="180" y2="180" stroke="#4ecb8d"/>
-          <line x1="110" y1="150" x2="110" y2="100" stroke="#f5a623" stroke-width="2" marker-end="url(#arrA)"/>
-          <defs><marker id="arrA" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#f5a623"/></marker></defs>
-          <text x="120" y="128" fill="#f5a623" font-size="10">wake</text>
+          <line x1="240" y1="105" x2="180" y2="75" stroke="#8eaac7" stroke-dasharray="2 2"/>
+          <line x1="240" y1="135" x2="180" y2="180" stroke="#87d5bb"/>
+          <line x1="110" y1="150" x2="110" y2="100" stroke="#f4c44d" stroke-width="2" marker-end="url(#arrA)"/>
+          <defs><marker id="arrA" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#f4c44d"/></marker></defs>
+          <text x="120" y="128" fill="#f4c44d" font-size="10">wake</text>
         </g>
       </svg>
     </div>
@@ -542,7 +542,7 @@ FPCCR |= FPCCR_ASPEN | FPCCR_LSPEN;</code></pre>
   </div>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">16</span><h2>SVCall vs PendSV — Two Roles</h2></div>
   <div class="cols cols-2" style="margin-top:0.3em;">
     <div>
@@ -566,7 +566,7 @@ FPCCR |= FPCCR_ASPEN | FPCCR_LSPEN;</code></pre>
   </div>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">17</span><h2>SysTick — The Built-in Tick Timer</h2></div>
   <div class="cols cols-2" style="margin-top:0.3em;">
     <div>
@@ -602,38 +602,38 @@ void systick_init(uint32_t core_hz, uint32_t tick_hz)
   </div>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">18</span><h2>Fault Taxonomy</h2></div>
   <svg class="diagram" viewBox="0 0 900 260" style="width:100%;">
     <g font-family="DM Sans" font-size="12">
-      <rect x="20" y="20" width="160" height="50" rx="6" fill="#2a0a0a" stroke="#f87171"/>
-      <text x="100" y="40" text-anchor="middle" fill="#f87171" font-weight="700">HardFault</text>
-      <text x="100" y="58" text-anchor="middle" fill="#fff" font-size="10">catch-all / escalation</text>
+      <rect x="20" y="20" width="160" height="50" rx="6" fill="#492b26" stroke="#fd8c79"/>
+      <text x="100" y="40" text-anchor="middle" fill="#fd8c79" font-weight="700">HardFault</text>
+      <text x="100" y="58" text-anchor="middle" fill="#ffffff" font-size="10">catch-all / escalation</text>
 
-      <rect x="250" y="20" width="160" height="50" rx="6" fill="#2a1a0a" stroke="#f5a623"/>
-      <text x="330" y="40" text-anchor="middle" fill="#f5a623" font-weight="700">MemManage</text>
-      <text x="330" y="58" text-anchor="middle" fill="#fff" font-size="10">MPU / XN violation</text>
+      <rect x="250" y="20" width="160" height="50" rx="6" fill="#3f3f3a" stroke="#f4c44d"/>
+      <text x="330" y="40" text-anchor="middle" fill="#f4c44d" font-weight="700">MemManage</text>
+      <text x="330" y="58" text-anchor="middle" fill="#ffffff" font-size="10">MPU / XN violation</text>
 
-      <rect x="430" y="20" width="160" height="50" rx="6" fill="#2a1a0a" stroke="#f5a623"/>
-      <text x="510" y="40" text-anchor="middle" fill="#f5a623" font-weight="700">BusFault</text>
-      <text x="510" y="58" text-anchor="middle" fill="#fff" font-size="10">bus error abort</text>
+      <rect x="430" y="20" width="160" height="50" rx="6" fill="#3f3f3a" stroke="#f4c44d"/>
+      <text x="510" y="40" text-anchor="middle" fill="#f4c44d" font-weight="700">BusFault</text>
+      <text x="510" y="58" text-anchor="middle" fill="#ffffff" font-size="10">bus error abort</text>
 
-      <rect x="610" y="20" width="160" height="50" rx="6" fill="#2a1a0a" stroke="#f5a623"/>
-      <text x="690" y="40" text-anchor="middle" fill="#f5a623" font-weight="700">UsageFault</text>
-      <text x="690" y="58" text-anchor="middle" fill="#fff" font-size="10">undefined / div0 / align…</text>
+      <rect x="610" y="20" width="160" height="50" rx="6" fill="#3f3f3a" stroke="#f4c44d"/>
+      <text x="690" y="40" text-anchor="middle" fill="#f4c44d" font-weight="700">UsageFault</text>
+      <text x="690" y="58" text-anchor="middle" fill="#ffffff" font-size="10">undefined / div0 / align…</text>
 
-      <rect x="250" y="120" width="160" height="50" rx="6" fill="#1a0a2a" stroke="#a78bfa"/>
-      <text x="330" y="140" text-anchor="middle" fill="#a78bfa" font-weight="700">SecureFault</text>
-      <text x="330" y="158" text-anchor="middle" fill="#fff" font-size="10">v8-M TrustZone only</text>
+      <rect x="250" y="120" width="160" height="50" rx="6" fill="#352e45" stroke="#c7b9fe"/>
+      <text x="330" y="140" text-anchor="middle" fill="#c7b9fe" font-weight="700">SecureFault</text>
+      <text x="330" y="158" text-anchor="middle" fill="#ffffff" font-size="10">v8-M TrustZone only</text>
 
-      <line x1="330" y1="70" x2="140" y2="70" stroke="#8888a8" stroke-dasharray="3 3"/>
-      <line x1="510" y1="70" x2="140" y2="70" stroke="#8888a8" stroke-dasharray="3 3"/>
-      <line x1="690" y1="70" x2="140" y2="70" stroke="#8888a8" stroke-dasharray="3 3"/>
-      <line x1="330" y1="120" x2="140" y2="80" stroke="#8888a8" stroke-dasharray="3 3"/>
-      <text x="420" y="105" font-size="10" fill="#8888a8">escalate if disabled / nested</text>
+      <line x1="330" y1="70" x2="140" y2="70" stroke="#8eaac7" stroke-dasharray="3 3"/>
+      <line x1="510" y1="70" x2="140" y2="70" stroke="#8eaac7" stroke-dasharray="3 3"/>
+      <line x1="690" y1="70" x2="140" y2="70" stroke="#8eaac7" stroke-dasharray="3 3"/>
+      <line x1="330" y1="120" x2="140" y2="80" stroke="#8eaac7" stroke-dasharray="3 3"/>
+      <text x="420" y="105" font-size="10" fill="#8eaac7">escalate if disabled / nested</text>
 
-      <rect x="20" y="200" width="870" height="40" rx="6" fill="#10101a" stroke="#2a2a3a"/>
-      <text x="455" y="226" text-anchor="middle" fill="#ccc" font-size="11">Configurable fault → HardFault if (a) not enabled in SHCSR, (b) same-/higher-priority fault nests, (c) fault in NMI/HardFault itself, (d) vector fetch failure</text>
+      <rect x="20" y="200" width="870" height="40" rx="6" fill="#143154" stroke="#305782"/>
+      <text x="455" y="226" text-anchor="middle" fill="#d0ddea" font-size="11">Configurable fault → HardFault if (a) not enabled in SHCSR, (b) same-/higher-priority fault nests, (c) fault in NMI/HardFault itself, (d) vector fetch failure</text>
     </g>
   </svg>
   <div class="card amber" style="font-size:0.7em;">
@@ -641,7 +641,7 @@ void systick_init(uint32_t core_hz, uint32_t tick_hz)
   </div>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">19</span><h2>Decoding a HardFault</h2></div>
   <div class="cols cols-2" style="margin-top:0.3em;">
     <div>
@@ -679,7 +679,7 @@ void hard_fault_c(uint32_t *sf)
   </div>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">20</span><h2>Common Fault Causes — Recipes</h2></div>
   <table style="font-size:0.62em;">
     <tr><th>Symptom</th><th>CFSR bit</th><th>Typical cause</th></tr>
@@ -694,7 +694,7 @@ void hard_fault_c(uint32_t *sf)
   </table>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">21</span><h2>CMSIS NVIC API</h2></div>
   <div class="cols cols-2" style="margin-top:0.3em;">
     <div>
@@ -726,7 +726,7 @@ __set_BASEPRI(prev);</code></pre>
   </div>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">22</span><h2>ISR Design Patterns</h2></div>
   <div class="cols cols-3">
     <div class="card amber">
@@ -747,44 +747,44 @@ __set_BASEPRI(prev);</code></pre>
   </div>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">23</span><h2>FreeRTOS — Exception Priority Rules</h2></div>
   <svg class="diagram" viewBox="0 0 840 220" style="width:100%;">
     <g font-family="DM Sans" font-size="11">
       <!-- priority axis -->
-      <line x1="40" y1="180" x2="800" y2="180" stroke="#8888a8" stroke-width="1"/>
-      <text x="40"  y="200" fill="#f5a623">0 (highest)</text>
-      <text x="800" y="200" text-anchor="end" fill="#4ecb8d">255 (lowest)</text>
+      <line x1="40" y1="180" x2="800" y2="180" stroke="#8eaac7" stroke-width="1"/>
+      <text x="40"  y="200" fill="#f4c44d">0 (highest)</text>
+      <text x="800" y="200" text-anchor="end" fill="#87d5bb">255 (lowest)</text>
 
       <!-- "above kernel" -->
-      <rect x="60" y="70" width="280" height="100" rx="6" fill="#2a0a0a" stroke="#f87171"/>
-      <text x="200" y="92" text-anchor="middle" fill="#f87171" font-weight="700">Above kernel IRQs</text>
-      <text x="200" y="110" text-anchor="middle" font-size="10" fill="#fff">may NOT call FromISR APIs</text>
-      <text x="200" y="126" text-anchor="middle" font-size="10" fill="#fff">can preempt the scheduler</text>
-      <text x="200" y="148" text-anchor="middle" font-size="10" fill="#ccc">e.g. motor-control 20 kHz PWM ISR</text>
+      <rect x="60" y="70" width="280" height="100" rx="6" fill="#492b26" stroke="#fd8c79"/>
+      <text x="200" y="92" text-anchor="middle" fill="#fd8c79" font-weight="700">Above kernel IRQs</text>
+      <text x="200" y="110" text-anchor="middle" font-size="10" fill="#ffffff">may NOT call FromISR APIs</text>
+      <text x="200" y="126" text-anchor="middle" font-size="10" fill="#ffffff">can preempt the scheduler</text>
+      <text x="200" y="148" text-anchor="middle" font-size="10" fill="#d0ddea">e.g. motor-control 20 kHz PWM ISR</text>
 
       <!-- "kernel" -->
-      <rect x="360" y="70" width="280" height="100" rx="6" fill="#0a2a1a" stroke="#4ecb8d"/>
-      <text x="500" y="92" text-anchor="middle" fill="#4ecb8d" font-weight="700">Kernel-safe IRQs</text>
-      <text x="500" y="110" text-anchor="middle" font-size="10" fill="#fff">may call xQueueSendFromISR etc.</text>
-      <text x="500" y="126" text-anchor="middle" font-size="10" fill="#fff">blocked by taskENTER_CRITICAL</text>
-      <text x="500" y="148" text-anchor="middle" font-size="10" fill="#ccc">e.g. UART, DMA completion</text>
+      <rect x="360" y="70" width="280" height="100" rx="6" fill="#384d46" stroke="#87d5bb"/>
+      <text x="500" y="92" text-anchor="middle" fill="#87d5bb" font-weight="700">Kernel-safe IRQs</text>
+      <text x="500" y="110" text-anchor="middle" font-size="10" fill="#ffffff">may call xQueueSendFromISR etc.</text>
+      <text x="500" y="126" text-anchor="middle" font-size="10" fill="#ffffff">blocked by taskENTER_CRITICAL</text>
+      <text x="500" y="148" text-anchor="middle" font-size="10" fill="#d0ddea">e.g. UART, DMA completion</text>
 
       <!-- "PendSV/SysTick" -->
-      <rect x="660" y="70" width="150" height="100" rx="6" fill="#1a0a2a" stroke="#a78bfa"/>
-      <text x="735" y="92" text-anchor="middle" fill="#a78bfa" font-weight="700">PendSV / SysTick</text>
-      <text x="735" y="110" text-anchor="middle" font-size="10" fill="#fff">lowest priority</text>
-      <text x="735" y="126" text-anchor="middle" font-size="10" fill="#fff">kernel own use</text>
+      <rect x="660" y="70" width="150" height="100" rx="6" fill="#352e45" stroke="#c7b9fe"/>
+      <text x="735" y="92" text-anchor="middle" fill="#c7b9fe" font-weight="700">PendSV / SysTick</text>
+      <text x="735" y="110" text-anchor="middle" font-size="10" fill="#ffffff">lowest priority</text>
+      <text x="735" y="126" text-anchor="middle" font-size="10" fill="#ffffff">kernel own use</text>
 
       <!-- sep lines -->
-      <line x1="340" y1="50" x2="340" y2="180" stroke="#f87171" stroke-dasharray="3 3"/>
-      <text x="340" y="45" text-anchor="middle" font-size="10" fill="#f87171">configMAX_SYSCALL_INTERRUPT_PRIORITY</text>
+      <line x1="340" y1="50" x2="340" y2="180" stroke="#fd8c79" stroke-dasharray="3 3"/>
+      <text x="340" y="45" text-anchor="middle" font-size="10" fill="#fd8c79">configMAX_SYSCALL_INTERRUPT_PRIORITY</text>
     </g>
   </svg>
   <p class="smaller dim">The exact numerical threshold is configured per port. With 4 impl. bits on STM32, a typical split is kernel-safe above 0x50 and PendSV/SysTick at 0xF0.</p>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">24</span><h2>Common Bugs</h2></div>
   <div class="cols cols-2">
     <div>
@@ -818,7 +818,7 @@ __set_BASEPRI(prev);</code></pre>
   </div>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">25</span><h2>v8-M / TrustZone Additions</h2></div>
   <div class="cols cols-2" style="margin-top:0.3em;">
     <div>
@@ -842,7 +842,7 @@ __set_BASEPRI(prev);</code></pre>
   </div>
 </section>
 
-<section data-background-color="#0a0a0f">
+<section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">26</span><h2>References</h2></div>
   <div style="max-width:90%; margin:0 auto; font-size:0.58em; line-height:1.8;">
     <p>
