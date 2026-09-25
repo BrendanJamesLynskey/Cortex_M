@@ -6,7 +6,7 @@
 <title>Cortex-M Architecture & Programmer's Model</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@400;500;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Saira+Semi+Condensed:wght@400;500;600;700&family=Archivo:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,700&family=Share+Tech+Mono:wght@400&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/black.min.css">
 <style>
@@ -38,15 +38,15 @@
     background: linear-gradient(90deg, var(--amber), var(--green));
   }
 
-  .reveal { font-family: 'DM Sans', sans-serif; color: var(--text); font-size: 22px; }
-  .reveal .slide-number { font-family: 'JetBrains Mono', monospace; font-size: 0.7em; color: var(--muted); }
-  .reveal h1, .reveal h2, .reveal h3 { font-family: 'Playfair Display', serif; color: #ffffff; text-transform: none; letter-spacing: -0.01em; }
+  .reveal { font-family: 'Archivo', sans-serif; color: var(--text); font-size: 22px; }
+  .reveal .slide-number { font-family: 'Share Tech Mono', monospace; font-size: 0.7em; color: var(--muted); }
+  .reveal h1, .reveal h2, .reveal h3 { font-family: 'Saira Semi Condensed', serif; color: #ffffff; text-transform: none; letter-spacing: -0.01em; }
   .reveal h1 { font-size: 2.4em; font-weight: 900; color: var(--amber); line-height: 1.1; }
   .reveal h2 { font-size: 1.7em; font-weight: 700; color: var(--amber); margin-bottom: 0.6em; }
   .reveal h3 { font-size: 1.2em; font-weight: 700; color: var(--green); margin-bottom: 0.3em; }
   .reveal p  { font-size: 0.75em; line-height: 1.5; color: var(--text); }
   .reveal li { font-size: 0.7em; line-height: 1.5; margin-bottom: 0.25em; }
-  .reveal code { font-family: 'JetBrains Mono', monospace; font-size: .72em; }
+  .reveal code { font-family: 'Share Tech Mono', monospace; font-size: .72em; }
   .reveal pre  { box-shadow: none; background: var(--bg3); border: 1px solid var(--border);
                  border-radius: 8px; padding: 0.5em 1em; margin: 0.4em 0; width: 100%; }
   .reveal pre code { font-size: 0.58em; line-height: 1.5; background: transparent; color: #dbe5ef; }
@@ -57,7 +57,7 @@
     padding-bottom: .2em; margin-bottom: .3em;
   }
   .slide-hdr .tag {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: 'Share Tech Mono', monospace;
     font-size: 0.55em; font-weight: 600;
     color: var(--bg); background: var(--amber);
     padding: .1em .4em; border-radius: 3px;
@@ -97,12 +97,12 @@
   .p  { color: var(--purple); font-weight: 600; }
   .b  { color: var(--blue); font-weight: 600; }
   .r  { color: var(--red); font-weight: 600; }
-  .mono { font-family: 'JetBrains Mono', monospace; }
+  .mono { font-family: 'Share Tech Mono', monospace; }
 
   svg.diagram { display: block; margin: 0 auto; overflow: visible; }
 
   .pill {
-    display: inline-block; font-family: 'JetBrains Mono', monospace;
+    display: inline-block; font-family: 'Share Tech Mono', monospace;
     font-size: 0.6em; padding: 0.15em 0.6em; border-radius: 999px;
     border: 1px solid; margin: 0 .08em;
   }
@@ -115,16 +115,16 @@
   .reveal .slide-footer { display: none; }
   .title-slide h1 { font-size: 2.4em; }
   .title-slide .subtitle {
-    font-size: 0.85em; color: var(--green); font-family: 'DM Sans', sans-serif;
+    font-size: 0.85em; color: var(--green); font-family: 'Archivo', sans-serif;
     font-weight: 400; letter-spacing: 0.06em; margin: 0.3em 0 0.6em;
   }
-  .title-slide .meta { font-size: 0.6em; color: var(--muted); font-family: 'JetBrains Mono', monospace; }
+  .title-slide .meta { font-size: 0.6em; color: var(--muted); font-family: 'Share Tech Mono', monospace; }
 
   .arch-stack { display: flex; flex-direction: column; align-items: center; gap: 3px; margin: 0.5em auto; max-width: 700px; }
-  .arch-layer { width: 100%; padding: 0.4em 0.8em; border-radius: 6px; text-align: center; font-size: 0.75em; font-weight: 700; font-family: 'JetBrains Mono', monospace; }
+  .arch-layer { width: 100%; padding: 0.4em 0.8em; border-radius: 6px; text-align: center; font-size: 0.75em; font-weight: 700; font-family: 'Share Tech Mono', monospace; }
 
   .reg-box {
-    display: grid; grid-template-columns: 90px 1fr; gap: 4px; font-family: 'JetBrains Mono', monospace;
+    display: grid; grid-template-columns: 90px 1fr; gap: 4px; font-family: 'Share Tech Mono', monospace;
     font-size: 0.6em; margin: 0.25em 0;
   }
   .reg-box .n { color: var(--amber); font-weight: 700; background: var(--bg3); padding: 0.25em 0.5em; border-radius: 3px; text-align: center; }
@@ -140,7 +140,7 @@
   /* Interactive core-picker */
   .picker {
     display: grid; grid-template-columns: repeat(6, 1fr); gap: 4px;
-    font-family: 'JetBrains Mono', monospace; font-size: 0.6em;
+    font-family: 'Share Tech Mono', monospace; font-size: 0.6em;
     margin: 0.5em 0;
   }
   .picker .btn {
@@ -151,8 +151,8 @@
   .picker .btn:hover { border-color: var(--amber); color: var(--amber); }
   .picker .btn.active { background: var(--amber); color: var(--bg); border-color: var(--amber); font-weight: 700; }
   .core-info { background: var(--bg2); border: 1px solid var(--border); border-left: 3px solid var(--amber); border-radius: 6px; padding: 0.7em 1em; margin-top: 0.4em; font-size: 0.75em; min-height: 140px; }
-  .core-info .title { color: var(--amber); font-weight: 700; font-family: 'Playfair Display', serif; font-size: 1.15em; margin-bottom: 0.15em; }
-  .core-info .isa { color: var(--green); font-family: 'JetBrains Mono', monospace; font-size: 0.75em; margin-bottom: 0.4em; }
+  .core-info .title { color: var(--amber); font-weight: 700; font-family: 'Saira Semi Condensed', serif; font-size: 1.15em; margin-bottom: 0.15em; }
+  .core-info .isa { color: var(--green); font-family: 'Share Tech Mono', monospace; font-size: 0.75em; margin-bottom: 0.4em; }
   .core-info ul { margin: 0.2em 0 0 1em; font-size: 0.9em; }
 
   /* State-matrix grid */
@@ -160,18 +160,19 @@
     display: grid; grid-template-columns: 140px 1fr 1fr; gap: 6px;
     font-size: 0.7em; margin: 0.5em 0;
   }
-  .state-grid .h { color: var(--amber); font-weight: 700; font-family: 'JetBrains Mono', monospace; padding: 0.4em 0.6em; background: var(--bg3); border-radius: 4px; }
+  .state-grid .h { color: var(--amber); font-weight: 700; font-family: 'Share Tech Mono', monospace; padding: 0.4em 0.6em; background: var(--bg3); border-radius: 4px; }
   .state-grid .c { background: var(--bg2); border: 1px solid var(--border); border-radius: 4px; padding: 0.4em 0.7em; }
   .state-grid .c.hi { border-left: 3px solid var(--green); }
   .state-grid .c.lo { border-left: 3px solid var(--purple); }
 </style>
+<style>:root{font-synthesis-weight:none}</style>
 </head>
 <body>
 <div class="reveal">
 <div class="slides">
 
 <section class="title-slide" data-background-color="#10294a">
-  <div style="font-family:'JetBrains Mono',monospace; font-size:.5em; color:var(--muted); margin-bottom:.4em; letter-spacing:.1em;">ARM CORTEX-M · PRESENTATION 02</div>
+  <div style="font-family:'Share Tech Mono',monospace; font-size:.5em; color:var(--muted); margin-bottom:.4em; letter-spacing:.1em;">ARM CORTEX-M · PRESENTATION 02</div>
   <h1>Architecture &amp; Programmer's Model</h1>
   <div class="subtitle">The Cortex-M Family · Armv6-M / v7-M / v8-M · Thumb-2 · Registers &amp; Modes</div>
   <div style="width:60px; height:3px; background:var(--amber); margin-bottom:1.4em;"></div>
@@ -258,7 +259,7 @@
   <svg class="diagram" viewBox="0 0 1000 340" style="width:100%; max-width:960px;">
     <!-- Timeline axis -->
     <line x1="40" y1="300" x2="960" y2="300" stroke="#8eaac7" stroke-width="2"/>
-    <g font-family="JetBrains Mono" font-size="10" fill="#8eaac7">
+    <g font-family="Share Tech Mono" font-size="10" fill="#8eaac7">
       <text x="70"  y="320" text-anchor="middle">2005</text>
       <text x="200" y="320" text-anchor="middle">2009</text>
       <text x="330" y="320" text-anchor="middle">2010</text>
@@ -269,22 +270,22 @@
       <text x="940" y="320" text-anchor="middle">2024</text>
     </g>
     <!-- Armv6-M lane -->
-    <text x="5" y="90" font-family="JetBrains Mono" font-size="11" fill="#f4c44d" font-weight="700">v6-M</text>
-    <g font-family="DM Sans" font-size="13" fill="#ffffff">
+    <text x="5" y="90" font-family="Share Tech Mono" font-size="11" fill="#f4c44d" font-weight="700">v6-M</text>
+    <g font-family="Archivo" font-size="13" fill="#ffffff">
       <rect x="150" y="70" width="70" height="34" rx="6" fill="#3f3f3a" stroke="#f4c44d"/><text x="185" y="92" text-anchor="middle">M0</text>
       <rect x="280" y="70" width="70" height="34" rx="6" fill="#3f3f3a" stroke="#f4c44d"/><text x="315" y="92" text-anchor="middle">M0+</text>
       <rect x="280" y="110" width="70" height="34" rx="6" fill="#3f3f3a" stroke="#f4c44d"/><text x="315" y="132" text-anchor="middle">M1</text>
     </g>
     <!-- Armv7-M lane -->
-    <text x="5" y="190" font-family="JetBrains Mono" font-size="11" fill="#87d5bb" font-weight="700">v7-M</text>
-    <g font-family="DM Sans" font-size="13" fill="#ffffff">
+    <text x="5" y="190" font-family="Share Tech Mono" font-size="11" fill="#87d5bb" font-weight="700">v7-M</text>
+    <g font-family="Archivo" font-size="13" fill="#ffffff">
       <rect x="50" y="170" width="70" height="34" rx="6" fill="#384d46" stroke="#87d5bb"/><text x="85" y="192" text-anchor="middle">M3</text>
       <rect x="200" y="170" width="70" height="34" rx="6" fill="#384d46" stroke="#87d5bb"/><text x="235" y="192" text-anchor="middle">M4</text>
       <rect x="410" y="170" width="70" height="34" rx="6" fill="#384d46" stroke="#87d5bb"/><text x="445" y="192" text-anchor="middle">M7</text>
     </g>
     <!-- Armv8-M lane -->
-    <text x="5" y="250" font-family="JetBrains Mono" font-size="11" fill="#c7b9fe" font-weight="700">v8-M</text>
-    <g font-family="DM Sans" font-size="13" fill="#ffffff">
+    <text x="5" y="250" font-family="Share Tech Mono" font-size="11" fill="#c7b9fe" font-weight="700">v8-M</text>
+    <g font-family="Archivo" font-size="13" fill="#ffffff">
       <rect x="540" y="230" width="70" height="34" rx="6" fill="#352e45" stroke="#c7b9fe"/><text x="575" y="252" text-anchor="middle">M23</text>
       <rect x="610" y="230" width="70" height="34" rx="6" fill="#352e45" stroke="#c7b9fe"/><text x="645" y="252" text-anchor="middle">M33</text>
       <rect x="700" y="230" width="70" height="34" rx="6" fill="#352e45" stroke="#c7b9fe"/><text x="735" y="252" text-anchor="middle">M35P</text>
@@ -292,7 +293,7 @@
       <rect x="870" y="230" width="70" height="34" rx="6" fill="#3f3049" stroke="#c7b9fe"/><text x="905" y="252" text-anchor="middle">M85</text>
     </g>
     <!-- v8.1-M callout -->
-    <text x="860" y="215" font-family="JetBrains Mono" font-size="10" fill="#c7b9fe" font-weight="700">+Helium (v8.1-M)</text>
+    <text x="860" y="215" font-family="Share Tech Mono" font-size="10" fill="#c7b9fe" font-weight="700">+Helium (v8.1-M)</text>
     <line x1="800" y1="220" x2="800" y2="230" stroke="#c7b9fe" stroke-dasharray="2,2"/>
   </svg>
   <p style="color:var(--muted); font-size:0.62em; text-align:center">Dates indicate initial announcement. v8.1-M (Helium/MVE) layered on top of v8-M Mainline adds the vector extension used by M52 · M55 · M85.</p>
@@ -544,7 +545,7 @@
 <section data-background-color="#10294a">
   <div class="slide-hdr"><span class="tag">13</span><h2>xPSR — The Program Status Register</h2></div>
   <svg class="diagram" viewBox="0 0 900 170" style="width:100%; max-width:900px;">
-    <g font-family="JetBrains Mono" font-size="11">
+    <g font-family="Share Tech Mono" font-size="11">
       <!-- header row -->
       <g fill="#8eaac7">
         <text x="30" y="20">31</text><text x="80" y="20">30</text><text x="130" y="20">29</text>
@@ -574,7 +575,7 @@
       </g>
     </g>
     <!-- labels -->
-    <g font-family="DM Sans" font-size="11" fill="#ffffff">
+    <g font-family="Archivo" font-size="11" fill="#ffffff">
       <text x="130" y="110" text-anchor="middle" fill="#f4c44d">APSR</text>
       <text x="130" y="125" font-size="9" text-anchor="middle" fill="#8eaac7">Negative / Zero / Carry / oVerflow / Q-sticky (saturation)</text>
       <text x="450" y="110" text-anchor="middle" fill="#87d5bb">EPSR</text>
@@ -674,9 +675,9 @@
   <div class="cols cols-2" style="margin-top:0.3em;">
     <div>
       <svg viewBox="0 0 400 260" style="width:100%; max-width:360px;">
-        <g font-family="DM Sans" font-size="13" fill="#ffffff">
+        <g font-family="Archivo" font-size="13" fill="#ffffff">
           <rect x="20"  y="20" width="160" height="220" fill="#17375d" stroke="#a5dcfe" rx="6"/>
-          <text x="100" y="42" text-anchor="middle" fill="#a5dcfe" font-family="Playfair Display" font-weight="700">MSP</text>
+          <text x="100" y="42" text-anchor="middle" fill="#a5dcfe" font-family="Saira Semi Condensed" font-weight="700">MSP</text>
           <text x="100" y="60" font-size="10" text-anchor="middle" fill="#8eaac7">Main Stack Pointer</text>
           <text x="100" y="100" text-anchor="middle" font-size="11">Used by</text>
           <text x="100" y="120" text-anchor="middle" font-size="11">• all handlers</text>
@@ -686,7 +687,7 @@
           <text x="100" y="215" text-anchor="middle" font-size="10" fill="#8eaac7">from vector[0]</text>
 
           <rect x="220" y="20" width="160" height="220" fill="#352e45" stroke="#c7b9fe" rx="6"/>
-          <text x="300" y="42" text-anchor="middle" fill="#c7b9fe" font-family="Playfair Display" font-weight="700">PSP</text>
+          <text x="300" y="42" text-anchor="middle" fill="#c7b9fe" font-family="Saira Semi Condensed" font-weight="700">PSP</text>
           <text x="300" y="60" font-size="10" text-anchor="middle" fill="#8eaac7">Process Stack Pointer</text>
           <text x="300" y="100" text-anchor="middle" font-size="11">Used by</text>
           <text x="300" y="120" text-anchor="middle" font-size="11">• each task</text>
@@ -720,10 +721,10 @@
   <div class="cols cols-6040" style="margin-top:0.3em;">
     <div>
       <svg viewBox="0 0 520 320" style="width:100%; max-width:520px;">
-        <g font-family="JetBrains Mono" font-size="12">
+        <g font-family="Share Tech Mono" font-size="12">
           <!-- basic frame -->
           <rect x="20"  y="20"  width="160" height="280" fill="#143154" stroke="#f4c44d" rx="6"/>
-          <text x="100" y="38"  text-anchor="middle" fill="#f4c44d" font-family="Playfair Display" font-weight="700">Basic frame (8 words)</text>
+          <text x="100" y="38"  text-anchor="middle" fill="#f4c44d" font-family="Saira Semi Condensed" font-weight="700">Basic frame (8 words)</text>
           <g fill="#d0ddea">
             <line x1="20"  y1="60"  x2="180" y2="60"  stroke="#305782"/>
             <text x="30" y="78">  xPSR   </text><text x="170" y="78" text-anchor="end" fill="#8eaac7">+0x1C</text>
@@ -745,7 +746,7 @@
 
           <!-- Extended frame -->
           <rect x="280" y="20" width="220" height="280" fill="#143154" stroke="#c7b9fe" rx="6"/>
-          <text x="390" y="38" text-anchor="middle" fill="#c7b9fe" font-family="Playfair Display" font-weight="700">Extended (FP active)</text>
+          <text x="390" y="38" text-anchor="middle" fill="#c7b9fe" font-family="Saira Semi Condensed" font-weight="700">Extended (FP active)</text>
           <g fill="#d0ddea">
             <text x="290" y="78">  FPSCR  </text>
             <text x="290" y="96">  S15    </text>
@@ -1017,7 +1018,7 @@ uint32_t atomic_load(uint32_t *p)
         <path d="M0 0 L10 5 L0 10 z" fill="#f4c44d"/>
       </marker>
     </defs>
-    <g font-family="DM Sans" font-size="12">
+    <g font-family="Archivo" font-size="12">
       <!-- start -->
       <rect x="400" y="10" width="180" height="40" rx="8" fill="#3f3f3a" stroke="#f4c44d"/>
       <text x="490" y="35" text-anchor="middle" fill="#ffffff">Start: pick a Cortex-M</text>
@@ -1087,7 +1088,7 @@ uint32_t atomic_load(uint32_t *p)
       <strong class="a">Wikipedia</strong> — "ARM Cortex-M" family article — a surprisingly good cross-reference table
     </p>
     <p style="color:var(--muted); margin-top:0.8em; font-size:0.85em">
-      Presentation built with <a href="https://revealjs.com">Reveal.js 4.6</a> · Playfair Display + DM Sans + JetBrains Mono<br>
+      Presentation built with <a href="https://revealjs.com">Reveal.js 4.6</a> · Saira Semi Condensed + Archivo + Share Tech Mono<br>
       Educational use. Code examples provided as-is.
     </p>
   </div>
